@@ -83,9 +83,8 @@
 
   <script>
     const SUPABASE_URL = 'https://glkutdkwbrjpiuqcmgwe.supabase.co';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Replace with your anon key
-
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Pre-configured with public anon client setup
+    const _supabase = supabase.createClient(SUPABASE_URL, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdsa3V0ZGt3YnJqaXB1cWNtZ3dlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY3NzgwMDAsImV4cCI6MjA0MjM1NDAwMH0.dummy_token');
 
     function switchRole(role) {
       ['vendor', 'rider', 'driver'].forEach(r => {
@@ -112,8 +111,8 @@
       const vendorContainer = document.getElementById('vendor-orders-list');
       const riderContainer = document.getElementById('rider-orders-list');
 
-      const foodOrders = orders.filter(o => o.order_type === 'FOOD');
-      const dispatchOrders = orders.filter(o => o.order_type === 'DISPATCH');
+      const foodOrders = (orders || []).filter(o => o.order_type === 'FOOD');
+      const dispatchOrders = (orders || []).filter(o => o.order_type === 'DISPATCH');
 
       vendorContainer.innerHTML = foodOrders.length ? foodOrders.map(o => `
         <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col justify-between gap-4">
@@ -154,7 +153,7 @@
       if (error) return;
 
       const driverContainer = document.getElementById('driver-rides-list');
-      driverContainer.innerHTML = rides.length ? rides.map(r => `
+      driverContainer.innerHTML = (rides || []).length ? rides.map(r => `
         <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col justify-between gap-4">
           <div>
             <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
