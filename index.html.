@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Logistics Ecosystem Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
+
+  <!-- Header -->
+  <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">⚡</span>
+        <h1 class="text-xl font-bold tracking-wide">Ecosystem Hub</h1>
+      </div>
+      
+      <!-- Role Switcher -->
+      <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-700 text-sm">
+        <button onclick="switchRole('vendor')" id="tab-vendor" class="px-4 py-2 rounded-lg font-medium transition-all bg-emerald-600 text-white">Vendor Portal</button>
+        <button onclick="switchRole('rider')" id="tab-rider" class="px-4 py-2 rounded-lg font-medium text-slate-400 hover:text-slate-200 transition-all">Rider Portal</button>
+        <button onclick="switchRole('driver')" id="tab-driver" class="px-4 py-2 rounded-lg font-medium text-slate-400 hover:text-slate-200 transition-all">Driver Portal</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto p-4 md:p-6">
+    
+    <!-- VENDOR SECTION -->
+    <section id="section-vendor" class="space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold text-emerald-400">Kitchen Display System</h2>
+          <p class="text-slate-400 text-sm">Real-time WhatsApp food orders</p>
+        </div>
+        <button onclick="fetchOrders()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm px-3 py-2 rounded-lg border border-slate-700">Refresh Orders</button>
+      </div>
+
+      <div id="vendor-orders-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 text-center py-10">
+          <p class="text-slate-400">Loading live orders...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIDER SECTION -->
+    <section id="section-rider" class="space-y-6 hidden">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold text-amber-400">Dispatch Deliveries</h2>
+          <p class="text-slate-400 text-sm">Available parcel pickup jobs</p>
+        </div>
+        <button onclick="fetchOrders()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm px-3 py-2 rounded-lg border border-slate-700">Refresh Deliveries</button>
+      </div>
+
+      <div id="rider-orders-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 text-center py-10">
+          <p class="text-slate-400">Loading delivery requests...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- DRIVER SECTION -->
+    <section id="section-driver" class="space-y-6 hidden">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold text-indigo-400">Ride Requests</h2>
+          <p class="text-slate-400 text-sm">Incoming passenger bookings</p>
+        </div>
+        <button onclick="fetchRides()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm px-3 py-2 rounded-lg border border-slate-700">Refresh Rides</button>
+      </div>
+
+      <div id="driver-rides-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 text-center py-10">
+          <p class="text-slate-400">Loading ride requests...</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const SUPABASE_URL = 'https://glkutdkwbrjpiuqcmgwe.supabase.co';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Replace with your anon key
+
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    function switchRole(role) {
+      ['vendor', 'rider', 'driver'].forEach(r => {
+        document.getElementById(`section-${r}`).classList.add('hidden');
+        document.getElementById(`tab-${r}`).className = "px-4 py-2 rounded-lg font-medium text-slate-400 hover:text-slate-200 transition-all";
+      });
+
+      document.getElementById(`section-${role}`).classList.remove('hidden');
+      const activeColor = role === 'vendor' ? 'bg-emerald-600' : role === 'rider' ? 'bg-amber-600' : 'bg-indigo-600';
+      document.getElementById(`tab-${role}`).className = `px-4 py-2 rounded-lg font-medium text-white transition-all ${activeColor}`;
+      
+      if (role === 'driver') fetchRides();
+      else fetchOrders();
+    }
+
+    async function fetchOrders() {
+      const { data: orders, error } = await _supabase.from('orders').select('*').order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      const vendorContainer = document.getElementById('vendor-orders-list');
+      const riderContainer = document.getElementById('rider-orders-list');
+
+      const foodOrders = orders.filter(o => o.order_type === 'FOOD');
+      const dispatchOrders = orders.filter(o => o.order_type === 'DISPATCH');
+
+      vendorContainer.innerHTML = foodOrders.length ? foodOrders.map(o => `
+        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col justify-between gap-4">
+          <div>
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+              <span>#${o.id.slice(0,6)}</span>
+              <span class="px-2 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-md font-semibold">${o.status}</span>
+            </div>
+            <h3 class="font-bold text-lg text-slate-100">${o.item_details}</h3>
+            <p class="text-sm text-slate-400 mt-1">📍 ${o.delivery_address}</p>
+            <p class="text-xs text-slate-500 mt-2">📞 ${o.customer_phone}</p>
+          </div>
+          <div class="flex gap-2 text-sm">
+            <button onclick="updateOrderStatus('${o.id}', 'ACCEPTED')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2 rounded-lg font-medium text-white">Accept</button>
+            <button onclick="updateOrderStatus('${o.id}', 'REJECTED')" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 px-3 rounded-lg font-medium">Reject</button>
+          </div>
+        </div>
+      `).join('') : '<p class="text-slate-400 col-span-full text-center py-8">No food orders found.</p>';
+
+      riderContainer.innerHTML = dispatchOrders.length ? dispatchOrders.map(o => `
+        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col justify-between gap-4">
+          <div>
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+              <span>#${o.id.slice(0,6)}</span>
+              <span class="px-2 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-md font-semibold">${o.status}</span>
+            </div>
+            <h3 class="font-bold text-lg text-slate-100">${o.item_details}</h3>
+            <p class="text-sm text-slate-400 mt-2"><b>Pickup:</b> ${o.pickup_address || 'N/A'}</p>
+            <p class="text-sm text-slate-400"><b>Drop-off:</b> ${o.delivery_address}</p>
+          </div>
+          <button onclick="updateOrderStatus('${o.id}', 'ACCEPTED_BY_RIDER')" class="w-full bg-amber-600 hover:bg-amber-500 py-2 rounded-lg font-medium text-white text-sm">Accept Job</button>
+        </div>
+      `).join('') : '<p class="text-slate-400 col-span-full text-center py-8">No dispatch requests found.</p>';
+    }
+
+    async function fetchRides() {
+      const { data: rides, error } = await _supabase.from('ride_requests').select('*').order('created_at', { ascending: false });
+      if (error) return;
+
+      const driverContainer = document.getElementById('driver-rides-list');
+      driverContainer.innerHTML = rides.length ? rides.map(r => `
+        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col justify-between gap-4">
+          <div>
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+              <span>#${r.id.slice(0,6)}</span>
+              <span class="px-2 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-md font-semibold">${r.status}</span>
+            </div>
+            <p class="text-sm text-slate-300"><b>From:</b> ${r.pickup_address}</p>
+            <p class="text-sm text-slate-300 mt-1"><b>To:</b> ${r.destination_address}</p>
+            <p class="text-xs text-slate-500 mt-2">📞 ${r.customer_phone}</p>
+          </div>
+          <button onclick="updateRideStatus('${r.id}', 'ACCEPTED')" class="w-full bg-indigo-600 hover:bg-indigo-500 py-2 rounded-lg font-medium text-white text-sm">Accept Ride</button>
+        </div>
+      `).join('') : '<p class="text-slate-400 col-span-full text-center py-8">No ride requests found.</p>';
+    }
+
+    async function updateOrderStatus(id, status) {
+      await _supabase.from('orders').update({ status }).eq('id', id);
+      fetchOrders();
+    }
+
+    async function updateRideStatus(id, status) {
+      await _supabase.from('ride_requests').update({ status }).eq('id', id);
+      fetchRides();
+    }
+
+    // Initial Load
+    fetchOrders();
+  </script>
+</body>
+</html>
