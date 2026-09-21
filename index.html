@@ -83,8 +83,9 @@
 
   <script>
     const SUPABASE_URL = 'https://glkutdkwbrjpiuqcmgwe.supabase.co';
-    // Pre-configured with public anon client setup
-    const _supabase = supabase.createClient(SUPABASE_URL, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdsa3V0ZGt3YnJqaXB1cWNtZ3dlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY3NzgwMDAsImV4cCI6MjA0MjM1NDAwMH0.dummy_token');
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdsa3V0ZGt3YnJqcGl1cWNtZ3dlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5NzU3MTMsImV4cCI6MjEwNTU1MTcxM30.f2SgZJvP681imm0Qe1fKsATnCk_86z2guwvZWASXoZM';
+
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     function switchRole(role) {
       ['vendor', 'rider', 'driver'].forEach(r => {
@@ -104,7 +105,7 @@
       const { data: orders, error } = await _supabase.from('orders').select('*').order('created_at', { ascending: false });
       
       if (error) {
-        console.error(error);
+        console.error("Supabase Order Fetch Error:", error);
         return;
       }
 
@@ -118,12 +119,12 @@
         <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col justify-between gap-4">
           <div>
             <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
-              <span>#${o.id.slice(0,6)}</span>
-              <span class="px-2 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-md font-semibold">${o.status}</span>
+              <span>#${(o.id || '').toString().slice(0,6)}</span>
+              <span class="px-2 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-md font-semibold">${o.status || 'PENDING'}</span>
             </div>
-            <h3 class="font-bold text-lg text-slate-100">${o.item_details}</h3>
-            <p class="text-sm text-slate-400 mt-1">📍 ${o.delivery_address}</p>
-            <p class="text-xs text-slate-500 mt-2">📞 ${o.customer_phone}</p>
+            <h3 class="font-bold text-lg text-slate-100">${o.item_details || 'Food Item'}</h3>
+            <p class="text-sm text-slate-400 mt-1">📍 ${o.delivery_address || 'No address provided'}</p>
+            <p class="text-xs text-slate-500 mt-2">📞 ${o.customer_phone || 'N/A'}</p>
           </div>
           <div class="flex gap-2 text-sm">
             <button onclick="updateOrderStatus('${o.id}', 'ACCEPTED')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2 rounded-lg font-medium text-white">Accept</button>
@@ -136,12 +137,12 @@
         <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col justify-between gap-4">
           <div>
             <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
-              <span>#${o.id.slice(0,6)}</span>
-              <span class="px-2 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-md font-semibold">${o.status}</span>
+              <span>#${(o.id || '').toString().slice(0,6)}</span>
+              <span class="px-2 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-md font-semibold">${o.status || 'PENDING'}</span>
             </div>
-            <h3 class="font-bold text-lg text-slate-100">${o.item_details}</h3>
+            <h3 class="font-bold text-lg text-slate-100">${o.item_details || 'Parcel Package'}</h3>
             <p class="text-sm text-slate-400 mt-2"><b>Pickup:</b> ${o.pickup_address || 'N/A'}</p>
-            <p class="text-sm text-slate-400"><b>Drop-off:</b> ${o.delivery_address}</p>
+            <p class="text-sm text-slate-400"><b>Drop-off:</b> ${o.delivery_address || 'N/A'}</p>
           </div>
           <button onclick="updateOrderStatus('${o.id}', 'ACCEPTED_BY_RIDER')" class="w-full bg-amber-600 hover:bg-amber-500 py-2 rounded-lg font-medium text-white text-sm">Accept Job</button>
         </div>
@@ -150,19 +151,22 @@
 
     async function fetchRides() {
       const { data: rides, error } = await _supabase.from('ride_requests').select('*').order('created_at', { ascending: false });
-      if (error) return;
+      if (error) {
+        console.error("Supabase Ride Fetch Error:", error);
+        return;
+      }
 
       const driverContainer = document.getElementById('driver-rides-list');
       driverContainer.innerHTML = (rides || []).length ? rides.map(r => `
         <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col justify-between gap-4">
           <div>
             <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
-              <span>#${r.id.slice(0,6)}</span>
-              <span class="px-2 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-md font-semibold">${r.status}</span>
+              <span>#${(r.id || '').toString().slice(0,6)}</span>
+              <span class="px-2 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-md font-semibold">${r.status || 'SEARCHING'}</span>
             </div>
-            <p class="text-sm text-slate-300"><b>From:</b> ${r.pickup_address}</p>
-            <p class="text-sm text-slate-300 mt-1"><b>To:</b> ${r.destination_address}</p>
-            <p class="text-xs text-slate-500 mt-2">📞 ${r.customer_phone}</p>
+            <p class="text-sm text-slate-300"><b>From:</b> ${r.pickup_address || 'N/A'}</p>
+            <p class="text-sm text-slate-300 mt-1"><b>To:</b> ${r.destination_address || 'N/A'}</p>
+            <p class="text-xs text-slate-500 mt-2">📞 ${r.customer_phone || 'N/A'}</p>
           </div>
           <button onclick="updateRideStatus('${r.id}', 'ACCEPTED')" class="w-full bg-indigo-600 hover:bg-indigo-500 py-2 rounded-lg font-medium text-white text-sm">Accept Ride</button>
         </div>
@@ -178,6 +182,13 @@
       await _supabase.from('ride_requests').update({ status }).eq('id', id);
       fetchRides();
     }
+
+    // Auto Subscribe to Realtime Postgres Changes
+    _supabase
+      .channel('schema-db-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => fetchOrders())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'ride_requests' }, () => fetchRides())
+      .subscribe();
 
     // Initial Load
     fetchOrders();
