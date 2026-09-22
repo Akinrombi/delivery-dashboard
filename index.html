@@ -3,596 +3,266 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chowdeck Vendor Merchant Portal</title>
+  <title>Vendor Partner Dashboard</title>
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <!-- Supabase JS Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    body { background-color: #0b0f19; color: #f3f4f6; font-family: sans-serif; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans flex flex-col pb-20 md:pb-0">
+<body class="p-4 max-w-md mx-auto min-h-screen flex flex-col justify-between">
 
-  <!-- AUTHENTICATION MODAL -->
-  <div id="auth-modal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-slate-900 border border-slate-800 p-6 md:p-8 rounded-3xl max-w-md w-full shadow-2xl space-y-6 my-auto">
-      <div class="text-center">
-        <span class="text-4xl">🍳</span>
-        <h2 id="auth-title" class="text-2xl font-bold text-slate-100 mt-2">Vendor Sign In</h2>
-        <p id="auth-subtitle" class="text-xs text-slate-400 mt-1">Access your Chowdeck merchant portal</p>
-      </div>
-
-      <div class="flex bg-slate-800 p-1 rounded-xl border border-slate-700 text-xs">
-        <button id="btn-tab-login" onclick="toggleAuthMode('login')" class="flex-1 py-2 rounded-lg font-bold bg-emerald-500 text-slate-950 transition-all">Sign In</button>
-        <button id="btn-tab-signup" onclick="toggleAuthMode('signup')" class="flex-1 py-2 rounded-lg font-bold text-slate-400 hover:text-slate-200 transition-all">Register Store</button>
-      </div>
-
-      <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
-        <div id="signup-fields" class="space-y-3 hidden">
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Store / Restaurant Name</label>
-            <input type="text" id="reg-store-name" placeholder="e.g. Mama's Chow" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Cuisine / Short Description</label>
-            <input type="text" id="reg-description" placeholder="e.g. Local & African delicacies" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Phone Number</label>
-            <input type="tel" id="reg-phone" placeholder="+234..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Store Address / Location</label>
-            <input type="text" id="reg-address" placeholder="e.g. 12 Allen Avenue, Ikeja" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" />
-          </div>
-        </div>
-
+  <!-- TOP HEADER -->
+  <div>
+    <div class="flex items-center justify-between mb-6 bg-gray-900 p-4 rounded-2xl border border-gray-800">
+      <div class="flex items-center gap-3">
+        <div class="text-3xl">🍳</div>
         <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">Email Address</label>
-          <input type="email" id="auth-email" required placeholder="vendor@gmail.com" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" />
+          <h1 id="store-name" class="text-lg font-bold text-emerald-400">Loading Store...</h1>
+          <p id="store-email" class="text-xs text-gray-400">vendor@delivery.com</p>
         </div>
+      </div>
+      <button id="store-status-btn" onclick="toggleStoreStatus()" class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2">
+        Store Open <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      </button>
+    </div>
 
-        <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">Password</label>
-          <input type="password" id="auth-password" required placeholder="••••••••" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" />
+    <!-- METRICS CARDS -->
+    <div class="grid grid-cols-2 gap-3 mb-6">
+      <div class="bg-gray-900/80 p-4 rounded-2xl border border-gray-800">
+        <p class="text-xs font-medium text-gray-400 mb-1">New Orders</p>
+        <h2 id="metric-new" class="text-3xl font-extrabold text-amber-400">0</h2>
+      </div>
+      <div class="bg-gray-900/80 p-4 rounded-2xl border border-gray-800">
+        <p class="text-xs font-medium text-gray-400 mb-1">Preparing</p>
+        <h2 id="metric-preparing" class="text-3xl font-extrabold text-blue-400">0</h2>
+      </div>
+      <div class="bg-gray-900/80 p-4 rounded-2xl border border-gray-800">
+        <p class="text-xs font-medium text-gray-400 mb-1">Ready for Rider</p>
+        <h2 id="metric-ready" class="text-3xl font-extrabold text-emerald-400">0</h2>
+      </div>
+      <div class="bg-gray-900/80 p-4 rounded-2xl border border-gray-800">
+        <p class="text-xs font-medium text-gray-400 mb-1">Est. Prep Time</p>
+        <div class="flex items-baseline gap-1 mt-1">
+          <span class="bg-gray-800 text-amber-300 px-2 py-0.5 rounded text-lg font-bold">20</span>
+          <span class="text-xs text-gray-400">mins</span>
         </div>
+      </div>
+    </div>
 
-        <button type="submit" id="auth-submit-btn" class="w-full bg-emerald-500 hover:bg-emerald-400 py-3 rounded-xl font-bold text-slate-950 text-sm transition-all shadow-lg shadow-emerald-500/20">
-          Sign In
+    <!-- TAB TOGGLE -->
+    <div class="flex bg-gray-900 p-1 rounded-xl border border-gray-800 mb-4">
+      <button id="tab-btn-orders" onclick="switchTab('orders')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-amber-500 text-black shadow transition">
+        🔔 New Orders (<span id="badge-new">0</span>)
+      </button>
+      <button id="tab-btn-prep" onclick="switchTab('prep')" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition">
+        ⌛ Preparing / Pickup (<span id="badge-prep">0</span>)
+      </button>
+    </div>
+
+    <!-- TAB 1: ORDERS CONTENT -->
+    <div id="view-orders">
+      <div id="orders-container" class="space-y-3">
+        <div class="bg-gray-900/50 border border-gray-800/80 rounded-2xl p-8 text-center text-gray-500 text-sm">
+          No orders in this tab
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: MENU CATALOG CONTENT -->
+    <div id="view-menu" class="hidden space-y-4">
+      <div class="bg-gray-900 p-4 rounded-2xl border border-gray-800 space-y-3">
+        <h3 class="text-sm font-bold text-gray-200">Add New Menu Item</h3>
+        <input id="item-name" type="text" placeholder="Item Name (e.g. Jollof Rice)" class="w-full bg-gray-800 border border-gray-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-emerald-500" />
+        <input id="item-price" type="number" placeholder="Price (₦)" class="w-full bg-gray-800 border border-gray-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-emerald-500" />
+        <button onclick="addMenuItem()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-2.5 rounded-xl text-xs transition">
+          + Save Food Item
         </button>
-      </form>
+      </div>
 
-      <div id="auth-error" class="hidden p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-400 text-center"></div>
+      <div class="space-y-2">
+        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Current Menu Items</h3>
+        <div id="menu-container" class="space-y-2">
+          <!-- Loaded dynamically -->
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- HEADER -->
-  <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto flex items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <span class="text-3xl">🍳</span>
-        <div>
-          <h1 id="header-store-name" class="text-lg font-black text-emerald-400 tracking-tight">Vendor Store</h1>
-          <p id="user-display-email" class="text-xs text-slate-400 font-medium">vendor@gmail.com</p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <button id="store-status-btn" onclick="toggleStoreStatus()" class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20 flex items-center gap-1.5">
-          <span>Store Open</span>
-          <span class="w-2 h-2 rounded-full bg-slate-950 animate-pulse"></span>
-        </button>
-
-        <button onclick="handleSignOut()" class="p-2 bg-slate-800 text-slate-300 rounded-xl text-xs hover:bg-slate-700 border border-slate-700" title="Sign Out">
-          <i data-lucide="log-out" class="w-4 h-4"></i>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-6xl mx-auto p-4 md:p-6 flex-1 w-full space-y-6">
-
-    <!-- SECTION 1: KITCHEN ORDERS -->
-    <section id="section-orders" class="space-y-6">
-      
-      <!-- TOP STAT CARDS -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div class="bg-slate-900 p-4 rounded-2xl border border-amber-500/30">
-          <p class="text-xs text-slate-400 font-semibold">New Orders</p>
-          <p id="count-new" class="text-3xl font-black text-amber-400 mt-1">0</p>
-        </div>
-        <div class="bg-slate-900 p-4 rounded-2xl border border-blue-500/30">
-          <p class="text-xs text-slate-400 font-semibold">Preparing</p>
-          <p id="count-preparing" class="text-3xl font-black text-blue-400 mt-1">0</p>
-        </div>
-        <div class="bg-slate-900 p-4 rounded-2xl border border-emerald-500/30">
-          <p class="text-xs text-slate-400 font-semibold">Ready for Rider</p>
-          <p id="count-ready" class="text-3xl font-black text-emerald-400 mt-1">0</p>
-        </div>
-        <div class="bg-slate-900 p-4 rounded-2xl border border-purple-500/30">
-          <p class="text-xs text-slate-400 font-semibold">Est. Prep Time</p>
-          <div class="flex items-center gap-1 mt-1">
-            <input type="number" id="prep-time-input" value="20" onchange="updatePrepTime()" class="w-12 bg-slate-950 border border-slate-800 rounded px-1 text-center text-base text-amber-400 font-bold focus:outline-none" />
-            <span class="text-xs text-slate-400">mins</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- WORKFLOW TABS -->
-      <div class="flex border-b border-slate-800 space-x-2 pb-2 overflow-x-auto no-scrollbar">
-        <button onclick="switchOrderTab('new')" id="tab-new" class="px-4 py-2.5 rounded-xl font-bold text-xs bg-amber-500 text-slate-950 whitespace-nowrap flex items-center gap-1.5">
-          <span>🔔 New Orders</span>
-        </button>
-        <button onclick="switchOrderTab('awaiting')" id="tab-awaiting" class="px-4 py-2.5 rounded-xl font-bold text-xs text-slate-400 hover:text-slate-200 whitespace-nowrap flex items-center gap-1.5">
-          <span>⏳ Preparing / Awaiting Pickup</span>
-          <span id="badge-preparing-tab" class="bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded-full text-[10px]">0</span>
-        </button>
-        <button onclick="switchOrderTab('completed')" id="tab-completed" class="px-4 py-2.5 rounded-xl font-bold text-xs text-slate-400 hover:text-slate-200 whitespace-nowrap">
-          ✅ Completed
-        </button>
-        <button onclick="switchOrderTab('rejected')" id="tab-rejected" class="px-4 py-2.5 rounded-xl font-bold text-xs text-slate-400 hover:text-slate-200 whitespace-nowrap">
-          ❌ Rejected
-        </button>
-      </div>
-
-      <!-- ORDERS DISPLAY -->
-      <div id="orders-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Rendered dynamically -->
-      </div>
-    </section>
-
-    <!-- SECTION 2: MENU CATALOG -->
-    <section id="section-menu" class="space-y-6 hidden">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 p-6 rounded-3xl border border-slate-800">
-        <div>
-          <h2 class="text-xl font-bold text-slate-100">Menu Catalog & Stock Controls</h2>
-          <p class="text-xs text-slate-400 mt-1">Manage items, prices, and toggle In Stock / Out of Stock for WhatsApp customers.</p>
-        </div>
-        <button onclick="toggleAddProductModal(true)" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2">
-          <i data-lucide="plus" class="w-4 h-4"></i> Add New Item
-        </button>
-      </div>
-
-      <!-- MENU GRID -->
-      <div id="menu-items-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Rendered dynamically -->
-      </div>
-    </section>
-
-  </main>
-
   <!-- BOTTOM NAVIGATION BAR -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 py-2.5 px-4 z-40">
-    <div class="max-w-md mx-auto flex items-center justify-around">
-      <button onclick="switchSection('orders')" id="nav-orders" class="flex flex-col items-center gap-1 text-emerald-400 font-bold">
-        <i data-lucide="utensils-crossed" class="w-5 h-5"></i>
-        <span class="text-[11px]">Orders</span>
-      </button>
-
-      <button onclick="switchSection('menu')" id="nav-menu" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200">
-        <i data-lucide="book-open" class="w-5 h-5"></i>
-        <span class="text-[11px]">Menu Catalog</span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- ADD PRODUCT MODAL -->
-  <div id="add-product-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl max-w-md w-full shadow-2xl space-y-4">
-      <div class="flex justify-between items-center pb-2 border-b border-slate-800">
-        <h3 class="font-bold text-slate-100">Add Menu Item</h3>
-        <button onclick="toggleAddProductModal(false)" class="text-slate-400 hover:text-white">✕</button>
-      </div>
-      <form onsubmit="handleAddProductSubmit(event)" class="space-y-3">
-        <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">Item Name</label>
-          <input type="text" id="prod-name" required placeholder="e.g. Jollof Rice & Fried Chicken" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" />
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">Price (₦)</label>
-          <input type="number" id="prod-price" required placeholder="3500" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" />
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-slate-400 mb-1">Category</label>
-          <select id="prod-category" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
-            <option value="Main Course">Main Course</option>
-            <option value="Drinks & Beverages">Drinks & Beverages</option>
-            <option value="Sides & Extras">Sides & Extras</option>
-            <option value="Pastries & Bakery">Pastries & Bakery</option>
-          </select>
-        </div>
-        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 py-3 rounded-xl font-bold text-slate-950 text-xs transition-all mt-2">
-          Save Menu Item
-        </button>
-      </form>
-    </div>
+  <div class="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur border-t border-gray-800 py-3 px-6 max-w-md mx-auto flex justify-around">
+    <button onclick="switchNav('orders')" id="nav-orders" class="flex flex-col items-center gap-1 text-emerald-400">
+      <span class="text-lg">🍴</span>
+      <span class="text-[10px] font-bold">Orders</span>
+    </button>
+    <button onclick="switchNav('menu')" id="nav-menu" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white">
+      <span class="text-lg">📖</span>
+      <span class="text-[10px] font-bold">Menu Catalog</span>
+    </button>
   </div>
 
   <script>
+    // 1. SUPABASE INITIALIZATION
     const SUPABASE_URL = 'https://glkutdkwbrjpiuqcmgwe.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdsa3V0ZGt3YnJqcGl1cWNtZ3dlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5NzU3MTMsImV4cCI6MjEwNTU1MTcxM30.f2SgZJvP681imm0Qe1fKsATnCk_86z2guwvZWASXoZM';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdsa3V0ZGt3YnJqcGl1cWNtZ3dlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5NzU3MTMsImV4cCI6MjEwNTU1MTcxM30.f2SgZJvP681imm0Qe1fKsATnCk_86z2guwvZWASXoZM';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let currentVendorId = null;
+    let activeTab = 'orders';
 
-    let authMode = 'login';
-    let currentSessionUser = null;
-    let vendorProfile = null;
-    let isStoreOpen = true;
-    let currentOrderTab = 'new';
-    let currentSection = 'orders';
-    
-    let allOrders = [];
-    let menuItems = [];
+    // 2. INITIALIZE DASHBOARD & FETCH CURRENT VENDOR
+    async function initDashboard() {
+      // Fetch or assign current vendor profile
+      const { data: vendor, error } = await supabase.from('vendors').select('*').limit(1).single();
 
-    async function initSession() {
-      lucide.createIcons();
-      const { data: { session } } = await _supabase.auth.getSession();
-      if (session) {
-        currentSessionUser = session.user;
-        await loadVendorProfile();
-      } else {
-        showAuthModal();
+      if (vendor) {
+        currentVendorId = vendor.id;
+        document.getElementById('store-name').innerText = vendor.name || vendor.store_name || "Mama's Chow";
+        document.getElementById('store-email').innerText = vendor.email || "vendor@delivery.com";
       }
+
+      // Fetch store's filtered data
+      await fetchOrders();
+      await fetchMenuItems();
     }
 
-    function switchSection(section) {
-      currentSection = section;
-      document.getElementById('section-orders').classList.toggle('hidden', section !== 'orders');
-      document.getElementById('section-menu').classList.toggle('hidden', section !== 'menu');
+    // 3. FETCH ORDERS FILTERED STRICTLY BY VENDOR ID
+    async function fetchOrders() {
+      if (!currentVendorId) return;
+
+      // Filtered query isolating vendor orders
+      const { data: orders, error } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('vendor_id', currentVendorId);
+
+      const ordersContainer = document.getElementById('orders-container');
       
-      const navOrders = document.getElementById('nav-orders');
-      const navMenu = document.getElementById('nav-menu');
+      if (error || !orders || orders.length === 0) {
+        // Reset metrics to 0 when no orders exist
+        document.getElementById('metric-new').innerText = '0';
+        document.getElementById('metric-preparing').innerText = '0';
+        document.getElementById('metric-ready').innerText = '0';
+        document.getElementById('badge-new').innerText = '0';
+        document.getElementById('badge-prep').innerText = '0';
 
-      if (section === 'orders') {
-        navOrders.className = "flex flex-col items-center gap-1 text-emerald-400 font-bold";
-        navMenu.className = "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200";
-        fetchOrders();
-      } else {
-        navMenu.className = "flex flex-col items-center gap-1 text-emerald-400 font-bold";
-        navOrders.className = "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200";
-        fetchMenuItemsFromSupabase();
-      }
-    }
-
-    function showAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
-    function hideAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
-
-    function toggleAuthMode(mode) {
-      authMode = mode;
-      const isLogin = mode === 'login';
-      document.getElementById('signup-fields').classList.toggle('hidden', isLogin);
-      document.getElementById('auth-title').innerText = isLogin ? 'Vendor Sign In' : 'Register Store';
-      document.getElementById('auth-submit-btn').innerText = isLogin ? 'Sign In' : 'Register Store';
-      document.getElementById('btn-tab-login').className = `flex-1 py-2 rounded-lg font-bold text-xs ${isLogin ? 'bg-emerald-500 text-slate-950' : 'text-slate-400'}`;
-      document.getElementById('btn-tab-signup').className = `flex-1 py-2 rounded-lg font-bold text-xs ${!isLogin ? 'bg-emerald-500 text-slate-950' : 'text-slate-400'}`;
-    }
-
-    async function handleAuthSubmit(e) {
-      e.preventDefault();
-      const email = document.getElementById('auth-email').value;
-      const password = document.getElementById('auth-password').value;
-
-      if (authMode === 'login') {
-        const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-        if (error) {
-          currentSessionUser = { id: 'vendor_' + email.replace(/[^a-zA-Z0-9]/g, ''), email };
-          vendorProfile = { store_name: 'Vendor Store', description: 'Fresh Food Vendor', phone: '', address: '' };
-        } else {
-          currentSessionUser = data.user;
-          await loadVendorProfile();
-          return;
-        }
-      } else {
-        const storeName = document.getElementById('reg-store-name').value;
-        const description = document.getElementById('reg-description').value || 'Freshly cooked meals & fast delivery';
-        const phone = document.getElementById('reg-phone').value;
-        const address = document.getElementById('reg-address').value;
-
-        const { data, error } = await _supabase.auth.signUp({ email, password });
-        
-        currentSessionUser = data?.user || { id: 'vendor_' + Date.now(), email };
-        vendorProfile = { store_name: storeName, description, phone, address };
-
-        // Synchronize restaurant automatically into Supabase vendors table for WhatsApp Bot
-        await syncVendorToSupabase(currentSessionUser.id, storeName, description, phone, address);
-      }
-      hideAuthModal();
-      updateUI();
-      fetchOrders();
-    }
-
-    async function syncVendorToSupabase(vendorId, storeName, description, phone, address) {
-      try {
-        await _supabase.from('vendors').upsert({
-          id: vendorId,
-          store_name: storeName,
-          description: description,
-          phone: phone,
-          address: address,
-          is_open: true
-        });
-      } catch (err) {
-        console.log("Supabase Sync:", err);
-      }
-    }
-
-    async function loadVendorProfile() {
-      if (!currentSessionUser) return;
-      const { data } = await _supabase.from('vendors').select('*').eq('id', currentSessionUser.id).single();
-      if (data) {
-        vendorProfile = { store_name: data.store_name, description: data.description, phone: data.phone, address: data.address };
-        isStoreOpen = data.is_open ?? true;
-      } else {
-        vendorProfile = { store_name: 'Vendor Store', description: 'Fresh & local meals', phone: '', address: '' };
-      }
-      hideAuthModal();
-      updateUI();
-      fetchMenuItemsFromSupabase();
-      fetchOrders();
-    }
-
-    async function handleSignOut() {
-      await _supabase.auth.signOut();
-      currentSessionUser = null;
-      showAuthModal();
-    }
-
-    function updateUI() {
-      if (!vendorProfile) return;
-      document.getElementById('header-store-name').innerText = vendorProfile.store_name || 'Vendor Store';
-      document.getElementById('user-display-email').innerText = currentSessionUser ? currentSessionUser.email : 'vendor@gmail.com';
-    }
-
-    async function toggleStoreStatus() {
-      isStoreOpen = !isStoreOpen;
-      const btn = document.getElementById('store-status-btn');
-      if (isStoreOpen) {
-        btn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20 flex items-center gap-1.5";
-        btn.innerHTML = `<span>Store Open</span><span class="w-2 h-2 rounded-full bg-slate-950 animate-pulse"></span>`;
-      } else {
-        btn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center gap-1.5";
-        btn.innerHTML = `<span>Store Closed</span><span class="w-2 h-2 rounded-full bg-rose-500"></span>`;
-      }
-
-      if (currentSessionUser) {
-        await _supabase.from('vendors').update({ is_open: isStoreOpen }).eq('id', currentSessionUser.id);
-      }
-    }
-
-    function updatePrepTime() {
-      const val = document.getElementById('prep-time-input').value;
-      alert(`Average preparation time updated to ${val} minutes.`);
-    }
-
-    /* MENU CATALOG & SUPABASE SYNC */
-    async function fetchMenuItemsFromSupabase() {
-      if (!currentSessionUser) return;
-      const { data } = await _supabase.from('vendor_menu').select('*').eq('vendor_id', currentSessionUser.id);
-      if (data && data.length) {
-        menuItems = data.map(i => ({
-          id: i.id,
-          name: i.name,
-          price: i.price,
-          category: i.category || 'Main Course',
-          inStock: i.in_stock
-        }));
-      } else {
-        const saved = localStorage.getItem(`vendor_menu_${currentSessionUser.id}`);
-        if (saved) menuItems = JSON.parse(saved);
-        else {
-          menuItems = [
-            { id: 'm1', name: 'Special Jollof Rice & Chicken', price: 3500, category: 'Main Course', inStock: true },
-            { id: 'm2', name: 'Fried Rice & Beef', price: 3800, category: 'Main Course', inStock: true },
-            { id: 'm3', name: 'Chilled Soft Drink (50cl)', price: 500, category: 'Drinks & Beverages', inStock: false }
-          ];
-        }
-      }
-      renderMenuItems();
-    }
-
-    async function saveMenuItems() {
-      if (currentSessionUser) {
-        localStorage.setItem(`vendor_menu_${currentSessionUser.id}`, JSON.stringify(menuItems));
-      }
-      renderMenuItems();
-    }
-
-    function renderMenuItems() {
-      const grid = document.getElementById('menu-items-grid');
-      if (!menuItems.length) {
-        grid.innerHTML = `<p class="text-slate-400 text-center col-span-full py-8">No menu items added yet.</p>`;
+        ordersContainer.innerHTML = `
+          <div class="bg-gray-900/50 border border-gray-800/80 rounded-2xl p-8 text-center text-gray-500 text-sm">
+            No orders in this tab
+          </div>`;
         return;
       }
 
-      grid.innerHTML = menuItems.map(m => `
-        <div class="bg-slate-900 p-5 rounded-2xl border ${m.inStock ? 'border-slate-800' : 'border-rose-500/30 bg-rose-950/10'} space-y-3 flex flex-col justify-between shadow-xl">
-          <div>
-            <div class="flex items-center justify-between text-xs mb-2">
-              <span class="px-2 py-0.5 rounded font-bold bg-slate-800 text-slate-300">${m.category}</span>
-              <span class="px-2 py-0.5 rounded font-bold ${m.inStock ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
-                ${m.inStock ? 'IN STOCK' : 'OUT OF STOCK'}
-              </span>
+      let newCount = 0;
+      let prepCount = 0;
+      let readyCount = 0;
+      ordersContainer.innerHTML = '';
+
+      orders.forEach(order => {
+        if (order.status === 'pending') newCount++;
+        if (order.status === 'preparing') prepCount++;
+        if (order.status === 'ready') readyCount++;
+
+        // Render Order Card
+        ordersContainer.innerHTML += `
+          <div class="bg-gray-900 border border-gray-800 rounded-2xl p-4 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-amber-400">Order #${order.id.toString().slice(0, 6)}</span>
+              <span class="text-[10px] bg-gray-800 text-gray-300 px-2 py-0.5 rounded-full uppercase font-bold">${order.status}</span>
             </div>
-            <h3 class="font-bold text-slate-100">${m.name}</h3>
-            <p class="text-lg font-black text-emerald-400 mt-1">₦ ${Number(m.price).toLocaleString()}</p>
-          </div>
-
-          <div class="flex items-center gap-2 pt-2 border-t border-slate-800">
-            <button onclick="toggleItemStock('${m.id}')" class="flex-1 py-2 rounded-xl text-xs font-bold ${m.inStock ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30' : 'bg-emerald-500 text-slate-950'}">
-              ${m.inStock ? 'Mark Out of Stock' : 'Mark In Stock'}
-            </button>
-            <button onclick="deleteMenuItem('${m.id}')" class="p-2 bg-rose-500/10 text-rose-400 rounded-xl text-xs hover:bg-rose-500/20" title="Delete">
-              <i data-lucide="trash-2" class="w-4 h-4"></i>
-            </button>
-          </div>
-        </div>
-      `).join('');
-      lucide.createIcons();
-    }
-
-    async function toggleItemStock(id) {
-      const item = menuItems.find(i => i.id === id);
-      if (item) {
-        item.inStock = !item.inStock;
-        saveMenuItems();
-        if (currentSessionUser) {
-          await _supabase.from('vendor_menu').upsert({
-            id: item.id,
-            vendor_id: currentSessionUser.id,
-            name: item.name,
-            price: item.price,
-            category: item.category,
-            in_stock: item.inStock
-          });
-        }
-      }
-    }
-
-    async function deleteMenuItem(id) {
-      menuItems = menuItems.filter(i => i.id !== id);
-      saveMenuItems();
-      if (currentSessionUser) {
-        await _supabase.from('vendor_menu').delete().eq('id', id);
-      }
-    }
-
-    function toggleAddProductModal(show) {
-      document.getElementById('add-product-modal').classList.toggle('hidden', !show);
-    }
-
-    async function handleAddProductSubmit(e) {
-      e.preventDefault();
-      const name = document.getElementById('prod-name').value;
-      const price = document.getElementById('prod-price').value;
-      const category = document.getElementById('prod-category').value;
-      const newId = 'm_' + Date.now();
-
-      const newItem = { id: newId, name, price, category, inStock: true };
-      menuItems.push(newItem);
-      saveMenuItems();
-
-      if (currentSessionUser) {
-        await _supabase.from('vendor_menu').insert({
-          id: newId,
-          vendor_id: currentSessionUser.id,
-          name,
-          price,
-          category,
-          in_stock: true
-        });
-      }
-
-      toggleAddProductModal(false);
-      document.getElementById('prod-name').value = '';
-      document.getElementById('prod-price').value = '';
-    }
-
-    /* ORDERS MANAGEMENT */
-    function switchOrderTab(tab) {
-      currentOrderTab = tab;
-      const isNew = tab === 'new';
-      const isAwaiting = tab === 'awaiting';
-      const isCompleted = tab === 'completed';
-      const isRejected = tab === 'rejected';
-
-      document.getElementById('tab-new').className = `px-4 py-2.5 rounded-xl font-bold text-xs whitespace-nowrap ${isNew ? 'bg-amber-500 text-slate-950' : 'text-slate-400 hover:text-slate-200'}`;
-      document.getElementById('tab-awaiting').className = `px-4 py-2.5 rounded-xl font-bold text-xs whitespace-nowrap ${isAwaiting ? 'bg-blue-500 text-slate-950' : 'text-slate-400 hover:text-slate-200'}`;
-      document.getElementById('tab-completed').className = `px-4 py-2.5 rounded-xl font-bold text-xs whitespace-nowrap ${isCompleted ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-slate-200'}`;
-      document.getElementById('tab-rejected').className = `px-4 py-2.5 rounded-xl font-bold text-xs whitespace-nowrap ${isRejected ? 'bg-rose-500 text-slate-950' : 'text-slate-400 hover:text-slate-200'}`;
-
-      renderOrders();
-    }
-
-    async function fetchOrders() {
-      const { data } = await _supabase.from('orders').select('*').order('created_at', { ascending: false });
-      if (data && data.length) allOrders = data;
-      else if (!allOrders.length) {
-        allOrders = [
-          { id: '102918', item_details: '2x Jollof Rice + Fried Fish + Cold Coke', delivery_address: '14 Ikeja Way, Lagos', status: 'PREPARING', created_at: new Date().toISOString() },
-          { id: '102919', item_details: '1x Beef Burger & Extra Cheese Fries', delivery_address: '5 Allen Avenue, Ikeja', status: 'PREPARING', created_at: new Date().toISOString() },
-          { id: '102920', item_details: '1x Egusi Soup & Pounded Yam', delivery_address: '8 Victoria Island, Lagos', status: 'PREPARING', created_at: new Date().toISOString() },
-          { id: '102921', item_details: '3x Peppered Chicken Wings', delivery_address: '22 Lekki Phase 1', status: 'PREPARING', created_at: new Date().toISOString() },
-          { id: '102922', item_details: '1x Fried Rice & Grilled Turkey', delivery_address: '10 Maryland Mall', status: 'PREPARING', created_at: new Date().toISOString() }
-        ];
-      }
-      updateOrderCounts();
-      renderOrders();
-    }
-
-    function updateOrderCounts() {
-      const counts = {
-        new: allOrders.filter(o => o.status === 'PENDING' || o.status === 'NEW').length,
-        preparing: allOrders.filter(o => o.status === 'PREPARING' || o.status === 'ACCEPTED').length,
-        ready: allOrders.filter(o => o.status === 'READY_FOR_PICKUP').length,
-      };
-
-      document.getElementById('count-new').innerText = counts.new;
-      document.getElementById('count-preparing').innerText = counts.preparing;
-      document.getElementById('count-ready').innerText = counts.ready;
-      document.getElementById('badge-preparing-tab').innerText = counts.preparing;
-    }
-
-    function renderOrders() {
-      const container = document.getElementById('orders-container');
-      const filtered = allOrders.filter(o => {
-        const s = (o.status || 'PENDING').toUpperCase();
-        if (currentOrderTab === 'new') return s === 'PENDING' || s === 'NEW';
-        if (currentOrderTab === 'awaiting') return s === 'PREPARING' || s === 'ACCEPTED' || s === 'READY_FOR_PICKUP';
-        if (currentOrderTab === 'completed') return s === 'COMPLETED' || s === 'DELIVERED';
-        if (currentOrderTab === 'rejected') return s === 'REJECTED' || s === 'CANCELLED';
-        return false;
-      });
-
-      if (!filtered.length) {
-        container.innerHTML = `
-          <div class="bg-slate-900 border border-slate-800 p-12 rounded-2xl text-center col-span-full">
-            <p class="text-slate-400 text-sm font-medium">No orders in this tab</p>
+            <p class="text-xs text-gray-300">📍 ${order.delivery_address || 'Address provided'}</p>
+            <p class="text-xs font-bold text-emerald-400">Total: ₦${order.total_amount || 0}</p>
           </div>
         `;
+      });
+
+      // Update Dashboard Counters
+      document.getElementById('metric-new').innerText = newCount;
+      document.getElementById('metric-preparing').innerText = prepCount;
+      document.getElementById('metric-ready').innerText = readyCount;
+      document.getElementById('badge-new').innerText = newCount;
+      document.getElementById('badge-prep').innerText = prepCount;
+    }
+
+    // 4. FETCH MENU ITEMS FOR THIS STORE
+    async function fetchMenuItems() {
+      if (!currentVendorId) return;
+
+      const { data: items } = await supabase
+        .from('menu_items')
+        .select('*')
+        .eq('restaurant_id', currentVendorId);
+
+      const menuContainer = document.getElementById('menu-container');
+      menuContainer.innerHTML = '';
+
+      if (!items || items.length === 0) {
+        menuContainer.innerHTML = `<p class="text-xs text-gray-500">No items in catalog yet.</p>`;
         return;
       }
 
-      container.innerHTML = filtered.map(o => `
-        <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between gap-4 shadow-xl">
-          <div>
-            <div class="flex justify-between items-center text-xs text-slate-400 mb-2">
-              <span class="font-bold text-emerald-400">#${(o.id || '').toString().slice(0,6)}</span>
-              <span class="bg-slate-800 px-2 py-0.5 rounded text-[10px] text-slate-300 font-semibold">${o.status}</span>
-            </div>
-            <h3 class="font-bold text-slate-100 text-base">${o.item_details || 'Food Order'}</h3>
-            <p class="text-xs text-slate-400 mt-2">📍 ${o.delivery_address || 'Address pending'}</p>
+      items.forEach(item => {
+        menuContainer.innerHTML += `
+          <div class="flex justify-between items-center bg-gray-900 border border-gray-800 p-3 rounded-xl text-xs">
+            <span class="font-bold text-gray-200">${item.title || item.name}</span>
+            <span class="text-emerald-400 font-extrabold">₦${item.price}</span>
           </div>
-
-          ${currentOrderTab === 'new' ? `
-            <div class="flex gap-2">
-              <button onclick="updateOrderStatus('${o.id}', 'PREPARING')" class="flex-1 bg-emerald-500 hover:bg-emerald-400 py-2.5 rounded-xl text-xs font-bold text-slate-950 transition-all">Accept Order</button>
-              <button onclick="updateOrderStatus('${o.id}', 'REJECTED')" class="bg-rose-500/10 text-rose-400 border border-rose-500/30 px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-rose-500/20">Reject</button>
-            </div>
-          ` : ''}
-
-          ${currentOrderTab === 'awaiting' ? `
-            <button onclick="updateOrderStatus('${o.id}', 'READY_FOR_PICKUP')" class="w-full bg-emerald-500 hover:bg-emerald-400 py-2.5 rounded-xl text-xs font-bold text-slate-950 shadow-lg shadow-emerald-500/20 transition-all">
-              Mark Ready for Rider Pickup 🚴
-            </button>
-          ` : ''}
-        </div>
-      `).join('');
+        `;
+      });
     }
 
-    async function updateOrderStatus(id, newStatus) {
-      const order = allOrders.find(o => o.id === id);
-      if (order) order.status = newStatus;
-      await _supabase.from('orders').update({ status: newStatus }).eq('id', id);
-      updateOrderCounts();
-      renderOrders();
+    // 5. ADD NEW MENU ITEM
+    async function addMenuItem() {
+      const name = document.getElementById('item-name').value.trim();
+      const price = document.getElementById('item-price').value.trim();
+
+      if (!name || !price || !currentVendorId) return alert('Fill in name and price!');
+
+      await supabase.from('menu_items').insert([
+        {
+          restaurant_id: currentVendorId,
+          title: name,
+          price: Number(price)
+        }
+      ]);
+
+      document.getElementById('item-name').value = '';
+      document.getElementById('item-price').value = '';
+      fetchMenuItems();
     }
 
-    initSession();
+    // 6. NAVIGATION & TAB SWITCHING LOGIC
+    function switchNav(nav) {
+      if (nav === 'orders') {
+        document.getElementById('view-orders').classList.remove('hidden');
+        document.getElementById('view-menu').classList.add('hidden');
+        document.getElementById('nav-orders').className = 'flex flex-col items-center gap-1 text-emerald-400';
+        document.getElementById('nav-menu').className = 'flex flex-col items-center gap-1 text-gray-400 hover:text-white';
+      } else {
+        document.getElementById('view-orders').classList.add('hidden');
+        document.getElementById('view-menu').classList.remove('hidden');
+        document.getElementById('nav-orders').className = 'flex flex-col items-center gap-1 text-gray-400 hover:text-white';
+        document.getElementById('nav-menu').className = 'flex flex-col items-center gap-1 text-emerald-400';
+      }
+    }
+
+    function switchTab(tab) {
+      const btnOrders = document.getElementById('tab-btn-orders');
+      const btnPrep = document.getElementById('tab-btn-prep');
+
+      if (tab === 'orders') {
+        btnOrders.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-amber-500 text-black shadow transition';
+        btnPrep.className = 'flex-1 py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition';
+      } else {
+        btnOrders.className = 'flex-1 py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition';
+        btnPrep.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-amber-500 text-black shadow transition';
+      }
+    }
+
+    // Start App
+    initDashboard();
   </script>
 </body>
 </html>
