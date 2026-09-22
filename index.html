@@ -36,6 +36,11 @@
           </div>
 
           <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Cuisine / Short Description</label>
+            <input type="text" id="reg-description" placeholder="e.g. Local & African delicacies" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" />
+          </div>
+
+          <div>
             <label class="block text-xs font-medium text-slate-400 mb-1">Phone Number</label>
             <input type="tel" id="reg-phone" placeholder="+234..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" />
           </div>
@@ -103,7 +108,7 @@
         </div>
         <div class="bg-slate-900 p-4 rounded-2xl border border-blue-500/30">
           <p class="text-xs text-slate-400 font-semibold">Preparing</p>
-          <p id="count-preparing" class="text-3xl font-black text-blue-400 mt-1">5</p>
+          <p id="count-preparing" class="text-3xl font-black text-blue-400 mt-1">0</p>
         </div>
         <div class="bg-slate-900 p-4 rounded-2xl border border-emerald-500/30">
           <p class="text-xs text-slate-400 font-semibold">Ready for Rider</p>
@@ -125,7 +130,7 @@
         </button>
         <button onclick="switchOrderTab('awaiting')" id="tab-awaiting" class="px-4 py-2.5 rounded-xl font-bold text-xs text-slate-400 hover:text-slate-200 whitespace-nowrap flex items-center gap-1.5">
           <span>⏳ Preparing / Awaiting Pickup</span>
-          <span class="bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded-full text-[10px]">5</span>
+          <span id="badge-preparing-tab" class="bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded-full text-[10px]">0</span>
         </button>
         <button onclick="switchOrderTab('completed')" id="tab-completed" class="px-4 py-2.5 rounded-xl font-bold text-xs text-slate-400 hover:text-slate-200 whitespace-nowrap">
           ✅ Completed
@@ -146,7 +151,7 @@
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 p-6 rounded-3xl border border-slate-800">
         <div>
           <h2 class="text-xl font-bold text-slate-100">Menu Catalog & Stock Controls</h2>
-          <p class="text-xs text-slate-400 mt-1">Manage items, prices, and toggle In Stock / Out of Stock.</p>
+          <p class="text-xs text-slate-400 mt-1">Manage items, prices, and toggle In Stock / Out of Stock for WhatsApp customers.</p>
         </div>
         <button onclick="toggleAddProductModal(true)" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2">
           <i data-lucide="plus" class="w-4 h-4"></i> Add New Item
@@ -161,7 +166,7 @@
 
   </main>
 
-  <!-- BOTTOM NAVIGATION BAR (MATCHING CHOWDECK / PREVIEW) -->
+  <!-- BOTTOM NAVIGATION BAR -->
   <nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 py-2.5 px-4 z-40">
     <div class="max-w-md mx-auto flex items-center justify-around">
       <button onclick="switchSection('orders')" id="nav-orders" class="flex flex-col items-center gap-1 text-emerald-400 font-bold">
@@ -221,20 +226,8 @@
     let currentOrderTab = 'new';
     let currentSection = 'orders';
     
-    // Sample demo data matching preview
-    let allOrders = [
-      { id: '102918', item_details: '2x Jollof Rice + Fried Fish + Cold Coke', delivery_address: '14 Ikeja Way, Lagos', status: 'PREPARING', created_at: new Date().toISOString() },
-      { id: '102919', item_details: '1x Beef Burger & Extra Cheese Fries', delivery_address: '5 Allen Avenue, Ikeja', status: 'PREPARING', created_at: new Date().toISOString() },
-      { id: '102920', item_details: '1x Egusi Soup & Pounded Yam', delivery_address: '8 Victoria Island, Lagos', status: 'PREPARING', created_at: new Date().toISOString() },
-      { id: '102921', item_details: '3x Peppered Chicken Wings', delivery_address: '22 Lekki Phase 1', status: 'PREPARING', created_at: new Date().toISOString() },
-      { id: '102922', item_details: '1x Fried Rice & Grilled Turkey', delivery_address: '10 Maryland Mall', status: 'PREPARING', created_at: new Date().toISOString() }
-    ];
-
-    let menuItems = [
-      { id: 'm1', name: 'Special Jollof Rice & Chicken', price: 3500, category: 'Main Course', inStock: true },
-      { id: 'm2', name: 'Fried Rice & Beef', price: 3800, category: 'Main Course', inStock: true },
-      { id: 'm3', name: 'Chilled Soft Drink (50cl)', price: 500, category: 'Drinks & Beverages', inStock: false }
-    ];
+    let allOrders = [];
+    let menuItems = [];
 
     async function initSession() {
       lucide.createIcons();
@@ -262,7 +255,7 @@
       } else {
         navMenu.className = "flex flex-col items-center gap-1 text-emerald-400 font-bold";
         navOrders.className = "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-200";
-        renderMenuItems();
+        fetchMenuItemsFromSupabase();
       }
     }
 
@@ -284,28 +277,62 @@
       const email = document.getElementById('auth-email').value;
       const password = document.getElementById('auth-password').value;
 
-      const { data, error } = authMode === 'login' 
-        ? await _supabase.auth.signInWithPassword({ email, password })
-        : await _supabase.auth.signUp({ email, password });
-
-      if (error) {
-        currentSessionUser = { id: 'vendor_local_' + Date.now(), email };
-        vendorProfile = { store_name: 'Vendor Store', phone: '', address: '' };
+      if (authMode === 'login') {
+        const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          currentSessionUser = { id: 'vendor_' + email.replace(/[^a-zA-Z0-9]/g, ''), email };
+          vendorProfile = { store_name: 'Vendor Store', description: 'Fresh Food Vendor', phone: '', address: '' };
+        } else {
+          currentSessionUser = data.user;
+          await loadVendorProfile();
+          return;
+        }
       } else {
-        currentSessionUser = data.user;
-        vendorProfile = { store_name: 'Vendor Store', phone: '', address: '' };
+        const storeName = document.getElementById('reg-store-name').value;
+        const description = document.getElementById('reg-description').value || 'Freshly cooked meals & fast delivery';
+        const phone = document.getElementById('reg-phone').value;
+        const address = document.getElementById('reg-address').value;
+
+        const { data, error } = await _supabase.auth.signUp({ email, password });
+        
+        currentSessionUser = data?.user || { id: 'vendor_' + Date.now(), email };
+        vendorProfile = { store_name: storeName, description, phone, address };
+
+        // Synchronize restaurant automatically into Supabase vendors table for WhatsApp Bot
+        await syncVendorToSupabase(currentSessionUser.id, storeName, description, phone, address);
       }
       hideAuthModal();
       updateUI();
       fetchOrders();
     }
 
+    async function syncVendorToSupabase(vendorId, storeName, description, phone, address) {
+      try {
+        await _supabase.from('vendors').upsert({
+          id: vendorId,
+          store_name: storeName,
+          description: description,
+          phone: phone,
+          address: address,
+          is_open: true
+        });
+      } catch (err) {
+        console.log("Supabase Sync:", err);
+      }
+    }
+
     async function loadVendorProfile() {
       if (!currentSessionUser) return;
-      vendorProfile = { store_name: 'Vendor Store', phone: '', address: '' };
+      const { data } = await _supabase.from('vendors').select('*').eq('id', currentSessionUser.id).single();
+      if (data) {
+        vendorProfile = { store_name: data.store_name, description: data.description, phone: data.phone, address: data.address };
+        isStoreOpen = data.is_open ?? true;
+      } else {
+        vendorProfile = { store_name: 'Vendor Store', description: 'Fresh & local meals', phone: '', address: '' };
+      }
       hideAuthModal();
       updateUI();
-      loadMenuItems();
+      fetchMenuItemsFromSupabase();
       fetchOrders();
     }
 
@@ -321,7 +348,7 @@
       document.getElementById('user-display-email').innerText = currentSessionUser ? currentSessionUser.email : 'vendor@gmail.com';
     }
 
-    function toggleStoreStatus() {
+    async function toggleStoreStatus() {
       isStoreOpen = !isStoreOpen;
       const btn = document.getElementById('store-status-btn');
       if (isStoreOpen) {
@@ -331,6 +358,10 @@
         btn.className = "px-3.5 py-2 rounded-xl text-xs font-bold transition-all bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center gap-1.5";
         btn.innerHTML = `<span>Store Closed</span><span class="w-2 h-2 rounded-full bg-rose-500"></span>`;
       }
+
+      if (currentSessionUser) {
+        await _supabase.from('vendors').update({ is_open: isStoreOpen }).eq('id', currentSessionUser.id);
+      }
     }
 
     function updatePrepTime() {
@@ -338,14 +369,36 @@
       alert(`Average preparation time updated to ${val} minutes.`);
     }
 
-    /* MENU MANAGEMENT */
-    function loadMenuItems() {
-      const saved = localStorage.getItem(`vendor_menu_${currentSessionUser?.id || 'default'}`);
-      if (saved) menuItems = JSON.parse(saved);
+    /* MENU CATALOG & SUPABASE SYNC */
+    async function fetchMenuItemsFromSupabase() {
+      if (!currentSessionUser) return;
+      const { data } = await _supabase.from('vendor_menu').select('*').eq('vendor_id', currentSessionUser.id);
+      if (data && data.length) {
+        menuItems = data.map(i => ({
+          id: i.id,
+          name: i.name,
+          price: i.price,
+          category: i.category || 'Main Course',
+          inStock: i.in_stock
+        }));
+      } else {
+        const saved = localStorage.getItem(`vendor_menu_${currentSessionUser.id}`);
+        if (saved) menuItems = JSON.parse(saved);
+        else {
+          menuItems = [
+            { id: 'm1', name: 'Special Jollof Rice & Chicken', price: 3500, category: 'Main Course', inStock: true },
+            { id: 'm2', name: 'Fried Rice & Beef', price: 3800, category: 'Main Course', inStock: true },
+            { id: 'm3', name: 'Chilled Soft Drink (50cl)', price: 500, category: 'Drinks & Beverages', inStock: false }
+          ];
+        }
+      }
+      renderMenuItems();
     }
 
-    function saveMenuItems() {
-      localStorage.setItem(`vendor_menu_${currentSessionUser?.id || 'default'}`, JSON.stringify(menuItems));
+    async function saveMenuItems() {
+      if (currentSessionUser) {
+        localStorage.setItem(`vendor_menu_${currentSessionUser.id}`, JSON.stringify(menuItems));
+      }
       renderMenuItems();
     }
 
@@ -357,7 +410,7 @@
       }
 
       grid.innerHTML = menuItems.map(m => `
-        <div class="bg-slate-900 p-5 rounded-2xl border ${m.inStock ? 'border-slate-800' : 'border-rose-500/30 bg-rose-950/10'} space-y-3 flex flex-col justify-between">
+        <div class="bg-slate-900 p-5 rounded-2xl border ${m.inStock ? 'border-slate-800' : 'border-rose-500/30 bg-rose-950/10'} space-y-3 flex flex-col justify-between shadow-xl">
           <div>
             <div class="flex items-center justify-between text-xs mb-2">
               <span class="px-2 py-0.5 rounded font-bold bg-slate-800 text-slate-300">${m.category}</span>
@@ -382,28 +435,58 @@
       lucide.createIcons();
     }
 
-    function toggleItemStock(id) {
+    async function toggleItemStock(id) {
       const item = menuItems.find(i => i.id === id);
-      if (item) { item.inStock = !item.inStock; saveMenuItems(); }
+      if (item) {
+        item.inStock = !item.inStock;
+        saveMenuItems();
+        if (currentSessionUser) {
+          await _supabase.from('vendor_menu').upsert({
+            id: item.id,
+            vendor_id: currentSessionUser.id,
+            name: item.name,
+            price: item.price,
+            category: item.category,
+            in_stock: item.inStock
+          });
+        }
+      }
     }
 
-    function deleteMenuItem(id) {
+    async function deleteMenuItem(id) {
       menuItems = menuItems.filter(i => i.id !== id);
       saveMenuItems();
+      if (currentSessionUser) {
+        await _supabase.from('vendor_menu').delete().eq('id', id);
+      }
     }
 
     function toggleAddProductModal(show) {
       document.getElementById('add-product-modal').classList.toggle('hidden', !show);
     }
 
-    function handleAddProductSubmit(e) {
+    async function handleAddProductSubmit(e) {
       e.preventDefault();
       const name = document.getElementById('prod-name').value;
       const price = document.getElementById('prod-price').value;
       const category = document.getElementById('prod-category').value;
+      const newId = 'm_' + Date.now();
 
-      menuItems.push({ id: 'm_' + Date.now(), name, price, category, inStock: true });
+      const newItem = { id: newId, name, price, category, inStock: true };
+      menuItems.push(newItem);
       saveMenuItems();
+
+      if (currentSessionUser) {
+        await _supabase.from('vendor_menu').insert({
+          id: newId,
+          vendor_id: currentSessionUser.id,
+          name,
+          price,
+          category,
+          in_stock: true
+        });
+      }
+
       toggleAddProductModal(false);
       document.getElementById('prod-name').value = '';
       document.getElementById('prod-price').value = '';
@@ -428,6 +511,15 @@
     async function fetchOrders() {
       const { data } = await _supabase.from('orders').select('*').order('created_at', { ascending: false });
       if (data && data.length) allOrders = data;
+      else if (!allOrders.length) {
+        allOrders = [
+          { id: '102918', item_details: '2x Jollof Rice + Fried Fish + Cold Coke', delivery_address: '14 Ikeja Way, Lagos', status: 'PREPARING', created_at: new Date().toISOString() },
+          { id: '102919', item_details: '1x Beef Burger & Extra Cheese Fries', delivery_address: '5 Allen Avenue, Ikeja', status: 'PREPARING', created_at: new Date().toISOString() },
+          { id: '102920', item_details: '1x Egusi Soup & Pounded Yam', delivery_address: '8 Victoria Island, Lagos', status: 'PREPARING', created_at: new Date().toISOString() },
+          { id: '102921', item_details: '3x Peppered Chicken Wings', delivery_address: '22 Lekki Phase 1', status: 'PREPARING', created_at: new Date().toISOString() },
+          { id: '102922', item_details: '1x Fried Rice & Grilled Turkey', delivery_address: '10 Maryland Mall', status: 'PREPARING', created_at: new Date().toISOString() }
+        ];
+      }
       updateOrderCounts();
       renderOrders();
     }
@@ -442,6 +534,7 @@
       document.getElementById('count-new').innerText = counts.new;
       document.getElementById('count-preparing').innerText = counts.preparing;
       document.getElementById('count-ready').innerText = counts.ready;
+      document.getElementById('badge-preparing-tab').innerText = counts.preparing;
     }
 
     function renderOrders() {
