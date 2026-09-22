@@ -110,27 +110,41 @@
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let currentVendorId = null;
-    let activeTab = 'orders';
 
-    // 2. INITIALIZE DASHBOARD & FETCH CURRENT VENDOR
+    // 2. SAFE DASHBOARD INITIALIZATION
     async function initDashboard() {
-      // Fetch or assign current vendor profile
-      const { data: vendor, error } = await supabase.from('vendors').select('*').limit(1).single();
+      try {
+        // Fetch vendors list safely without single() throwing errors
+        const { data: vendors, error } = await supabase.from('vendors').select('*').limit(1);
 
-      if (vendor) {
-        currentVendorId = vendor.id;
-        document.getElementById('store-name').innerText = vendor.name || vendor.store_name || "Mama's Chow";
-        document.getElementById('store-email').innerText = vendor.email || "vendor@delivery.com";
+        if (vendors && vendors.length > 0) {
+          currentVendorId = vendors[0].id;
+          document.getElementById('store-name').innerText = vendors[0].name || vendors[0].store_name || "Mama's Chow";
+          document.getElementById('store-email').innerText = vendors[0].email || "vendor@delivery.com";
+        } else {
+          document.getElementById('store-name').innerText = "No Store Found";
+        }
+
+        // Fetch order and menu data
+        await fetchOrders();
+        await fetchMenuItems();
+
+      } catch (err) {
+        console.error('❌ Dashboard initialization error:', err.message);
       }
-
-      // Fetch store's filtered data
-      await fetchOrders();
-      await fetchMenuItems();
     }
 
     // 3. FETCH ORDERS FILTERED STRICTLY BY VENDOR ID
     async function fetchOrders() {
-      if (!currentVendorId) return;
+      const ordersContainer = document.getElementById('orders-container');
+
+      if (!currentVendorId) {
+        ordersContainer.innerHTML = `
+          <div class="bg-gray-900/50 border border-gray-800/80 rounded-2xl p-8 text-center text-gray-500 text-sm">
+            No orders in this tab
+          </div>`;
+        return;
+      }
 
       // Filtered query isolating vendor orders
       const { data: orders, error } = await supabase
@@ -138,8 +152,6 @@
         .select('*')
         .eq('vendor_id', currentVendorId);
 
-      const ordersContainer = document.getElementById('orders-container');
-      
       if (error || !orders || orders.length === 0) {
         // Reset metrics to 0 when no orders exist
         document.getElementById('metric-new').innerText = '0';
