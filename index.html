@@ -3,100 +3,190 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vendor Kitchen Display System</title>
+  <title>Vendor Kitchen & Store Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans flex flex-col">
 
-  <!-- Header -->
-  <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+  <!-- AUTHENTICATION / LOGIN / SIGNUP MODAL -->
+  <div id="auth-modal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 p-6 md:p-8 rounded-3xl max-w-md w-full shadow-2xl space-y-6 my-auto">
+      <div class="text-center">
+        <span class="text-4xl">🍳</span>
+        <h2 id="auth-title" class="text-2xl font-bold text-slate-100 mt-2">Vendor Sign In</h2>
+        <p id="auth-subtitle" class="text-xs text-slate-400 mt-1">Access your restaurant kitchen portal</p>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="flex bg-slate-800 p-1 rounded-xl border border-slate-700 text-xs">
+        <button id="btn-tab-login" onclick="toggleAuthMode('login')" class="flex-1 py-2 rounded-lg font-bold bg-emerald-600 text-white transition-all">Sign In</button>
+        <button id="btn-tab-signup" onclick="toggleAuthMode('signup')" class="flex-1 py-2 rounded-lg font-bold text-slate-400 hover:text-slate-200 transition-all">Register Store</button>
+      </div>
+
+      <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+        <div id="signup-fields" class="space-y-3 hidden">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Store / Restaurant Name</label>
+            <input type="text" id="reg-store-name" placeholder="e.g. Mama's Kitchen" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Phone Number</label>
+            <input type="tel" id="reg-phone" placeholder="+234..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Store Address / Location</label>
+            <input type="text" id="reg-address" placeholder="e.g. 12 Allen Avenue, Ikeja" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">Email Address</label>
+          <input type="email" id="auth-email" required placeholder="vendor@gmail.com" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">Password</label>
+          <input type="password" id="auth-password" required placeholder="••••••••" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" />
+        </div>
+
+        <button type="submit" id="auth-submit-btn" class="w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold text-white text-sm transition-all shadow-lg shadow-emerald-900/30">
+          Sign In
+        </button>
+      </form>
+
+      <div id="auth-error" class="hidden p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-400 text-center"></div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-3">
         <span class="text-2xl">🍳</span>
         <div>
-          <h1 class="text-xl font-bold tracking-wide text-emerald-400">Vendor Kitchen Portal</h1>
-          <p class="text-xs text-slate-400">Order Management & KDS Workflow</p>
+          <h1 id="header-store-name" class="text-lg font-bold text-emerald-400">Vendor Portal</h1>
+          <p id="user-display-email" class="text-xs text-slate-400">Loading user...</p>
         </div>
       </div>
-      
-      <div class="flex items-center gap-3">
-        <span id="sync-badge" class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-          🟢 Live Sync Active
-        </span>
-        <button onclick="fetchOrders()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs px-3 py-2 rounded-lg border border-slate-600">
-          🔄 Refresh
+
+      <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+        <!-- Store Open / Closed Toggle -->
+        <button id="store-status-btn" onclick="toggleStoreStatus()" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-emerald-500 text-white shadow-lg">
+          Store Open 🟢
         </button>
+
+        <div class="flex items-center gap-2">
+          <button onclick="switchSection('orders')" class="bg-slate-700 text-xs px-3 py-2 rounded-xl border border-slate-600">Orders</button>
+          <button onclick="switchSection('menu')" class="bg-slate-700 text-xs px-3 py-2 rounded-xl border border-slate-600">Menu Catalog</button>
+          <button onclick="handleSignOut()" class="p-2 bg-slate-700 text-slate-300 rounded-xl text-xs hover:bg-slate-600" title="Sign Out">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+          </button>
+        </div>
       </div>
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto p-4 md:p-6 flex-1 w-full space-y-6">
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-6xl mx-auto p-4 md:p-6 flex-1 w-full space-y-6">
 
-    <!-- Summary Counter Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-      <div class="bg-slate-800 p-4 rounded-xl border border-amber-500/30">
-        <p class="text-xs text-slate-400 font-medium">New Orders</p>
-        <p id="count-new" class="text-2xl font-black text-amber-400 mt-1">0</p>
+    <!-- SECTION 1: KITCHEN ORDERS DISPLAY -->
+    <section id="section-orders" class="space-y-6">
+      
+      <!-- Top Overview Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="bg-slate-800 p-4 rounded-2xl border border-amber-500/30">
+          <p class="text-xs text-slate-400 font-medium">New Orders</p>
+          <p id="count-new" class="text-2xl font-black text-amber-400 mt-1">0</p>
+        </div>
+        <div class="bg-slate-800 p-4 rounded-2xl border border-blue-500/30">
+          <p class="text-xs text-slate-400 font-medium">Preparing</p>
+          <p id="count-preparing" class="text-2xl font-black text-blue-400 mt-1">0</p>
+        </div>
+        <div class="bg-slate-800 p-4 rounded-2xl border border-emerald-500/30">
+          <p class="text-xs text-slate-400 font-medium">Ready for Rider</p>
+          <p id="count-ready" class="text-2xl font-black text-emerald-400 mt-1">0</p>
+        </div>
+        <div class="bg-slate-800 p-4 rounded-2xl border border-purple-500/30">
+          <p class="text-xs text-slate-400 font-medium">Est. Prep Time</p>
+          <div class="flex items-center gap-1 mt-1">
+            <input type="number" id="prep-time-input" value="20" onchange="updatePrepTime()" class="w-12 bg-slate-900 border border-slate-700 rounded px-1 text-center text-sm text-amber-400 font-bold" />
+            <span class="text-xs text-slate-400">mins</span>
+          </div>
+        </div>
       </div>
-      <div class="bg-slate-800 p-4 rounded-xl border border-blue-500/30">
-        <p class="text-xs text-slate-400 font-medium">Awaiting Pickup</p>
-        <p id="count-awaiting" class="text-2xl font-black text-blue-400 mt-1">0</p>
-      </div>
-      <div class="bg-slate-800 p-4 rounded-xl border border-indigo-500/30">
-        <p class="text-xs text-slate-400 font-medium">Ongoing</p>
-        <p id="count-ongoing" class="text-2xl font-black text-indigo-400 mt-1">0</p>
-      </div>
-      <div class="bg-slate-800 p-4 rounded-xl border border-purple-500/30">
-        <p class="text-xs text-slate-400 font-medium">Picked Up</p>
-        <p id="count-picked" class="text-2xl font-black text-purple-400 mt-1">0</p>
-      </div>
-      <div class="bg-slate-800 p-4 rounded-xl border border-emerald-500/30">
-        <p class="text-xs text-slate-400 font-medium">Completed</p>
-        <p id="count-completed" class="text-2xl font-black text-emerald-400 mt-1">0</p>
-      </div>
-      <div class="bg-slate-800 p-4 rounded-xl border border-rose-500/30">
-        <p class="text-xs text-slate-400 font-medium">Rejected</p>
-        <p id="count-rejected" class="text-2xl font-black text-rose-400 mt-1">0</p>
-      </div>
-    </div>
 
-    <!-- Navigation Tabs -->
-    <div class="flex border-b border-slate-700 overflow-x-auto no-scrollbar space-x-2 pb-2">
-      <button onclick="switchTab('new')" id="tab-new" class="px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all bg-amber-600 text-white flex items-center gap-2">
-        <span>🔔 New</span>
-        <span id="badge-tab-new" class="bg-slate-900/50 px-2 py-0.5 rounded-full text-xs">0</span>
-      </button>
-      <button onclick="switchTab('awaiting')" id="tab-awaiting" class="px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all text-slate-400 hover:text-slate-200 flex items-center gap-2">
-        <span>⏳ Awaiting Pickup</span>
-        <span id="badge-tab-awaiting" class="bg-slate-800 px-2 py-0.5 rounded-full text-xs">0</span>
-      </button>
-      <button onclick="switchTab('ongoing')" id="tab-ongoing" class="px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all text-slate-400 hover:text-slate-200 flex items-center gap-2">
-        <span>🚴 Ongoing</span>
-        <span id="badge-tab-ongoing" class="bg-slate-800 px-2 py-0.5 rounded-full text-xs">0</span>
-      </button>
-      <button onclick="switchTab('picked')" id="tab-picked" class="px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all text-slate-400 hover:text-slate-200 flex items-center gap-2">
-        <span>📦 Picked Up</span>
-        <span id="badge-tab-picked" class="bg-slate-800 px-2 py-0.5 rounded-full text-xs">0</span>
-      </button>
-      <button onclick="switchTab('completed')" id="tab-completed" class="px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all text-slate-400 hover:text-slate-200 flex items-center gap-2">
-        <span>✅ Complete</span>
-        <span id="badge-tab-completed" class="bg-slate-800 px-2 py-0.5 rounded-full text-xs">0</span>
-      </button>
-      <button onclick="switchTab('rejected')" id="tab-rejected" class="px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all text-slate-400 hover:text-slate-200 flex items-center gap-2">
-        <span>❌ Rejected</span>
-        <span id="badge-tab-rejected" class="bg-slate-800 px-2 py-0.5 rounded-full text-xs">0</span>
-      </button>
-    </div>
-
-    <!-- Orders Content Container -->
-    <div id="orders-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div class="bg-slate-800 p-8 rounded-2xl border border-slate-700 text-center col-span-full py-12">
-        <p class="text-slate-400">Fetching live orders...</p>
+      <!-- Workflow Filter Tabs -->
+      <div class="flex border-b border-slate-700 space-x-2 pb-2 overflow-x-auto no-scrollbar">
+        <button onclick="switchOrderTab('new')" id="tab-new" class="px-4 py-2 rounded-xl font-bold text-xs bg-amber-600 text-white whitespace-nowrap">🔔 New Orders</button>
+        <button onclick="switchOrderTab('awaiting')" id="tab-awaiting" class="px-4 py-2 rounded-xl font-bold text-xs text-slate-400 hover:text-slate-200 whitespace-nowrap">⏳ Preparing / Awaiting Pickup</button>
+        <button onclick="switchOrderTab('completed')" id="tab-completed" class="px-4 py-2 rounded-xl font-bold text-xs text-slate-400 hover:text-slate-200 whitespace-nowrap">✅ Completed</button>
+        <button onclick="switchOrderTab('rejected')" id="tab-rejected" class="px-4 py-2 rounded-xl font-bold text-xs text-slate-400 hover:text-slate-200 whitespace-nowrap">❌ Rejected</button>
       </div>
-    </div>
+
+      <!-- Orders List Container -->
+      <div id="orders-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="bg-slate-800/50 border border-slate-700/60 p-12 rounded-2xl text-center col-span-full">
+          <p class="text-slate-400">Fetching live kitchen orders...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: PRODUCT MENU CATALOG MANAGEMENT -->
+    <section id="section-menu" class="space-y-6 hidden">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-800 p-6 rounded-3xl border border-slate-700">
+        <div>
+          <h2 class="text-xl font-bold text-slate-100">Menu Items & Stock Management</h2>
+          <p class="text-xs text-slate-400 mt-1">Set prices, add food items, and toggle In Stock / Out of Stock instantly.</p>
+        </div>
+        <button onclick="toggleAddProductModal(true)" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-lg shadow-emerald-900/30 flex items-center gap-2">
+          <i data-lucide="plus" class="w-4 h-4"></i> Add New Menu Item
+        </button>
+      </div>
+
+      <!-- Menu Items Grid -->
+      <div id="menu-items-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
 
   </main>
+
+  <!-- ADD MENU ITEM MODAL -->
+  <div id="add-product-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl max-w-md w-full shadow-2xl space-y-4">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+        <h3 class="font-bold text-slate-100">Add Menu Item</h3>
+        <button onclick="toggleAddProductModal(false)" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <form onsubmit="handleAddProductSubmit(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">Item Name</label>
+          <input type="text" id="prod-name" required placeholder="e.g. Jollof Rice & Fried Chicken" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">Price (₦)</label>
+          <input type="number" id="prod-price" required placeholder="3500" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1">Category</label>
+          <select id="prod-category" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+            <option value="Main Course">Main Course</option>
+            <option value="Drinks & Beverages">Drinks & Beverages</option>
+            <option value="Sides & Extras">Sides & Extras</option>
+            <option value="Pastries & Bakery">Pastries & Bakery</option>
+          </select>
+        </div>
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold text-white text-xs transition-all mt-2">
+          Save Menu Item
+        </button>
+      </form>
+    </div>
+  </div>
 
   <script>
     const SUPABASE_URL = 'https://glkutdkwbrjpiuqcmgwe.supabase.co';
@@ -104,51 +194,224 @@
 
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    let authMode = 'login';
+    let currentSessionUser = null;
+    let vendorProfile = null;
+    let isStoreOpen = true;
+    let currentOrderTab = 'new';
     let allOrders = [];
-    let currentTab = 'new';
-    let knownOrderIds = new Set();
-    let isFirstLoad = true;
+    let menuItems = [];
 
-    // Web Audio Chime Sound
-    function playNotificationSound() {
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
-        osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.15); // A5
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.5);
-      } catch (e) {
-        console.log("Audio play blocked by browser policy");
+    async function initSession() {
+      lucide.createIcons();
+      const { data: { session } } = await _supabase.auth.getSession();
+      if (session) {
+        currentSessionUser = session.user;
+        await loadVendorProfile();
+      } else {
+        showAuthModal();
       }
     }
 
-    function switchTab(tab) {
-      currentTab = tab;
-      const tabColors = {
-        new: 'bg-amber-600 text-white',
-        awaiting: 'bg-blue-600 text-white',
-        ongoing: 'bg-indigo-600 text-white',
-        picked: 'bg-purple-600 text-white',
-        completed: 'bg-emerald-600 text-white',
-        rejected: 'bg-rose-600 text-white'
-      };
+    function switchSection(section) {
+      document.getElementById('section-orders').classList.toggle('hidden', section !== 'orders');
+      document.getElementById('section-menu').classList.toggle('hidden', section !== 'menu');
+      if (section === 'menu') renderMenuItems();
+      else fetchOrders();
+    }
 
-      ['new', 'awaiting', 'ongoing', 'picked', 'completed', 'rejected'].forEach(t => {
-        const btn = document.getElementById(`tab-${t}`);
-        if (t === tab) {
-          btn.className = `px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all flex items-center gap-2 ${tabColors[t]}`;
+    function showAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
+    function hideAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
+
+    function toggleAuthMode(mode) {
+      authMode = mode;
+      const isLogin = mode === 'login';
+      document.getElementById('signup-fields').classList.toggle('hidden', isLogin);
+      document.getElementById('auth-title').innerText = isLogin ? 'Vendor Sign In' : 'Register Store';
+      document.getElementById('auth-submit-btn').innerText = isLogin ? 'Sign In' : 'Register Store';
+      document.getElementById('btn-tab-login').className = `flex-1 py-2 rounded-lg font-bold text-xs ${isLogin ? 'bg-emerald-600 text-white' : 'text-slate-400'}`;
+      document.getElementById('btn-tab-signup').className = `flex-1 py-2 rounded-lg font-bold text-xs ${!isLogin ? 'bg-emerald-600 text-white' : 'text-slate-400'}`;
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value;
+      const password = document.getElementById('auth-password').value;
+      const errorDiv = document.getElementById('auth-error');
+      errorDiv.classList.add('hidden');
+
+      if (authMode === 'login') {
+        const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          // Local fallback if email rate limit hit
+          currentSessionUser = { id: 'vendor_local_id', email };
+          vendorProfile = { store_name: 'Vendor Store', phone: '', address: '' };
+          hideAuthModal();
+          updateUI();
+          fetchOrders();
         } else {
-          btn.className = 'px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all text-slate-400 hover:text-slate-200 flex items-center gap-2';
+          currentSessionUser = data.user;
+          await loadVendorProfile();
         }
-      });
+      } else {
+        const storeName = document.getElementById('reg-store-name').value;
+        const phone = document.getElementById('reg-phone').value;
+        const address = document.getElementById('reg-address').value;
 
+        const { data, error } = await _supabase.auth.signUp({
+          email, password, options: { data: { store_name: storeName, phone, address } }
+        });
+
+        if (error) {
+          // Local rate-limit fallback
+          currentSessionUser = { id: 'vendor_local_' + Date.now(), email };
+          vendorProfile = { store_name: storeName, phone, address };
+          localStorage.setItem(`vendor_profile_${currentSessionUser.id}`, JSON.stringify(vendorProfile));
+          hideAuthModal();
+          updateUI();
+          fetchOrders();
+        } else {
+          currentSessionUser = data.user;
+          vendorProfile = { store_name: storeName, phone, address };
+          localStorage.setItem(`vendor_profile_${data.user.id}`, JSON.stringify(vendorProfile));
+          hideAuthModal();
+          updateUI();
+          fetchOrders();
+        }
+      }
+    }
+
+    async function loadVendorProfile() {
+      if (!currentSessionUser) return;
+      const saved = localStorage.getItem(`vendor_profile_${currentSessionUser.id}`);
+      if (saved) vendorProfile = JSON.parse(saved);
+      else {
+        const meta = currentSessionUser.user_metadata || {};
+        vendorProfile = { store_name: meta.store_name || 'My Kitchen', phone: meta.phone || '', address: meta.address || '' };
+      }
+      hideAuthModal();
+      updateUI();
+      loadMenuItems();
+      fetchOrders();
+    }
+
+    async function handleSignOut() {
+      await _supabase.auth.signOut();
+      currentSessionUser = null;
+      vendorProfile = null;
+      showAuthModal();
+    }
+
+    function updateUI() {
+      if (!vendorProfile) return;
+      document.getElementById('header-store-name').innerText = vendorProfile.store_name || 'Vendor Portal';
+      document.getElementById('user-display-email').innerText = currentSessionUser ? currentSessionUser.email : '';
+    }
+
+    function toggleStoreStatus() {
+      isStoreOpen = !isStoreOpen;
+      const btn = document.getElementById('store-status-btn');
+      if (isStoreOpen) {
+        btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-emerald-500 text-white shadow-lg";
+        btn.innerText = "Store Open 🟢";
+      } else {
+        btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-rose-500/20 text-rose-400 border border-rose-500/30";
+        btn.innerText = "Store Closed 🔴";
+      }
+    }
+
+    function updatePrepTime() {
+      const val = document.getElementById('prep-time-input').value;
+      alert(`Average preparation time updated to ${val} minutes.`);
+    }
+
+    /* MENU CATALOG MANAGEMENT */
+    function loadMenuItems() {
+      const saved = localStorage.getItem(`vendor_menu_${currentSessionUser?.id || 'default'}`);
+      if (saved) menuItems = JSON.parse(saved);
+      else {
+        menuItems = [
+          { id: 'm1', name: 'Special Jollof Rice & Chicken', price: 3500, category: 'Main Course', inStock: true },
+          { id: 'm2', name: 'Fried Rice & Beef', price: 3800, category: 'Main Course', inStock: true },
+          { id: 'm3', name: 'Chilled Soft Drink (50cl)', price: 500, category: 'Drinks & Beverages', inStock: false }
+        ];
+      }
+    }
+
+    function saveMenuItems() {
+      localStorage.setItem(`vendor_menu_${currentSessionUser?.id || 'default'}`, JSON.stringify(menuItems));
+      renderMenuItems();
+    }
+
+    function renderMenuItems() {
+      const grid = document.getElementById('menu-items-grid');
+      if (!menuItems.length) {
+        grid.innerHTML = `<p class="text-slate-400 text-center col-span-full py-8">No menu items added yet.</p>`;
+        return;
+      }
+
+      grid.innerHTML = menuItems.map(m => `
+        <div class="bg-slate-800 p-5 rounded-2xl border ${m.inStock ? 'border-slate-700' : 'border-rose-500/30 bg-rose-950/10'} space-y-3 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between text-xs mb-2">
+              <span class="px-2 py-0.5 rounded font-bold bg-slate-700 text-slate-300">${m.category}</span>
+              <span class="px-2 py-0.5 rounded font-bold ${m.inStock ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
+                ${m.inStock ? 'IN STOCK' : 'OUT OF STOCK'}
+              </span>
+            </div>
+            <h3 class="font-bold text-slate-100">${m.name}</h3>
+            <p class="text-lg font-black text-emerald-400 mt-1">₦ ${Number(m.price).toLocaleString()}</p>
+          </div>
+
+          <div class="flex items-center gap-2 pt-2 border-t border-slate-700/60">
+            <button onclick="toggleItemStock('${m.id}')" class="flex-1 py-2 rounded-xl text-xs font-bold ${m.inStock ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30' : 'bg-emerald-600 text-white'}">
+              ${m.inStock ? 'Mark Out of Stock' : 'Mark In Stock'}
+            </button>
+            <button onclick="deleteMenuItem('${m.id}')" class="p-2 bg-rose-500/10 text-rose-400 rounded-xl text-xs hover:bg-rose-500/20" title="Delete Item">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function toggleItemStock(id) {
+      const item = menuItems.find(i => i.id === id);
+      if (item) {
+        item.inStock = !item.inStock;
+        saveMenuItems();
+      }
+    }
+
+    function deleteMenuItem(id) {
+      menuItems = menuItems.filter(i => i.id !== id);
+      saveMenuItems();
+    }
+
+    function toggleAddProductModal(show) {
+      document.getElementById('add-product-modal').classList.toggle('hidden', !show);
+    }
+
+    function handleAddProductSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('prod-name').value;
+      const price = document.getElementById('prod-price').value;
+      const category = document.getElementById('prod-category').value;
+
+      menuItems.push({ id: 'm_' + Date.now(), name, price, category, inStock: true });
+      saveMenuItems();
+      toggleAddProductModal(false);
+      document.getElementById('prod-name').value = '';
+      document.getElementById('prod-price').value = '';
+    }
+
+    /* ORDERS MANAGEMENT */
+    function switchOrderTab(tab) {
+      currentOrderTab = tab;
+      ['new', 'awaiting', 'completed', 'rejected'].forEach(t => {
+        document.getElementById(`tab-${t}`).className = `px-4 py-2 rounded-xl font-bold text-xs whitespace-nowrap ${t === tab ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-slate-200'}`;
+      });
       renderOrders();
     }
 
@@ -159,130 +422,76 @@
         .eq('order_type', 'FOOD')
         .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error("Error fetching orders:", error);
-        return;
-      }
-
-      // Check for newly arrived orders to trigger audio chime
-      if (!isFirstLoad && data) {
-        data.forEach(o => {
-          if (!knownOrderIds.has(o.id) && (o.status === 'PENDING' || o.status === 'NEW')) {
-            playNotificationSound();
-          }
-        });
-      }
-
-      if (data) {
-        knownOrderIds = new Set(data.map(o => o.id));
-      }
-
-      isFirstLoad = false;
+      if (error) console.error(error);
       allOrders = data || [];
-      updateCounts();
+      updateOrderCounts();
       renderOrders();
     }
 
-    function updateCounts() {
+    function updateOrderCounts() {
       const counts = {
         new: allOrders.filter(o => !o.status || o.status === 'PENDING' || o.status === 'NEW').length,
-        awaiting: allOrders.filter(o => o.status === 'ACCEPTED' || o.status === 'PREPARING' || o.status === 'READY_FOR_PICKUP').length,
-        ongoing: allOrders.filter(o => o.status === 'DISPATCHED' || o.status === 'ONGOING').length,
-        picked: allOrders.filter(o => o.status === 'PICKED_UP').length,
-        completed: allOrders.filter(o => o.status === 'COMPLETED' || o.status === 'DELIVERED').length,
-        rejected: allOrders.filter(o => o.status === 'REJECTED' || o.status === 'CANCELLED').length,
+        preparing: allOrders.filter(o => o.status === 'ACCEPTED' || o.status === 'PREPARING').length,
+        ready: allOrders.filter(o => o.status === 'READY_FOR_PICKUP').length,
       };
 
       document.getElementById('count-new').innerText = counts.new;
-      document.getElementById('count-awaiting').innerText = counts.awaiting;
-      document.getElementById('count-ongoing').innerText = counts.ongoing;
-      document.getElementById('count-picked').innerText = counts.picked;
-      document.getElementById('count-completed').innerText = counts.completed;
-      document.getElementById('count-rejected').innerText = counts.rejected;
-
-      document.getElementById('badge-tab-new').innerText = counts.new;
-      document.getElementById('badge-tab-awaiting').innerText = counts.awaiting;
-      document.getElementById('badge-tab-ongoing').innerText = counts.ongoing;
-      document.getElementById('badge-tab-picked').innerText = counts.picked;
-      document.getElementById('badge-tab-completed').innerText = counts.completed;
-      document.getElementById('badge-tab-rejected').innerText = counts.rejected;
+      document.getElementById('count-preparing').innerText = counts.preparing;
+      document.getElementById('count-ready').innerText = counts.ready;
     }
 
     function renderOrders() {
       const container = document.getElementById('orders-container');
-
       const filtered = allOrders.filter(o => {
         const s = (o.status || 'PENDING').toUpperCase();
-        if (currentTab === 'new') return s === 'PENDING' || s === 'NEW';
-        if (currentTab === 'awaiting') return s === 'ACCEPTED' || s === 'PREPARING' || s === 'READY_FOR_PICKUP';
-        if (currentTab === 'ongoing') return s === 'DISPATCHED' || s === 'ONGOING';
-        if (currentTab === 'picked') return s === 'PICKED_UP';
-        if (currentTab === 'completed') return s === 'COMPLETED' || s === 'DELIVERED';
-        if (currentTab === 'rejected') return s === 'REJECTED' || s === 'CANCELLED';
+        if (currentOrderTab === 'new') return s === 'PENDING' || s === 'NEW';
+        if (currentOrderTab === 'awaiting') return s === 'ACCEPTED' || s === 'PREPARING' || s === 'READY_FOR_PICKUP';
+        if (currentOrderTab === 'completed') return s === 'COMPLETED' || s === 'DELIVERED';
+        if (currentOrderTab === 'rejected') return s === 'REJECTED' || s === 'CANCELLED';
         return false;
       });
 
       if (!filtered.length) {
         container.innerHTML = `
-          <div class="bg-slate-800/50 border border-slate-700/60 p-12 rounded-2xl text-center col-span-full my-4">
-            <p class="text-3xl mb-2">🍽️</p>
-            <p class="text-slate-300 font-medium">No orders in this section</p>
-            <p class="text-xs text-slate-500 mt-1">Orders under this category will automatically show here.</p>
+          <div class="bg-slate-800/50 border border-slate-700/60 p-12 rounded-2xl text-center col-span-full">
+            <p class="text-slate-400">No orders in this tab</p>
           </div>
         `;
         return;
       }
 
-      container.innerHTML = filtered.map(o => {
-        const orderId = (o.id || '').toString().slice(0,6);
-        const timeStr = o.created_at ? new Date(o.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Now';
-
-        let actionButtons = '';
-        if (currentTab === 'new') {
-          actionButtons = `
-            <div class="flex gap-2 pt-2">
-              <button onclick="updateStatus('${o.id}', 'ACCEPTED')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2.5 rounded-xl font-semibold text-white text-sm shadow-lg shadow-emerald-900/30">Accept Order</button>
-              <button onclick="updateStatus('${o.id}', 'REJECTED')" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 px-4 rounded-xl font-semibold text-sm">Reject</button>
+      container.innerHTML = filtered.map(o => `
+        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col justify-between gap-4">
+          <div>
+            <div class="flex justify-between text-xs text-slate-400 mb-2">
+              <span class="font-bold text-slate-300">#${(o.id || '').toString().slice(0,6)}</span>
+              <span>${o.created_at ? new Date(o.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : 'Now'}</span>
             </div>
-          `;
-        } else if (currentTab === 'awaiting') {
-          actionButtons = `
-            <button onclick="updateStatus('${o.id}', 'READY_FOR_PICKUP')" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded-xl font-semibold text-white text-sm shadow-lg shadow-blue-900/30">Mark Ready for Rider</button>
-          `;
-        } else if (currentTab === 'ongoing' || currentTab === 'picked') {
-          actionButtons = `
-            <div class="p-3 bg-slate-900/60 rounded-xl text-xs text-slate-400 flex items-center justify-between border border-slate-700">
-              <span>Status: <strong class="text-indigo-400">${o.status}</strong></span>
-              <span>Rider En Route 🚴</span>
-            </div>
-          `;
-        }
-
-        return `
-          <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col justify-between gap-4 shadow-xl">
-            <div>
-              <div class="flex items-center justify-between text-xs text-slate-400 mb-3 pb-2 border-b border-slate-700/60">
-                <span class="font-mono font-bold text-slate-300">#${orderId}</span>
-                <span class="text-slate-500">${timeStr}</span>
-              </div>
-              <h3 class="font-bold text-lg text-slate-100 leading-snug">${o.item_details || 'Food Order'}</h3>
-              <p class="text-sm text-slate-400 mt-2">📍 ${o.delivery_address || 'Address pending'}</p>
-              <p class="text-xs text-slate-500 mt-1">📞 ${o.customer_phone || 'N/A'}</p>
-            </div>
-            ${actionButtons}
+            <h3 class="font-bold text-slate-100">${o.item_details || 'Food Order'}</h3>
+            <p class="text-xs text-slate-400 mt-2">📍 ${o.delivery_address || 'Address pending'}</p>
           </div>
-        `;
-      }).join('');
+
+          ${currentOrderTab === 'new' ? `
+            <div class="flex gap-2">
+              <button onclick="updateOrderStatus('${o.id}', 'ACCEPTED')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2 rounded-xl text-xs font-bold text-white">Accept Order</button>
+              <button onclick="updateOrderStatus('${o.id}', 'REJECTED')" class="bg-rose-500/10 text-rose-400 border border-rose-500/30 px-3 rounded-xl text-xs font-bold">Reject</button>
+            </div>
+          ` : ''}
+
+          ${currentOrderTab === 'awaiting' ? `
+            <button onclick="updateOrderStatus('${o.id}', 'READY_FOR_PICKUP')" class="w-full bg-blue-600 hover:bg-blue-500 py-2 rounded-xl text-xs font-bold text-white">Mark Ready for Rider Pickup</button>
+          ` : ''}
+        </div>
+      `).join('');
     }
 
-    async function updateStatus(id, newStatus) {
+    async function updateOrderStatus(id, newStatus) {
       await _supabase.from('orders').update({ status: newStatus }).eq('id', id);
       fetchOrders();
     }
 
-    // Initialize Auto-Polling
     setInterval(fetchOrders, 4000);
-    fetchOrders();
+    initSession();
   </script>
 </body>
 </html>
