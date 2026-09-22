@@ -3,81 +3,98 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Logistics Ecosystem Dashboard</title>
+  <title>Vendor Kitchen Display System</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans flex flex-col">
 
   <!-- Header -->
   <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-3">
-        <span class="text-2xl">⚡</span>
-        <h1 class="text-xl font-bold tracking-wide">Ecosystem Hub</h1>
+        <span class="text-2xl">🍳</span>
+        <div>
+          <h1 class="text-xl font-bold tracking-wide text-emerald-400">Vendor Kitchen Portal</h1>
+          <p class="text-xs text-slate-400">Order Management & KDS Workflow</p>
+        </div>
       </div>
       
-      <!-- Role Switcher -->
-      <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-700 text-sm">
-        <button onclick="switchRole('vendor')" id="tab-vendor" class="px-4 py-2 rounded-lg font-medium transition-all bg-emerald-600 text-white">Vendor Portal</button>
-        <button onclick="switchRole('rider')" id="tab-rider" class="px-4 py-2 rounded-lg font-medium text-slate-400 hover:text-slate-200 transition-all">Rider Portal</button>
-        <button onclick="switchRole('driver')" id="tab-driver" class="px-4 py-2 rounded-lg font-medium text-slate-400 hover:text-slate-200 transition-all">Driver Portal</button>
+      <div class="flex items-center gap-3">
+        <span id="sync-badge" class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          🟢 Live Sync Active
+        </span>
+        <button onclick="fetchOrders()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs px-3 py-2 rounded-lg border border-slate-600">
+          🔄 Refresh
+        </button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-6xl mx-auto p-4 md:p-6">
-    
-    <!-- VENDOR SECTION -->
-    <section id="section-vendor" class="space-y-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-2xl font-bold text-emerald-400">Kitchen Display System</h2>
-          <p class="text-slate-400 text-sm">Real-time WhatsApp food orders</p>
-        </div>
-        <button onclick="fetchOrders()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm px-3 py-2 rounded-lg border border-slate-700">Refresh Orders</button>
-      </div>
+  <main class="max-w-7xl mx-auto p-4 md:p-6 flex-1 w-full space-y-6">
 
-      <div id="vendor-orders-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 text-center py-10">
-          <p class="text-slate-400">Loading live orders...</p>
-        </div>
+    <!-- Summary Counter Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div class="bg-slate-800 p-4 rounded-xl border border-amber-500/30">
+        <p class="text-xs text-slate-400 font-medium">New Orders</p>
+        <p id="count-new" class="text-2xl font-black text-amber-400 mt-1">0</p>
       </div>
-    </section>
+      <div class="bg-slate-800 p-4 rounded-xl border border-blue-500/30">
+        <p class="text-xs text-slate-400 font-medium">Awaiting Pickup</p>
+        <p id="count-awaiting" class="text-2xl font-black text-blue-400 mt-1">0</p>
+      </div>
+      <div class="bg-slate-800 p-4 rounded-xl border border-indigo-500/30">
+        <p class="text-xs text-slate-400 font-medium">Ongoing</p>
+        <p id="count-ongoing" class="text-2xl font-black text-indigo-400 mt-1">0</p>
+      </div>
+      <div class="bg-slate-800 p-4 rounded-xl border border-purple-500/30">
+        <p class="text-xs text-slate-400 font-medium">Picked Up</p>
+        <p id="count-picked" class="text-2xl font-black text-purple-400 mt-1">0</p>
+      </div>
+      <div class="bg-slate-800 p-4 rounded-xl border border-emerald-500/30">
+        <p class="text-xs text-slate-400 font-medium">Completed</p>
+        <p id="count-completed" class="text-2xl font-black text-emerald-400 mt-1">0</p>
+      </div>
+      <div class="bg-slate-800 p-4 rounded-xl border border-rose-500/30">
+        <p class="text-xs text-slate-400 font-medium">Rejected</p>
+        <p id="count-rejected" class="text-2xl font-black text-rose-400 mt-1">0</p>
+      </div>
+    </div>
 
-    <!-- RIDER SECTION -->
-    <section id="section-rider" class="space-y-6 hidden">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-2xl font-bold text-amber-400">Dispatch Deliveries</h2>
-          <p class="text-slate-400 text-sm">Available parcel pickup jobs</p>
-        </div>
-        <button onclick="fetchOrders()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm px-3 py-2 rounded-lg border border-slate-700">Refresh Deliveries</button>
-      </div>
+    <!-- Navigation Tabs -->
+    <div class="flex border-b border-slate-700 overflow-x-auto no-scrollbar space-x-2 pb-2">
+      <button onclick="switchTab('new')" id="tab-new" class="px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all bg-amber-600 text-white flex items-center gap-2">
+        <span>🔔 New</span>
+        <span id="badge-tab-new" class="bg-slate-900/50 px-2 py-0.5 rounded-full text-xs">0</span>
+      </button>
+      <button onclick="switchTab('awaiting')" id="tab-awaiting" class="px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all text-slate-400 hover:text-slate-200 flex items-center gap-2">
+        <span>⏳ Awaiting Pickup</span>
+        <span id="badge-tab-awaiting" class="bg-slate-800 px-2 py-0.5 rounded-full text-xs">0</span>
+      </button>
+      <button onclick="switchTab('ongoing')" id="tab-ongoing" class="px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all text-slate-400 hover:text-slate-200 flex items-center gap-2">
+        <span>🚴 Ongoing</span>
+        <span id="badge-tab-ongoing" class="bg-slate-800 px-2 py-0.5 rounded-full text-xs">0</span>
+      </button>
+      <button onclick="switchTab('picked')" id="tab-picked" class="px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all text-slate-400 hover:text-slate-200 flex items-center gap-2">
+        <span>📦 Picked Up</span>
+        <span id="badge-tab-picked" class="bg-slate-800 px-2 py-0.5 rounded-full text-xs">0</span>
+      </button>
+      <button onclick="switchTab('completed')" id="tab-completed" class="px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all text-slate-400 hover:text-slate-200 flex items-center gap-2">
+        <span>✅ Complete</span>
+        <span id="badge-tab-completed" class="bg-slate-800 px-2 py-0.5 rounded-full text-xs">0</span>
+      </button>
+      <button onclick="switchTab('rejected')" id="tab-rejected" class="px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all text-slate-400 hover:text-slate-200 flex items-center gap-2">
+        <span>❌ Rejected</span>
+        <span id="badge-tab-rejected" class="bg-slate-800 px-2 py-0.5 rounded-full text-xs">0</span>
+      </button>
+    </div>
 
-      <div id="rider-orders-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 text-center py-10">
-          <p class="text-slate-400">Loading delivery requests...</p>
-        </div>
+    <!-- Orders Content Container -->
+    <div id="orders-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="bg-slate-800 p-8 rounded-2xl border border-slate-700 text-center col-span-full py-12">
+        <p class="text-slate-400">Fetching live orders...</p>
       </div>
-    </section>
-
-    <!-- DRIVER SECTION -->
-    <section id="section-driver" class="space-y-6 hidden">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-2xl font-bold text-indigo-400">Ride Requests</h2>
-          <p class="text-slate-400 text-sm">Incoming passenger bookings</p>
-        </div>
-        <button onclick="fetchRides()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm px-3 py-2 rounded-lg border border-slate-700">Refresh Rides</button>
-      </div>
-
-      <div id="driver-rides-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 text-center py-10">
-          <p class="text-slate-400">Loading ride requests...</p>
-        </div>
-      </div>
-    </section>
+    </div>
 
   </main>
 
@@ -87,110 +104,184 @@
 
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    function switchRole(role) {
-      ['vendor', 'rider', 'driver'].forEach(r => {
-        document.getElementById(`section-${r}`).classList.add('hidden');
-        document.getElementById(`tab-${r}`).className = "px-4 py-2 rounded-lg font-medium text-slate-400 hover:text-slate-200 transition-all";
+    let allOrders = [];
+    let currentTab = 'new';
+    let knownOrderIds = new Set();
+    let isFirstLoad = true;
+
+    // Web Audio Chime Sound
+    function playNotificationSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.15); // A5
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.5);
+      } catch (e) {
+        console.log("Audio play blocked by browser policy");
+      }
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      const tabColors = {
+        new: 'bg-amber-600 text-white',
+        awaiting: 'bg-blue-600 text-white',
+        ongoing: 'bg-indigo-600 text-white',
+        picked: 'bg-purple-600 text-white',
+        completed: 'bg-emerald-600 text-white',
+        rejected: 'bg-rose-600 text-white'
+      };
+
+      ['new', 'awaiting', 'ongoing', 'picked', 'completed', 'rejected'].forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        if (t === tab) {
+          btn.className = `px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all flex items-center gap-2 ${tabColors[t]}`;
+        } else {
+          btn.className = 'px-4 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-all text-slate-400 hover:text-slate-200 flex items-center gap-2';
+        }
       });
 
-      document.getElementById(`section-${role}`).classList.remove('hidden');
-      const activeColor = role === 'vendor' ? 'bg-emerald-600' : role === 'rider' ? 'bg-amber-600' : 'bg-indigo-600';
-      document.getElementById(`tab-${role}`).className = `px-4 py-2 rounded-lg font-medium text-white transition-all ${activeColor}`;
-      
-      if (role === 'driver') fetchRides();
-      else fetchOrders();
+      renderOrders();
     }
 
     async function fetchOrders() {
-      const { data: orders, error } = await _supabase.from('orders').select('*').order('created_at', { ascending: false });
-      
+      const { data, error } = await _supabase
+        .from('orders')
+        .select('*')
+        .eq('order_type', 'FOOD')
+        .order('created_at', { ascending: false });
+
       if (error) {
-        console.error("Supabase Order Fetch Error:", error);
+        console.error("Error fetching orders:", error);
         return;
       }
 
-      const vendorContainer = document.getElementById('vendor-orders-list');
-      const riderContainer = document.getElementById('rider-orders-list');
+      // Check for newly arrived orders to trigger audio chime
+      if (!isFirstLoad && data) {
+        data.forEach(o => {
+          if (!knownOrderIds.has(o.id) && (o.status === 'PENDING' || o.status === 'NEW')) {
+            playNotificationSound();
+          }
+        });
+      }
 
-      const foodOrders = (orders || []).filter(o => o.order_type === 'FOOD');
-      const dispatchOrders = (orders || []).filter(o => o.order_type === 'DISPATCH');
+      if (data) {
+        knownOrderIds = new Set(data.map(o => o.id));
+      }
 
-      vendorContainer.innerHTML = foodOrders.length ? foodOrders.map(o => `
-        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col justify-between gap-4">
-          <div>
-            <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
-              <span>#${(o.id || '').toString().slice(0,6)}</span>
-              <span class="px-2 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-md font-semibold">${o.status || 'PENDING'}</span>
-            </div>
-            <h3 class="font-bold text-lg text-slate-100">${o.item_details || 'Food Item'}</h3>
-            <p class="text-sm text-slate-400 mt-1">📍 ${o.delivery_address || 'No address provided'}</p>
-            <p class="text-xs text-slate-500 mt-2">📞 ${o.customer_phone || 'N/A'}</p>
-          </div>
-          <div class="flex gap-2 text-sm">
-            <button onclick="updateOrderStatus('${o.id}', 'ACCEPTED')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2 rounded-lg font-medium text-white">Accept</button>
-            <button onclick="updateOrderStatus('${o.id}', 'REJECTED')" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 px-3 rounded-lg font-medium">Reject</button>
-          </div>
-        </div>
-      `).join('') : '<p class="text-slate-400 col-span-full text-center py-8">No food orders found.</p>';
-
-      riderContainer.innerHTML = dispatchOrders.length ? dispatchOrders.map(o => `
-        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col justify-between gap-4">
-          <div>
-            <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
-              <span>#${(o.id || '').toString().slice(0,6)}</span>
-              <span class="px-2 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-md font-semibold">${o.status || 'PENDING'}</span>
-            </div>
-            <h3 class="font-bold text-lg text-slate-100">${o.item_details || 'Parcel Package'}</h3>
-            <p class="text-sm text-slate-400 mt-2"><b>Pickup:</b> ${o.pickup_address || 'N/A'}</p>
-            <p class="text-sm text-slate-400"><b>Drop-off:</b> ${o.delivery_address || 'N/A'}</p>
-          </div>
-          <button onclick="updateOrderStatus('${o.id}', 'ACCEPTED_BY_RIDER')" class="w-full bg-amber-600 hover:bg-amber-500 py-2 rounded-lg font-medium text-white text-sm">Accept Job</button>
-        </div>
-      `).join('') : '<p class="text-slate-400 col-span-full text-center py-8">No dispatch requests found.</p>';
+      isFirstLoad = false;
+      allOrders = data || [];
+      updateCounts();
+      renderOrders();
     }
 
-    async function fetchRides() {
-      const { data: rides, error } = await _supabase.from('ride_requests').select('*').order('created_at', { ascending: false });
-      if (error) {
-        console.error("Supabase Ride Fetch Error:", error);
+    function updateCounts() {
+      const counts = {
+        new: allOrders.filter(o => !o.status || o.status === 'PENDING' || o.status === 'NEW').length,
+        awaiting: allOrders.filter(o => o.status === 'ACCEPTED' || o.status === 'PREPARING' || o.status === 'READY_FOR_PICKUP').length,
+        ongoing: allOrders.filter(o => o.status === 'DISPATCHED' || o.status === 'ONGOING').length,
+        picked: allOrders.filter(o => o.status === 'PICKED_UP').length,
+        completed: allOrders.filter(o => o.status === 'COMPLETED' || o.status === 'DELIVERED').length,
+        rejected: allOrders.filter(o => o.status === 'REJECTED' || o.status === 'CANCELLED').length,
+      };
+
+      document.getElementById('count-new').innerText = counts.new;
+      document.getElementById('count-awaiting').innerText = counts.awaiting;
+      document.getElementById('count-ongoing').innerText = counts.ongoing;
+      document.getElementById('count-picked').innerText = counts.picked;
+      document.getElementById('count-completed').innerText = counts.completed;
+      document.getElementById('count-rejected').innerText = counts.rejected;
+
+      document.getElementById('badge-tab-new').innerText = counts.new;
+      document.getElementById('badge-tab-awaiting').innerText = counts.awaiting;
+      document.getElementById('badge-tab-ongoing').innerText = counts.ongoing;
+      document.getElementById('badge-tab-picked').innerText = counts.picked;
+      document.getElementById('badge-tab-completed').innerText = counts.completed;
+      document.getElementById('badge-tab-rejected').innerText = counts.rejected;
+    }
+
+    function renderOrders() {
+      const container = document.getElementById('orders-container');
+
+      const filtered = allOrders.filter(o => {
+        const s = (o.status || 'PENDING').toUpperCase();
+        if (currentTab === 'new') return s === 'PENDING' || s === 'NEW';
+        if (currentTab === 'awaiting') return s === 'ACCEPTED' || s === 'PREPARING' || s === 'READY_FOR_PICKUP';
+        if (currentTab === 'ongoing') return s === 'DISPATCHED' || s === 'ONGOING';
+        if (currentTab === 'picked') return s === 'PICKED_UP';
+        if (currentTab === 'completed') return s === 'COMPLETED' || s === 'DELIVERED';
+        if (currentTab === 'rejected') return s === 'REJECTED' || s === 'CANCELLED';
+        return false;
+      });
+
+      if (!filtered.length) {
+        container.innerHTML = `
+          <div class="bg-slate-800/50 border border-slate-700/60 p-12 rounded-2xl text-center col-span-full my-4">
+            <p class="text-3xl mb-2">🍽️</p>
+            <p class="text-slate-300 font-medium">No orders in this section</p>
+            <p class="text-xs text-slate-500 mt-1">Orders under this category will automatically show here.</p>
+          </div>
+        `;
         return;
       }
 
-      const driverContainer = document.getElementById('driver-rides-list');
-      driverContainer.innerHTML = (rides || []).length ? rides.map(r => `
-        <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col justify-between gap-4">
-          <div>
-            <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
-              <span>#${(r.id || '').toString().slice(0,6)}</span>
-              <span class="px-2 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-md font-semibold">${r.status || 'SEARCHING'}</span>
+      container.innerHTML = filtered.map(o => {
+        const orderId = (o.id || '').toString().slice(0,6);
+        const timeStr = o.created_at ? new Date(o.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Now';
+
+        let actionButtons = '';
+        if (currentTab === 'new') {
+          actionButtons = `
+            <div class="flex gap-2 pt-2">
+              <button onclick="updateStatus('${o.id}', 'ACCEPTED')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2.5 rounded-xl font-semibold text-white text-sm shadow-lg shadow-emerald-900/30">Accept Order</button>
+              <button onclick="updateStatus('${o.id}', 'REJECTED')" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 px-4 rounded-xl font-semibold text-sm">Reject</button>
             </div>
-            <p class="text-sm text-slate-300"><b>From:</b> ${r.pickup_address || 'N/A'}</p>
-            <p class="text-sm text-slate-300 mt-1"><b>To:</b> ${r.destination_address || 'N/A'}</p>
-            <p class="text-xs text-slate-500 mt-2">📞 ${r.customer_phone || 'N/A'}</p>
+          `;
+        } else if (currentTab === 'awaiting') {
+          actionButtons = `
+            <button onclick="updateStatus('${o.id}', 'READY_FOR_PICKUP')" class="w-full bg-blue-600 hover:bg-blue-500 py-2.5 rounded-xl font-semibold text-white text-sm shadow-lg shadow-blue-900/30">Mark Ready for Rider</button>
+          `;
+        } else if (currentTab === 'ongoing' || currentTab === 'picked') {
+          actionButtons = `
+            <div class="p-3 bg-slate-900/60 rounded-xl text-xs text-slate-400 flex items-center justify-between border border-slate-700">
+              <span>Status: <strong class="text-indigo-400">${o.status}</strong></span>
+              <span>Rider En Route 🚴</span>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col justify-between gap-4 shadow-xl">
+            <div>
+              <div class="flex items-center justify-between text-xs text-slate-400 mb-3 pb-2 border-b border-slate-700/60">
+                <span class="font-mono font-bold text-slate-300">#${orderId}</span>
+                <span class="text-slate-500">${timeStr}</span>
+              </div>
+              <h3 class="font-bold text-lg text-slate-100 leading-snug">${o.item_details || 'Food Order'}</h3>
+              <p class="text-sm text-slate-400 mt-2">📍 ${o.delivery_address || 'Address pending'}</p>
+              <p class="text-xs text-slate-500 mt-1">📞 ${o.customer_phone || 'N/A'}</p>
+            </div>
+            ${actionButtons}
           </div>
-          <button onclick="updateRideStatus('${r.id}', 'ACCEPTED')" class="w-full bg-indigo-600 hover:bg-indigo-500 py-2 rounded-lg font-medium text-white text-sm">Accept Ride</button>
-        </div>
-      `).join('') : '<p class="text-slate-400 col-span-full text-center py-8">No ride requests found.</p>';
+        `;
+      }).join('');
     }
 
-    async function updateOrderStatus(id, status) {
-      await _supabase.from('orders').update({ status }).eq('id', id);
+    async function updateStatus(id, newStatus) {
+      await _supabase.from('orders').update({ status: newStatus }).eq('id', id);
       fetchOrders();
     }
 
-    async function updateRideStatus(id, status) {
-      await _supabase.from('ride_requests').update({ status }).eq('id', id);
-      fetchRides();
-    }
-
-    // Auto Subscribe to Realtime Postgres Changes
-    _supabase
-      .channel('schema-db-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => fetchOrders())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'ride_requests' }, () => fetchRides())
-      .subscribe();
-
-    // Initial Load
+    // Initialize Auto-Polling
+    setInterval(fetchOrders, 4000);
     fetchOrders();
   </script>
 </body>
