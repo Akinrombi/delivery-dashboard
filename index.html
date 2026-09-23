@@ -1,8 +1,197 @@
-<script>
-  let isStoreOpen = true;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Vendor Control Dashboard</title>
 
-  // Array of varied test items so test orders look different
-  const sampleItems = [
+  <style>
+    :root {
+      --primary-color: #00A859;
+      --bg-dark: #0F172A;
+      --card-bg-dark: #1E293B;
+      --text-white: #F8FAFC;
+      --text-gray: #94A3B8;
+      --border-dark: #334155;
+      --danger-red: #EF4444;
+      --warning-orange: #F59E0B;
+      --blue-info: #3B82F6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg-dark); color: var(--text-white); padding: 16px; display: flex; justify-content: center; min-height: 100vh; padding-bottom: 40px; }
+    .app-wrapper { width: 100%; max-width: 480px; }
+
+    /* Header */
+    .top-header { background: var(--card-bg-dark); padding: 16px; border-radius: 12px; border: 1px solid var(--border-dark); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .header-title { font-size: 16px; font-weight: 700; }
+    .header-subtitle { font-size: 12px; color: var(--text-gray); }
+    .badge-status { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; cursor: pointer; border: none; }
+    .open-state { background: rgba(0, 168, 89, 0.2); color: var(--primary-color); border: 1px solid var(--primary-color); }
+    .closed-state { background: rgba(239, 68, 68, 0.2); color: var(--danger-red); border: 1px solid var(--danger-red); }
+
+    /* Navigation Bar */
+    .tab-navigation { display: flex; background: var(--card-bg-dark); padding: 4px; border-radius: 10px; border: 1px solid var(--border-dark); margin-bottom: 16px; gap: 4px; }
+    .tab-button { flex: 1; padding: 12px 0; background: transparent; border: none; color: var(--text-gray); font-weight: 600; font-size: 13px; cursor: pointer; border-radius: 8px; text-align: center; }
+    .tab-button.is-selected { background: var(--primary-color); color: #ffffff; font-weight: 700; }
+
+    /* Cards Layout */
+    .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .stat-box { background: var(--card-bg-dark); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border-dark); }
+    .stat-number { font-size: 18px; font-weight: 800; color: var(--text-white); margin-top: 4px; }
+
+    .content-box { background: var(--card-bg-dark); border-radius: 12px; padding: 16px; border: 1px solid var(--border-dark); margin-bottom: 16px; }
+    .box-title { font-size: 13px; font-weight: 700; color: var(--text-gray); text-transform: uppercase; margin-bottom: 14px; letter-spacing: 0.5px; }
+
+    /* Form Inputs */
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-gray); margin-bottom: 6px; }
+    .form-group input, .form-group select { width: 100%; padding: 12px; background: #0F172A; border: 1px solid var(--border-dark); color: var(--text-white); border-radius: 8px; font-size: 14px; outline: none; }
+
+    /* Action Buttons */
+    .action-btn { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: 700; font-size: 15px; cursor: pointer; }
+    .btn-green { background-color: var(--primary-color); color: white; }
+    .btn-blue { background-color: var(--blue-info); color: #fff; padding: 8px 12px; font-size: 12px; border-radius: 6px; border:none; font-weight:700; cursor:pointer;}
+    .btn-yellow { background-color: var(--warning-orange); color: #000; padding: 8px 12px; font-size: 12px; border-radius: 6px; border:none; font-weight:700; cursor:pointer;}
+
+    /* Row Styling */
+    .row-item { padding: 12px 0; border-bottom: 1px solid var(--border-dark); }
+    .row-item:last-child { border-bottom: none; }
+    .item-title-text { font-weight: 600; font-size: 15px; display: block; }
+    .item-price-text { color: var(--primary-color); font-weight: 700; font-size: 14px; margin-top: 2px; }
+    .item-tag { font-size: 11px; color: var(--text-gray); background: #0F172A; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 4px; font-weight:700; }
+
+    /* Modal Backdrop */
+    .modal-backdrop { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:100; justify-content:center; align-items:center; padding:16px; }
+    .modal-card { background:var(--card-bg-dark); border:1px solid var(--border-dark); border-radius:12px; width:100%; max-width:400px; padding:20px; }
+  </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+
+  <!-- Header -->
+  <div class="top-header">
+    <div>
+      <div class="header-title" id="vendorStoreTitle">My Vendor Store</div>
+      <div class="header-subtitle">Vendor Control Dashboard</div>
+    </div>
+    <button id="storeStatusBtn" class="badge-status open-state" onclick="toggleStoreStatus()">STORE OPEN</button>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="tab-navigation">
+    <button id="btn-tab-orders" class="tab-button is-selected" onclick="showSection('view-orders', 'btn-tab-orders')">Orders</button>
+    <button id="btn-tab-menu" class="tab-button" onclick="showSection('view-menu', 'btn-tab-menu')">Menu Manager</button>
+    <button id="btn-tab-settings" class="tab-button" onclick="showSection('view-settings', 'btn-tab-settings')">Settings</button>
+  </div>
+
+  <!-- ORDERS VIEW -->
+  <div id="view-orders" style="display: block;">
+    <div class="stats-container">
+      <div class="stat-box">
+        <div style="font-size:11px; color:var(--text-gray); font-weight:600;">TODAY'S SALES</div>
+        <div class="stat-number" id="totalEarnings">₦0</div>
+      </div>
+      <div class="stat-box">
+        <div style="font-size:11px; color:var(--text-gray); font-weight:600;">COMPLETED ORDERS</div>
+        <div class="stat-number" id="totalOrdersCount">0</div>
+      </div>
+    </div>
+
+    <div class="content-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div class="box-title" style="margin:0;">Incoming Customer Orders</div>
+        <div>
+          <button onclick="clearAllOrders()" style="background:transparent; color:var(--danger-red); border:none; font-size:11px; font-weight:bold; cursor:pointer; margin-right:8px;">Clear</button>
+          <button onclick="addDemoOrder()" style="background:transparent; color:var(--primary-color); border:none; font-size:12px; font-weight:bold; cursor:pointer;">+ Test Order</button>
+        </div>
+      </div>
+      <div id="ordersContainer">
+        <p style="color: var(--text-gray); font-size: 13px; text-align: center; padding: 10px 0;">No active incoming orders.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENU MANAGER VIEW -->
+  <div id="view-menu" style="display: none;">
+    <div class="content-box">
+      <div class="box-title">Add New Dish / Food Item</div>
+
+      <div class="form-group">
+        <label for="itemCategory">Category</label>
+        <select id="itemCategory">
+          <option value="Main Dishes">Main Dishes (Rice, Swallows)</option>
+          <option value="Proteins">Proteins (Chicken, Meat, Fish)</option>
+          <option value="Sides & Extras">Sides & Extras (Plantain, Chips)</option>
+          <option value="Drinks & Beverages">Drinks & Beverages</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="itemName">Food / Dish Name</label>
+        <input type="text" id="itemName" placeholder="e.g. Jollof Rice & Fried Chicken">
+      </div>
+
+      <div class="form-group">
+        <label for="itemPrice">Price in Naira (₦)</label>
+        <input type="number" id="itemPrice" placeholder="e.g. 2500">
+      </div>
+
+      <button class="action-btn btn-green" onclick="addMenuItem()">+ ADD TO MENU</button>
+    </div>
+
+    <div class="content-box">
+      <div class="box-title">Current Store Menu</div>
+      <div id="menuContainer">
+        <p style="color: var(--text-gray); font-size: 13px; text-align: center; padding: 10px 0;">No food items added yet.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS VIEW -->
+  <div id="view-settings" style="display: none;">
+    <div class="content-box">
+      <div class="box-title">Store Profile & Settings</div>
+      
+      <div class="form-group">
+        <label for="storeNameInput">Store Name</label>
+        <input type="text" id="storeNameInput" value="My Vendor Store">
+      </div>
+
+      <div class="form-group">
+        <label for="storePhoneInput">Store Contact Phone</label>
+        <input type="tel" id="storePhoneInput" placeholder="08012345678">
+      </div>
+
+      <div class="form-group">
+        <label for="prepTimeInput">Average Preparation Time</label>
+        <select id="prepTimeInput">
+          <option value="15">15 - 20 Minutes</option>
+          <option value="30" selected>25 - 30 Minutes</option>
+          <option value="45">40 - 45 Minutes</option>
+        </select>
+      </div>
+
+      <button class="action-btn btn-green" onclick="saveSettings()">SAVE SETTINGS</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Order Detail Modal -->
+<div id="orderModal" class="modal-backdrop">
+  <div class="modal-card">
+    <div class="box-title" style="margin-bottom:8px;">Order Details</div>
+    <div id="modalContent" style="font-size:14px; margin-bottom:16px; color:var(--text-gray);"></div>
+    <button class="action-btn btn-green" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script>
+  var isStoreOpen = true;
+
+  var sampleItems = [
     { item: 'Jollof Rice & Fried Chicken x1', amount: 3500 },
     { item: 'Fried Rice & Turkey x1', amount: 4200 },
     { item: 'Pounded Yam & Egusi Soup x1', amount: 3000 },
@@ -10,18 +199,18 @@
     { item: 'Asun Jollof Combo x1', amount: 4500 }
   ];
 
-  const sampleCustomers = [
+  var sampleCustomers = [
     { name: 'Hawa B.', address: 'Agric Bus Stop, Ikorodu' },
     { name: 'Tunde A.', address: 'Garage, Ikorodu' },
     { name: 'Chioma K.', address: 'First Gate, LASPOTECH' },
     { name: 'Bisi O.', address: 'Sabitex, Lekki' }
   ];
 
-  document.addEventListener('DOMContentLoaded', () => {
+  window.onload = function() {
     loadMenu();
     loadOrders();
     loadSettings();
-  });
+  };
 
   function showSection(sectionId, btnId) {
     document.getElementById('view-orders').style.display = 'none';
@@ -39,7 +228,7 @@
 
   function toggleStoreStatus() {
     isStoreOpen = !isStoreOpen;
-    const btn = document.getElementById('storeStatusBtn');
+    var btn = document.getElementById('storeStatusBtn');
     if (isStoreOpen) {
       btn.className = 'badge-status open-state';
       btn.innerText = 'STORE OPEN';
@@ -49,7 +238,6 @@
     }
   }
 
-  // --- MENU FUNCTIONS ---
   function getMenu() { 
     try {
       return JSON.parse(localStorage.getItem('vendor_store_menu') || '[]'); 
@@ -59,13 +247,13 @@
   }
 
   function addMenuItem() {
-    const category = document.getElementById('itemCategory').value;
-    const name = document.getElementById('itemName').value.trim();
-    const price = document.getElementById('itemPrice').value.trim();
+    var category = document.getElementById('itemCategory').value;
+    var name = document.getElementById('itemName').value.trim();
+    var price = document.getElementById('itemPrice').value.trim();
 
     if (!name || !price) { alert("Please enter both dish name and price."); return; }
 
-    const currentMenu = getMenu();
+    var currentMenu = getMenu();
     currentMenu.push({ id: Date.now(), category: category, name: name, price: price, inStock: true });
     localStorage.setItem('vendor_store_menu', JSON.stringify(currentMenu));
 
@@ -75,24 +263,26 @@
   }
 
   function loadMenu() {
-    const menu = getMenu();
-    const container = document.getElementById('menuContainer');
+    var menu = getMenu();
+    var container = document.getElementById('menuContainer');
     if (menu.length === 0) {
-      container.innerHTML = `<p style="color: var(--text-gray); font-size: 13px; text-align: center; padding: 10px 0;">No food items added yet.</p>`;
+      container.innerHTML = '<p style="color: var(--text-gray); font-size: 13px; text-align: center; padding: 10px 0;">No food items added yet.</p>';
       return;
     }
-    container.innerHTML = menu.map(item => `
-      <div class="row-item" style="display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <span class="item-tag">${item.category || 'General'}</span>
-          <span class="item-title-text">${item.name}</span>
-          <div class="item-price-text">₦${Number(item.price).toLocaleString()}</div>
-        </div>
-      </div>
-    `).join('');
+    var html = '';
+    for (var i = 0; i < menu.length; i++) {
+      var item = menu[i];
+      html += '<div class="row-item" style="display:flex; justify-content:space-between; align-items:center;">' +
+        '<div>' +
+          '<span class="item-tag">' + (item.category || 'General') + '</span>' +
+          '<span class="item-title-text">' + item.name + '</span>' +
+          '<div class="item-price-text">₦' + Number(item.price).toLocaleString() + '</div>' +
+        '</div>' +
+      '</div>';
+    }
+    container.innerHTML = html;
   }
 
-  // --- ORDERS WORKFLOW ---
   function getOrders() { 
     try {
       return JSON.parse(localStorage.getItem('vendor_active_orders') || '[]'); 
@@ -101,13 +291,12 @@
     }
   }
 
-  // Generates randomized test orders
   function addDemoOrder() {
-    const orders = getOrders();
-    const randomDish = sampleItems[Math.floor(Math.random() * sampleItems.length)];
-    const randomCustomer = sampleCustomers[Math.floor(Math.random() * sampleCustomers.length)];
+    var orders = getOrders();
+    var randomDish = sampleItems[Math.floor(Math.random() * sampleItems.length)];
+    var randomCustomer = sampleCustomers[Math.floor(Math.random() * sampleCustomers.length)];
 
-    const demo = {
+    var demo = {
       id: Date.now(),
       customer: randomCustomer.name,
       address: randomCustomer.address,
@@ -122,7 +311,6 @@
     loadOrders();
   }
 
-  // Clears all accumulated test orders from storage
   function clearAllOrders() {
     if (confirm("Clear all active orders?")) {
       localStorage.removeItem('vendor_active_orders');
@@ -131,18 +319,22 @@
   }
 
   function advanceOrderStatus(id) {
-    let orders = getOrders();
-    const order = orders.find(o => o.id === id);
+    var orders = getOrders();
+    var order = null;
+    for (var i = 0; i < orders.length; i++) {
+      if (orders[i].id === id) { order = orders[i]; break; }
+    }
+
     if (order) {
       if (order.status === 'NEW') {
         order.status = 'PREPARING';
       } else if (order.status === 'PREPARING') {
-        let totalSales = parseFloat(localStorage.getItem('vendor_total_sales') || '0') + order.amount;
-        let count = parseInt(localStorage.getItem('vendor_order_count') || '0') + 1;
+        var totalSales = parseFloat(localStorage.getItem('vendor_total_sales') || '0') + order.amount;
+        var count = parseInt(localStorage.getItem('vendor_order_count') || '0') + 1;
         localStorage.setItem('vendor_total_sales', totalSales);
         localStorage.setItem('vendor_order_count', count);
 
-        orders = orders.filter(o => o.id !== id);
+        orders = orders.filter(function(o) { return o.id !== id; });
       }
       localStorage.setItem('vendor_active_orders', JSON.stringify(orders));
       loadOrders();
@@ -150,16 +342,18 @@
   }
 
   function showOrderDetails(id) {
-    const orders = getOrders();
-    const order = orders.find(o => o.id === id);
+    var orders = getOrders();
+    var order = null;
+    for (var i = 0; i < orders.length; i++) {
+      if (orders[i].id === id) { order = orders[i]; break; }
+    }
     if (order) {
-      document.getElementById('modalContent').innerHTML = `
-        <p><strong>Customer:</strong> ${order.customer}</p>
-        <p><strong>Address:</strong> ${order.address}</p>
-        <p style="margin-top:6px;"><strong>Items:</strong> ${order.item}</p>
-        <p><strong>Notes:</strong> <em>${order.notes || 'None'}</em></p>
-        <p style="margin-top:8px; color:var(--primary-color); font-weight:bold; font-size:16px;">Total: ₦${Number(order.amount).toLocaleString()}</p>
-      `;
+      document.getElementById('modalContent').innerHTML = 
+        '<p><strong>Customer:</strong> ' + order.customer + '</p>' +
+        '<p><strong>Address:</strong> ' + order.address + '</p>' +
+        '<p style="margin-top:6px;"><strong>Items:</strong> ' + order.item + '</p>' +
+        '<p><strong>Notes:</strong> <em>' + (order.notes || 'None') + '</em></p>' +
+        '<p style="margin-top:8px; color:var(--primary-color); font-weight:bold; font-size:16px;">Total: ₦' + Number(order.amount).toLocaleString() + '</p>';
       document.getElementById('orderModal').style.display = 'flex';
     }
   }
@@ -167,40 +361,40 @@
   function closeModal() { document.getElementById('orderModal').style.display = 'none'; }
 
   function loadOrders() {
-    const orders = getOrders();
-    const container = document.getElementById('ordersContainer');
+    var orders = getOrders();
+    var container = document.getElementById('ordersContainer');
     
     document.getElementById('totalEarnings').innerText = '₦' + Number(localStorage.getItem('vendor_total_sales') || '0').toLocaleString();
     document.getElementById('totalOrdersCount').innerText = localStorage.getItem('vendor_order_count') || '0';
 
     if (orders.length === 0) {
-      container.innerHTML = `<p style="color: var(--text-gray); font-size: 13px; text-align: center; padding: 10px 0;">No active incoming orders.</p>`;
+      container.innerHTML = '<p style="color: var(--text-gray); font-size: 13px; text-align: center; padding: 10px 0;">No active incoming orders.</p>';
       return;
     }
 
-    container.innerHTML = orders.map(o => {
-      let btnClass = o.status === 'NEW' ? 'btn-blue' : 'btn-yellow';
-      let btnText = o.status === 'NEW' ? 'ACCEPT ORDER' : 'READY FOR RIDER';
-      let tagBg = o.status === 'NEW' ? 'rgba(59,130,246,0.15)' : 'rgba(245,158,11,0.15)';
-      let tagColor = o.status === 'NEW' ? 'var(--blue-info)' : 'var(--warning-orange)';
+    var html = '';
+    for (var i = 0; i < orders.length; i++) {
+      var o = orders[i];
+      var btnClass = o.status === 'NEW' ? 'btn-blue' : 'btn-yellow';
+      var btnText = o.status === 'NEW' ? 'ACCEPT ORDER' : 'READY FOR RIDER';
+      var tagBg = o.status === 'NEW' ? 'rgba(59,130,246,0.15)' : 'rgba(245,158,11,0.15)';
+      var tagColor = o.status === 'NEW' ? 'var(--blue-info)' : 'var(--warning-orange)';
 
-      return `
-        <div class="row-item" style="display:flex; justify-content:space-between; align-items:center;">
-          <div onclick="showOrderDetails(${o.id})" style="cursor:pointer; flex:1;">
-            <span class="item-tag" style="color:${tagColor}; background:${tagBg};">${o.status}</span>
-            <span class="item-title-text">${o.item}</span>
-            <div style="font-size:12px; color:var(--text-gray); margin-top:2px;">📍 ${o.customer} (${o.address})</div>
-            <div class="item-price-text" style="margin-top:2px;">₦${Number(o.amount).toLocaleString()}</div>
-          </div>
-          <button class="${btnClass}" onclick="advanceOrderStatus(${o.id})">${btnText}</button>
-        </div>
-      `;
-    }).join('');
+      html += '<div class="row-item" style="display:flex; justify-content:space-between; align-items:center;">' +
+        '<div onclick="showOrderDetails(' + o.id + ')" style="cursor:pointer; flex:1;">' +
+          '<span class="item-tag" style="color:' + tagColor + '; background:' + tagBg + ';">' + o.status + '</span>' +
+          '<span class="item-title-text">' + o.item + '</span>' +
+          '<div style="font-size:12px; color:var(--text-gray); margin-top:2px;">📍 ' + o.customer + ' (' + o.address + ')</div>' +
+          '<div class="item-price-text" style="margin-top:2px;">₦' + Number(o.amount).toLocaleString() + '</div>' +
+        '</div>' +
+        '<button class="' + btnClass + '" onclick="advanceOrderStatus(' + o.id + ')">' + btnText + '</button>' +
+      '</div>';
+    }
+    container.innerHTML = html;
   }
 
-  // --- SETTINGS ---
   function saveSettings() {
-    const name = document.getElementById('storeNameInput').value;
+    var name = document.getElementById('storeNameInput').value;
     if (name) {
       localStorage.setItem('vendor_store_name', name);
       document.getElementById('vendorStoreTitle').innerText = name;
@@ -209,10 +403,13 @@
   }
 
   function loadSettings() {
-    const savedName = localStorage.getItem('vendor_store_name');
+    var savedName = localStorage.getItem('vendor_store_name');
     if (savedName) {
       document.getElementById('vendorStoreTitle').innerText = savedName;
       document.getElementById('storeNameInput').value = savedName;
     }
   }
 </script>
+
+</body>
+</html>
