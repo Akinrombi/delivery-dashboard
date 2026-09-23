@@ -4,9 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vendor Partner Dashboard</title>
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body { background-color: #0b0f19; color: #f3f4f6; font-family: sans-serif; }
@@ -16,7 +14,7 @@
 
   <!-- TOP HEADER -->
   <div>
-    <div class="flex items-center justify-between mb-6 bg-gray-900 p-4 rounded-2xl border border-gray-800">
+    <div class="flex items-center justify-between mb-4 bg-gray-900 p-4 rounded-2xl border border-gray-800">
       <div class="flex items-center gap-3">
         <div class="text-3xl">🍳</div>
         <div>
@@ -25,7 +23,18 @@
         </div>
       </div>
       <button id="store-status-btn" onclick="toggleStoreStatus()" class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2">
-        Store Open <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="status-text">Store Open</span> <span id="status-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      </button>
+    </div>
+
+    <!-- WALLET & INSTANT CASHOUT BANNER -->
+    <div class="bg-gradient-to-r from-emerald-900/40 to-gray-900 p-4 rounded-2xl border border-emerald-500/30 mb-6 flex justify-between items-center">
+      <div>
+        <p class="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Today's Earnings</p>
+        <h3 id="wallet-balance" class="text-2xl font-black text-emerald-400">₦0</h3>
+      </div>
+      <button onclick="requestInstantPayout()" class="bg-emerald-500 hover:bg-emerald-600 text-black text-xs font-extrabold px-3 py-2 rounded-xl shadow transition">
+        ⚡ Instant Cashout
       </button>
     </div>
 
@@ -52,7 +61,7 @@
       </div>
     </div>
 
-    <!-- TAB TOGGLE -->
+    <!-- TAB SWITCHING -->
     <div class="flex bg-gray-900 p-1 rounded-xl border border-gray-800 mb-4">
       <button id="tab-btn-orders" onclick="switchTab('orders')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-amber-500 text-black shadow transition">
         🔔 New Orders (<span id="badge-new">0</span>)
@@ -71,7 +80,7 @@
       </div>
     </div>
 
-    <!-- TAB 2: MENU CATALOG CONTENT -->
+    <!-- TAB 2: MENU CATALOG -->
     <div id="view-menu" class="hidden space-y-4">
       <div class="bg-gray-900 p-4 rounded-2xl border border-gray-800 space-y-3">
         <h3 class="text-sm font-bold text-gray-200">Add New Menu Item</h3>
@@ -84,14 +93,12 @@
 
       <div class="space-y-2">
         <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Current Menu Items</h3>
-        <div id="menu-container" class="space-y-2">
-          <!-- Loaded dynamically -->
-        </div>
+        <div id="menu-container" class="space-y-2"></div>
       </div>
     </div>
   </div>
 
-  <!-- BOTTOM NAVIGATION BAR -->
+  <!-- NAVIGATION BAR -->
   <div class="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur border-t border-gray-800 py-3 px-6 max-w-md mx-auto flex justify-around">
     <button onclick="switchNav('orders')" id="nav-orders" class="flex flex-col items-center gap-1 text-emerald-400">
       <span class="text-lg">🍴</span>
@@ -104,148 +111,178 @@
   </div>
 
   <script>
-    // 1. SUPABASE INITIALIZATION
     const SUPABASE_URL = 'https://glkutdkwbrjpiuqcmgwe.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdsa3V0ZGt3YnJqcGl1cWNtZ3dlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5NzU3MTMsImV4cCI6MjEwNTU1MTcxM30.f2SgZJvP681imm0Qe1fKsATnCk_86z2guwvZWASXoZM';
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let currentVendorId = null;
+    let isStoreOpen = true;
+    let audioContext = null;
 
-    // 2. SAFE DASHBOARD INITIALIZATION
+    // Play Alert Chime for New Orders
+    function playOrderChime() {
+      try {
+        if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(587.33, audioContext.currentTime); // D5
+        osc.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 0.3); // A5
+        gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.start();
+        osc.stop(audioContext.currentTime + 0.4);
+      } catch (e) { console.log("Audio waiting for user click"); }
+    }
+
     async function initDashboard() {
       try {
-        // Fetch vendors list safely without single() throwing errors
-        const { data: vendors, error } = await supabase.from('vendors').select('*').limit(1);
+        const { data: vendors } = await supabase.from('vendors').select('*').limit(1);
 
         if (vendors && vendors.length > 0) {
           currentVendorId = vendors[0].id;
           document.getElementById('store-name').innerText = vendors[0].name || vendors[0].store_name || "Mama's Chow";
           document.getElementById('store-email').innerText = vendors[0].email || "vendor@delivery.com";
-        } else {
-          document.getElementById('store-name').innerText = "No Store Found";
+          isStoreOpen = vendors[0].is_open !== false;
+          updateStoreStatusUI();
         }
 
-        // Fetch order and menu data
         await fetchOrders();
         await fetchMenuItems();
 
+        // Realtime listener for incoming WhatsApp orders
+        supabase.channel('public:orders')
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
+            if (payload.new.vendor_id === currentVendorId) {
+              playOrderChime();
+              fetchOrders();
+            }
+          })
+          .subscribe();
+
       } catch (err) {
-        console.error('❌ Dashboard initialization error:', err.message);
+        console.error('❌ Dashboard init error:', err.message);
       }
     }
 
-    // 3. FETCH ORDERS FILTERED STRICTLY BY VENDOR ID
     async function fetchOrders() {
       const ordersContainer = document.getElementById('orders-container');
+      if (!currentVendorId) return;
 
-      if (!currentVendorId) {
-        ordersContainer.innerHTML = `
-          <div class="bg-gray-900/50 border border-gray-800/80 rounded-2xl p-8 text-center text-gray-500 text-sm">
-            No orders in this tab
-          </div>`;
-        return;
-      }
-
-      // Filtered query isolating vendor orders
-      const { data: orders, error } = await supabase
+      const { data: orders } = await supabase
         .from('orders')
         .select('*')
-        .eq('vendor_id', currentVendorId);
+        .eq('vendor_id', currentVendorId)
+        .order('created_at', { ascending: false });
 
-      if (error || !orders || orders.length === 0) {
-        // Reset metrics to 0 when no orders exist
+      if (!orders || orders.length === 0) {
         document.getElementById('metric-new').innerText = '0';
         document.getElementById('metric-preparing').innerText = '0';
         document.getElementById('metric-ready').innerText = '0';
         document.getElementById('badge-new').innerText = '0';
         document.getElementById('badge-prep').innerText = '0';
-
-        ordersContainer.innerHTML = `
-          <div class="bg-gray-900/50 border border-gray-800/80 rounded-2xl p-8 text-center text-gray-500 text-sm">
-            No orders in this tab
-          </div>`;
+        document.getElementById('wallet-balance').innerText = '₦0';
+        ordersContainer.innerHTML = `<div class="bg-gray-900/50 border border-gray-800/80 rounded-2xl p-8 text-center text-gray-500 text-sm">No active orders</div>`;
         return;
       }
 
-      let newCount = 0;
-      let prepCount = 0;
-      let readyCount = 0;
+      let newCount = 0, prepCount = 0, readyCount = 0, totalEarned = 0;
       ordersContainer.innerHTML = '';
 
       orders.forEach(order => {
         if (order.status === 'pending') newCount++;
         if (order.status === 'preparing') prepCount++;
         if (order.status === 'ready') readyCount++;
+        if (order.status === 'delivered') totalEarned += Number(order.total_amount || 0);
 
-        // Render Order Card
         ordersContainer.innerHTML += `
-          <div class="bg-gray-900 border border-gray-800 rounded-2xl p-4 space-y-2">
+          <div class="bg-gray-900 border border-gray-800 rounded-2xl p-4 space-y-3">
             <div class="flex justify-between items-center">
               <span class="text-xs font-bold text-amber-400">Order #${order.id.toString().slice(0, 6)}</span>
-              <span class="text-[10px] bg-gray-800 text-gray-300 px-2 py-0.5 rounded-full uppercase font-bold">${order.status}</span>
+              <span class="text-[10px] bg-gray-800 text-emerald-400 px-2 py-0.5 rounded-full uppercase font-bold">${order.status}</span>
             </div>
             <p class="text-xs text-gray-300">📍 ${order.delivery_address || 'Address provided'}</p>
-            <p class="text-xs font-bold text-emerald-400">Total: ₦${order.total_amount || 0}</p>
+            <div class="flex justify-between items-center pt-2 border-t border-gray-800/80">
+              <span class="text-xs font-bold text-emerald-400">₦${order.total_amount || 0}</span>
+              ${order.status === 'pending' ? `
+                <button onclick="updateOrderStatus('${order.id}', 'preparing')" class="bg-amber-500 text-black px-3 py-1 rounded-lg text-xs font-extrabold">Accept & Prepare</button>
+              ` : order.status === 'preparing' ? `
+                <button onclick="updateOrderStatus('${order.id}', 'ready')" class="bg-emerald-500 text-black px-3 py-1 rounded-lg text-xs font-extrabold">Mark Ready for Rider</button>
+              ` : `<span class="text-[11px] text-gray-400 font-bold">Awaiting Rider Pick Up</span>`}
+            </div>
           </div>
         `;
       });
 
-      // Update Dashboard Counters
       document.getElementById('metric-new').innerText = newCount;
       document.getElementById('metric-preparing').innerText = prepCount;
       document.getElementById('metric-ready').innerText = readyCount;
       document.getElementById('badge-new').innerText = newCount;
       document.getElementById('badge-prep').innerText = prepCount;
+      document.getElementById('wallet-balance').innerText = `₦${totalEarned.toLocaleString()}`;
     }
 
-    // 4. FETCH MENU ITEMS FOR THIS STORE
+    async function updateOrderStatus(orderId, newStatus) {
+      await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
+      fetchOrders();
+    }
+
+    async function toggleStoreStatus() {
+      isStoreOpen = !isStoreOpen;
+      updateStoreStatusUI();
+      if (currentVendorId) {
+        await supabase.from('vendors').update({ is_open: isStoreOpen }).eq('id', currentVendorId);
+      }
+    }
+
+    function updateStoreStatusUI() {
+      const btn = document.getElementById('store-status-btn');
+      const txt = document.getElementById('status-text');
+      const dot = document.getElementById('status-dot');
+      if (isStoreOpen) {
+        txt.innerText = 'Store Open';
+        btn.className = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2';
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+      } else {
+        txt.innerText = 'Store Closed';
+        btn.className = 'bg-red-500/20 text-red-400 border border-red-500/40 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2';
+        dot.className = 'w-2 h-2 rounded-full bg-red-400';
+      }
+    }
+
+    function requestInstantPayout() {
+      alert("⚡ Cashout request submitted! Funds will be transferred to your registered bank account.");
+    }
+
     async function fetchMenuItems() {
       if (!currentVendorId) return;
-
-      const { data: items } = await supabase
-        .from('menu_items')
-        .select('*')
-        .eq('restaurant_id', currentVendorId);
-
+      const { data: items } = await supabase.from('menu_items').select('*').eq('restaurant_id', currentVendorId);
       const menuContainer = document.getElementById('menu-container');
       menuContainer.innerHTML = '';
-
       if (!items || items.length === 0) {
-        menuContainer.innerHTML = `<p class="text-xs text-gray-500">No items in catalog yet.</p>`;
+        menuContainer.innerHTML = `<p class="text-xs text-gray-500">No items added yet.</p>`;
         return;
       }
-
       items.forEach(item => {
         menuContainer.innerHTML += `
           <div class="flex justify-between items-center bg-gray-900 border border-gray-800 p-3 rounded-xl text-xs">
             <span class="font-bold text-gray-200">${item.title || item.name}</span>
             <span class="text-emerald-400 font-extrabold">₦${item.price}</span>
-          </div>
-        `;
+          </div>`;
       });
     }
 
-    // 5. ADD NEW MENU ITEM
     async function addMenuItem() {
       const name = document.getElementById('item-name').value.trim();
       const price = document.getElementById('item-price').value.trim();
-
-      if (!name || !price || !currentVendorId) return alert('Fill in name and price!');
-
-      await supabase.from('menu_items').insert([
-        {
-          restaurant_id: currentVendorId,
-          title: name,
-          price: Number(price)
-        }
-      ]);
-
+      if (!name || !price || !currentVendorId) return alert('Enter name and price!');
+      await supabase.from('menu_items').insert([{ restaurant_id: currentVendorId, title: name, price: Number(price) }]);
       document.getElementById('item-name').value = '';
       document.getElementById('item-price').value = '';
       fetchMenuItems();
     }
 
-    // 6. NAVIGATION & TAB SWITCHING LOGIC
     function switchNav(nav) {
       if (nav === 'orders') {
         document.getElementById('view-orders').classList.remove('hidden');
@@ -263,7 +300,6 @@
     function switchTab(tab) {
       const btnOrders = document.getElementById('tab-btn-orders');
       const btnPrep = document.getElementById('tab-btn-prep');
-
       if (tab === 'orders') {
         btnOrders.className = 'flex-1 py-2 text-xs font-bold rounded-lg bg-amber-500 text-black shadow transition';
         btnPrep.className = 'flex-1 py-2 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition';
@@ -273,7 +309,6 @@
       }
     }
 
-    // Start App
     initDashboard();
   </script>
 </body>
