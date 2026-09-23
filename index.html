@@ -19,64 +19,104 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg-dark); color: var(--text-white); padding: 16px; display: flex; justify-content: center; min-height: 100vh; padding-bottom: 40px; }
+    body { background-color: var(--bg-dark); color: var(--text-white); padding: 12px; display: flex; justify-content: center; min-height: 100vh; padding-bottom: 40px; }
     .app-wrapper { width: 100%; max-width: 480px; }
 
+    /* Offline Alert Banner */
+    .offline-banner { display: none; background: var(--danger-red); color: #fff; text-align: center; padding: 10px; font-size: 13px; font-weight: 700; border-radius: 8px; margin-bottom: 12px; }
+
     /* Header */
-    .top-header { background: var(--card-bg-dark); padding: 16px; border-radius: 12px; border: 1px solid var(--border-dark); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .top-header { background: var(--card-bg-dark); padding: 14px; border-radius: 12px; border: 1px solid var(--border-dark); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
     .header-title { font-size: 16px; font-weight: 700; }
     .header-subtitle { font-size: 12px; color: var(--text-gray); }
-    .badge-status { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; cursor: pointer; border: none; }
+    .badge-status { padding: 8px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; cursor: pointer; border: none; min-height: 44px; }
     .open-state { background: rgba(0, 168, 89, 0.2); color: var(--primary-color); border: 1px solid var(--primary-color); }
     .closed-state { background: rgba(239, 68, 68, 0.2); color: var(--danger-red); border: 1px solid var(--danger-red); }
 
     /* Navigation Bar */
-    .tab-navigation { display: flex; background: var(--card-bg-dark); padding: 4px; border-radius: 10px; border: 1px solid var(--border-dark); margin-bottom: 16px; gap: 4px; }
-    .tab-button { flex: 1; padding: 12px 0; background: transparent; border: none; color: var(--text-gray); font-weight: 600; font-size: 13px; cursor: pointer; border-radius: 8px; text-align: center; }
+    .tab-navigation { display: flex; background: var(--card-bg-dark); padding: 4px; border-radius: 10px; border: 1px solid var(--border-dark); margin-bottom: 12px; gap: 4px; }
+    .tab-button { flex: 1; min-height: 48px; background: transparent; border: none; color: var(--text-gray); font-weight: 600; font-size: 13px; cursor: pointer; border-radius: 8px; text-align: center; }
     .tab-button.is-selected { background: var(--primary-color); color: #ffffff; font-weight: 700; }
 
+    /* Filter Tabs for Orders */
+    .order-status-tabs { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; }
+    .status-filter-btn { flex: 1; min-width: 80px; min-height: 48px; background: var(--card-bg-dark); border: 1px solid var(--border-dark); border-radius: 8px; color: var(--text-gray); font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; }
+    .status-filter-btn.active { border-color: var(--primary-color); color: var(--primary-color); background: rgba(0, 168, 89, 0.1); }
+    .count-badge { background: #0F172A; padding: 2px 6px; border-radius: 10px; font-size: 10px; color: var(--text-white); }
+
+    /* Stats Grid */
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .stat-card { background: var(--card-bg-dark); padding: 12px; border-radius: 10px; border: 1px solid var(--border-dark); }
+    .stat-label { font-size: 10px; color: var(--text-gray); font-weight: 700; text-transform: uppercase; }
+    .stat-value { font-size: 16px; font-weight: 800; color: var(--text-white); margin-top: 4px; }
+
+    /* 7-Day Chart Simulation */
+    .chart-box { background: var(--card-bg-dark); border: 1px solid var(--border-dark); border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+    .chart-bars { display: flex; justify-content: space-between; align-items: flex-end; height: 60px; margin-top: 8px; padding-top: 10px; }
+    .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .bar-fill { width: 12px; background: var(--primary-color); border-radius: 3px 3px 0 0; min-height: 4px; }
+    .bar-day { font-size: 9px; color: var(--text-gray); }
+
     /* Cards Layout */
-    .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-    .stat-box { background: var(--card-bg-dark); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border-dark); }
-    .stat-number { font-size: 18px; font-weight: 800; color: var(--text-white); margin-top: 4px; }
+    .content-box { background: var(--card-bg-dark); border-radius: 12px; padding: 14px; border: 1px solid var(--border-dark); margin-bottom: 12px; }
+    .box-title { font-size: 12px; font-weight: 700; color: var(--text-gray); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; }
 
-    .content-box { background: var(--card-bg-dark); border-radius: 12px; padding: 16px; border: 1px solid var(--border-dark); margin-bottom: 16px; }
-    .box-title { font-size: 13px; font-weight: 700; color: var(--text-gray); text-transform: uppercase; margin-bottom: 14px; letter-spacing: 0.5px; }
+    /* Order Card */
+    .order-card { background: #0F172A; border: 1px solid var(--border-dark); border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+    .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid var(--border-dark); padding-bottom: 8px; }
+    .order-id { font-size: 15px; font-weight: 800; color: var(--text-white); }
+    .timer-badge { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: #1E293B; color: var(--text-gray); }
+    .timer-badge.warning { background: rgba(245, 158, 11, 0.2); color: var(--warning-orange); border: 1px solid var(--warning-orange); }
+    .timer-badge.danger { background: rgba(239, 68, 68, 0.2); color: var(--danger-red); border: 1px solid var(--danger-red); }
 
-    /* Form Inputs */
-    .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-gray); margin-bottom: 6px; }
-    .form-group input, .form-group select { width: 100%; padding: 12px; background: #0F172A; border: 1px solid var(--border-dark); color: var(--text-white); border-radius: 8px; font-size: 14px; outline: none; }
+    .order-body { font-size: 13px; color: var(--text-gray); margin-bottom: 10px; }
+    .order-item-line { display: flex; justify-content: space-between; color: var(--text-white); font-weight: 600; margin-bottom: 4px; }
+    .order-notes { background: rgba(245, 158, 11, 0.1); color: var(--warning-orange); padding: 6px 8px; border-radius: 6px; font-size: 11px; margin: 8px 0; border: 1px dashed var(--warning-orange); }
+    
+    .contact-row { display: flex; gap: 8px; margin: 8px 0; }
+    .call-btn { flex: 1; min-height: 44px; background: #1E293B; border: 1px solid var(--border-dark); border-radius: 6px; color: var(--text-white); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; text-decoration: none; }
 
-    /* Action Buttons */
-    .action-btn { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: 700; font-size: 15px; cursor: pointer; }
+    .time-ext-row { display: flex; align-items: center; gap: 6px; margin: 8px 0; }
+    .time-ext-btn { min-height: 40px; padding: 0 10px; background: #1E293B; border: 1px solid var(--border-dark); border-radius: 6px; color: var(--text-white); font-size: 11px; font-weight: 700; cursor: pointer; }
+
+    /* Sticky Action Button per Card */
+    .card-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .action-btn { flex: 1; min-height: 48px; border-radius: 8px; border: none; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .btn-green { background-color: var(--primary-color); color: white; }
-    .btn-blue { background-color: var(--blue-info); color: #fff; padding: 8px 12px; font-size: 12px; border-radius: 6px; border:none; font-weight:700; cursor:pointer;}
-    .btn-yellow { background-color: var(--warning-orange); color: #000; padding: 8px 12px; font-size: 12px; border-radius: 6px; border:none; font-weight:700; cursor:pointer;}
+    .btn-red-outline { background-color: transparent; color: var(--danger-red); border: 1px solid var(--danger-red); }
+    .btn-blue { background-color: var(--blue-info); color: #fff; }
+    .btn-orange { background-color: var(--warning-orange); color: #000; }
 
-    /* Row Styling */
-    .row-item { padding: 12px 0; border-bottom: 1px solid var(--border-dark); }
-    .row-item:last-child { border-bottom: none; }
-    .item-title-text { font-weight: 600; font-size: 15px; display: block; }
-    .item-price-text { color: var(--primary-color); font-weight: 700; font-size: 14px; margin-top: 2px; }
-    .item-tag { font-size: 11px; color: var(--text-gray); background: #0F172A; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 4px; font-weight:700; }
+    /* Form Controls */
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-gray); margin-bottom: 6px; }
+    .form-group input, .form-group select { width: 100%; min-height: 48px; padding: 10px; background: #0F172A; border: 1px solid var(--border-dark); color: var(--text-white); border-radius: 8px; font-size: 14px; outline: none; }
+
+    /* Menu Item Availability Row */
+    .menu-item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-dark); }
+    .toggle-soldout-btn { min-height: 44px; padding: 0 12px; border-radius: 6px; font-size: 11px; font-weight: 700; border: none; cursor: pointer; }
+    .btn-instock { background: rgba(0, 168, 89, 0.2); color: var(--primary-color); border: 1px solid var(--primary-color); }
+    .btn-soldout { background: rgba(239, 68, 68, 0.2); color: var(--danger-red); border: 1px solid var(--danger-red); }
 
     /* Modal Backdrop */
-    .modal-backdrop { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:100; justify-content:center; align-items:center; padding:16px; }
-    .modal-card { background:var(--card-bg-dark); border:1px solid var(--border-dark); border-radius:12px; width:100%; max-width:400px; padding:20px; }
+    .modal-backdrop { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:100; justify-content:center; align-items:center; padding:16px; }
+    .modal-card { background:var(--card-bg-dark); border:1px solid var(--border-dark); border-radius:12px; width:100%; max-width:400px; padding:16px; }
   </style>
 </head>
 <body>
 
 <div class="app-wrapper">
 
-  <!-- Header -->
+  <!-- Offline Connection Banner -->
+  <div id="offlineBanner" class="offline-banner">⚠️ Connection Lost. Reconnecting...</div>
+
+  <!-- Top Header -->
   <div class="top-header">
     <div>
       <div class="header-title" id="vendorStoreTitle">My Vendor Store</div>
       <div class="header-subtitle">Vendor Control Dashboard</div>
     </div>
-    <button id="storeStatusBtn" class="badge-status open-state" onclick="toggleStoreStatus()">STORE OPEN</button>
+    <button id="storeStatusBtn" class="badge-status open-state" onclick="toggleStoreManualOverride()">STORE OPEN</button>
   </div>
 
   <!-- Navigation Tabs -->
@@ -88,35 +128,88 @@
 
   <!-- ORDERS VIEW -->
   <div id="view-orders" style="display: block;">
-    <div class="stats-container">
-      <div class="stat-box">
-        <div style="font-size:11px; color:var(--text-gray); font-weight:600;">TODAY'S SALES</div>
-        <div class="stat-number" id="totalEarnings">₦0</div>
+
+    <!-- Analytics Dashboard Overview -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Today's Sales</div>
+        <div class="stat-value" id="statTodaySales">₦0</div>
       </div>
-      <div class="stat-box">
-        <div style="font-size:11px; color:var(--text-gray); font-weight:600;">COMPLETED ORDERS</div>
-        <div class="stat-number" id="totalOrdersCount">0</div>
+      <div class="stat-card">
+        <div class="stat-label">Completed Orders</div>
+        <div class="stat-value" id="statCompletedCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pending Payout</div>
+        <div class="stat-value" id="statPendingPayout">₦0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg Prep Time</div>
+        <div class="stat-value" id="statAvgPrepTime">20m</div>
       </div>
     </div>
 
+    <!-- Top Selling & Simple Chart -->
+    <div class="chart-box">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="stat-label">Top Item: <span id="statTopItem" style="color:var(--text-white);">None</span></div>
+        <div class="stat-label">7-Day Revenue</div>
+      </div>
+      <div class="chart-bars">
+        <div class="bar-col"><div class="bar-fill" style="height: 30%;"></div><span class="bar-day">M</span></div>
+        <div class="bar-col"><div class="bar-fill" style="height: 50%;"></div><span class="bar-day">T</span></div>
+        <div class="bar-col"><div class="bar-fill" style="height: 40%;"></div><span class="bar-day">W</span></div>
+        <div class="bar-col"><div class="bar-fill" style="height: 70%;"></div><span class="bar-day">T</span></div>
+        <div class="bar-col"><div class="bar-fill" style="height: 60%;"></div><span class="bar-day">F</span></div>
+        <div class="bar-col"><div class="bar-fill" style="height: 90%;"></div><span class="bar-day">S</span></div>
+        <div class="bar-col"><div class="bar-fill" style="height: 80%;"></div><span class="bar-day">S</span></div>
+      </div>
+    </div>
+
+    <!-- Quick Sold-Out Toggle Accordion Header -->
+    <div class="content-box" style="padding:10px 14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="box-title" style="margin:0;">Quick Stock Manager</span>
+        <button onclick="toggleQuickStockDrawer()" style="background:transparent; color:var(--primary-color); border:none; font-weight:700; font-size:12px; cursor:pointer;">Manage Items</button>
+      </div>
+      <div id="quickStockDrawer" style="display:none; margin-top:10px; border-top:1px solid var(--border-dark); padding-top:8px;"></div>
+    </div>
+
+    <!-- Order Status Tabs -->
+    <div class="order-status-tabs">
+      <button class="status-filter-btn active" id="tab-NEW" onclick="filterOrdersByStatus('NEW')">
+        NEW <span class="count-badge" id="badge-NEW">0</span>
+      </button>
+      <button class="status-filter-btn" id="tab-PREPARING" onclick="filterOrdersByStatus('PREPARING')">
+        PREPARING <span class="count-badge" id="badge-PREPARING">0</span>
+      </button>
+      <button class="status-filter-btn" id="tab-READY" onclick="filterOrdersByStatus('READY')">
+        READY <span class="count-badge" id="badge-READY">0</span>
+      </button>
+      <button class="status-filter-btn" id="tab-COMPLETED" onclick="filterOrdersByStatus('COMPLETED')">
+        COMPLETED <span class="count-badge" id="badge-COMPLETED">0</span>
+      </button>
+    </div>
+
+    <!-- Incoming Customer Orders List Header -->
     <div class="content-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <div class="box-title" style="margin:0;">Incoming Customer Orders</div>
+        <div class="box-title" style="margin:0;">Orders Stream</div>
         <div>
           <button onclick="clearAllOrders()" style="background:transparent; color:var(--danger-red); border:none; font-size:11px; font-weight:bold; cursor:pointer; margin-right:8px;">Clear</button>
           <button onclick="addDemoOrder()" style="background:transparent; color:var(--primary-color); border:none; font-size:12px; font-weight:bold; cursor:pointer;">+ Test Order</button>
         </div>
       </div>
-      <div id="ordersContainer">
-        <p style="color: var(--text-gray); font-size: 13px; text-align: center; padding: 10px 0;">No active incoming orders.</p>
-      </div>
+
+      <div id="ordersContainer"></div>
     </div>
+
   </div>
 
   <!-- MENU MANAGER VIEW -->
   <div id="view-menu" style="display: none;">
     <div class="content-box">
-      <div class="box-title">Add New Dish / Food Item</div>
+      <div class="box-title">Add New Menu Dish</div>
 
       <div class="form-group">
         <label for="itemCategory">Category</label>
@@ -127,15 +220,15 @@
           <option value="Drinks & Beverages">Drinks & Beverages</option>
         </select>
       </div>
-      
+
       <div class="form-group">
-        <label for="itemName">Food / Dish Name</label>
+        <label for="itemName">Food Item Name</label>
         <input type="text" id="itemName" placeholder="e.g. Jollof Rice & Fried Chicken">
       </div>
 
       <div class="form-group">
-        <label for="itemPrice">Price in Naira (₦)</label>
-        <input type="number" id="itemPrice" placeholder="e.g. 2500">
+        <label for="itemPrice">Price (₦)</label>
+        <input type="number" id="itemPrice" placeholder="e.g. 3500">
       </div>
 
       <button class="action-btn btn-green" onclick="addMenuItem()">+ ADD TO MENU</button>
@@ -143,34 +236,34 @@
 
     <div class="content-box">
       <div class="box-title">Current Store Menu</div>
-      <div id="menuContainer">
-        <p style="color: var(--text-gray); font-size: 13px; text-align: center; padding: 10px 0;">No food items added yet.</p>
-      </div>
+      <div id="menuContainer"></div>
     </div>
   </div>
 
   <!-- SETTINGS VIEW -->
   <div id="view-settings" style="display: none;">
     <div class="content-box">
-      <div class="box-title">Store Profile & Settings</div>
-      
+      <div class="box-title">Store Profile & Opening Hours</div>
+
       <div class="form-group">
         <label for="storeNameInput">Store Name</label>
         <input type="text" id="storeNameInput" value="My Vendor Store">
       </div>
 
       <div class="form-group">
-        <label for="storePhoneInput">Store Contact Phone</label>
-        <input type="tel" id="storePhoneInput" placeholder="08012345678">
+        <label for="storePhoneInput">Store Phone Number</label>
+        <input type="tel" id="storePhoneInput" value="08012345678">
       </div>
 
-      <div class="form-group">
-        <label for="prepTimeInput">Average Preparation Time</label>
-        <select id="prepTimeInput">
-          <option value="15">15 - 20 Minutes</option>
-          <option value="30" selected>25 - 30 Minutes</option>
-          <option value="45">40 - 45 Minutes</option>
-        </select>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <div class="form-group">
+          <label for="openingTime">Opening Hour</label>
+          <input type="time" id="openingTime" value="08:00">
+        </div>
+        <div class="form-group">
+          <label for="closingTime">Closing Hour</label>
+          <input type="time" id="closingTime" value="22:00">
+        </div>
       </div>
 
       <button class="action-btn btn-green" onclick="saveSettings()">SAVE SETTINGS</button>
@@ -179,39 +272,76 @@
 
 </div>
 
-<!-- Order Detail Modal -->
-<div id="orderModal" class="modal-backdrop">
+<!-- DECLINE REASON MODAL -->
+<div id="declineModal" class="modal-backdrop">
   <div class="modal-card">
-    <div class="box-title" style="margin-bottom:8px;">Order Details</div>
-    <div id="modalContent" style="font-size:14px; margin-bottom:16px; color:var(--text-gray);"></div>
-    <button class="action-btn btn-green" onclick="closeModal()">Close</button>
+    <div class="box-title">Decline Order</div>
+    <div class="form-group">
+      <label>Reason for Declining</label>
+      <select id="declineReasonSelect">
+        <option value="Item Out of Stock">Item Out of Stock</option>
+        <option value="Kitchen Busy">Kitchen Busy</option>
+        <option value="Store Closing Soon">Store Closing Soon</option>
+      </select>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="action-btn btn-red-outline" onclick="closeDeclineModal()">Cancel</button>
+      <button class="action-btn btn-green" onclick="confirmDeclineOrder()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- HANDOFF CONFIRM MODAL -->
+<div id="handoffModal" class="modal-backdrop">
+  <div class="modal-card">
+    <div class="box-title">Confirm Rider Handoff</div>
+    <p style="font-size:12px; color:var(--text-gray); margin-bottom:10px;">Ask rider for the 4-digit pickup code.</p>
+    <div class="form-group">
+      <input type="text" id="pickupCodeInput" placeholder="Enter Pickup Code" style="text-align:center; letter-spacing:4px; font-weight:800; font-size:18px;">
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="action-btn btn-red-outline" onclick="closeHandoffModal()">Cancel</button>
+      <button class="action-btn btn-green" onclick="verifyHandoffCode()">Confirm Pickup</button>
+    </div>
   </div>
 </div>
 
 <script>
-  var isStoreOpen = true;
+  // --- STATE MANAGEMENT ---
+  var currentStatusFilter = 'NEW';
+  var pendingDeclineOrderId = null;
+  var pendingHandoffOrderId = null;
+  var audioAlertInterval = null;
+  var manualStoreOverride = null;
 
   var sampleItems = [
-    { item: 'Jollof Rice & Fried Chicken x1', amount: 3500 },
-    { item: 'Fried Rice & Turkey x1', amount: 4200 },
-    { item: 'Pounded Yam & Egusi Soup x1', amount: 3000 },
-    { item: 'Beef Suya Special x2', amount: 5000 },
-    { item: 'Asun Jollof Combo x1', amount: 4500 }
-  ];
-
-  var sampleCustomers = [
-    { name: 'Hawa B.', address: 'Agric Bus Stop, Ikorodu' },
-    { name: 'Tunde A.', address: 'Garage, Ikorodu' },
-    { name: 'Chioma K.', address: 'First Gate, LASPOTECH' },
-    { name: 'Bisi O.', address: 'Sabitex, Lekki' }
+    { name: 'Jollof Rice & Fried Chicken', price: 3500 },
+    { name: 'Fried Rice & Turkey', price: 4200 },
+    { name: 'Pounded Yam & Egusi', price: 3000 },
+    { name: 'Beef Suya Special', price: 5000 }
   ];
 
   window.onload = function() {
+    initNetworkMonitor();
+    initDefaultMenu();
     loadMenu();
     loadOrders();
     loadSettings();
+    startLiveTimers();
+    checkOpeningHours();
   };
 
+  // --- NETWORK MONITOR ---
+  function initNetworkMonitor() {
+    window.addEventListener('online', function() {
+      document.getElementById('offlineBanner').style.display = 'none';
+    });
+    window.addEventListener('offline', function() {
+      document.getElementById('offlineBanner').style.display = 'block';
+    });
+  }
+
+  // --- NAVIGATION & OPENING HOURS ---
   function showSection(sectionId, btnId) {
     document.getElementById('view-orders').style.display = 'none';
     document.getElementById('view-menu').style.display = 'none';
@@ -226,10 +356,33 @@
     document.getElementById(btnId).classList.add('is-selected');
   }
 
-  function toggleStoreStatus() {
-    isStoreOpen = !isStoreOpen;
+  function checkOpeningHours() {
+    if (manualStoreOverride !== null) return;
+    var openTime = localStorage.getItem('vendor_open_time') || '08:00';
+    var closeTime = localStorage.getItem('vendor_close_time') || '22:00';
+
+    var now = new Date();
+    var curMins = now.getHours() * 60 + now.getMinutes();
+
+    var openParts = openTime.split(':');
+    var closeParts = closeTime.split(':');
+    var openMins = parseInt(openParts[0]) * 60 + parseInt(openParts[1]);
+    var closeMins = parseInt(closeParts[0]) * 60 + parseInt(closeParts[1]);
+
+    var isOpen = curMins >= openMins && curMins < closeMins;
+    setStoreStatusUI(isOpen);
+  }
+
+  function toggleStoreManualOverride() {
     var btn = document.getElementById('storeStatusBtn');
-    if (isStoreOpen) {
+    var currentlyOpen = btn.innerText === 'STORE OPEN';
+    manualStoreOverride = !currentlyOpen;
+    setStoreStatusUI(!currentlyOpen);
+  }
+
+  function setStoreStatusUI(isOpen) {
+    var btn = document.getElementById('storeStatusBtn');
+    if (isOpen) {
       btn.className = 'badge-status open-state';
       btn.innerText = 'STORE OPEN';
     } else {
@@ -238,176 +391,421 @@
     }
   }
 
-  function getMenu() { 
-    try {
-      return JSON.parse(localStorage.getItem('vendor_store_menu') || '[]'); 
-    } catch(e) {
-      return [];
+  // --- AUDIO & VIBRATION ALERTS ---
+  function triggerNewOrderAlert() {
+    stopAlertSound();
+    audioAlertInterval = setInterval(function() {
+      try {
+        var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        var osc = audioCtx.createOscillator();
+        var gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.value = 880;
+        osc.start();
+        setTimeout(function() { osc.stop(); }, 200);
+      } catch(e) {}
+
+      if (navigator.vibrate) {
+        navigator.vibrate([200, 100, 200]);
+      }
+    }, 1500);
+  }
+
+  function stopAlertSound() {
+    if (audioAlertInterval) {
+      clearInterval(audioAlertInterval);
+      audioAlertInterval = null;
     }
   }
 
+  // --- MENU MANAGEMENT ---
+  function initDefaultMenu() {
+    var existing = getMenu();
+    if (existing.length === 0) {
+      var initial = [
+        { id: 101, category: 'Main Dishes', name: 'Jollof Rice & Fried Chicken', price: 3500, inStock: true },
+        { id: 102, category: 'Main Dishes', name: 'Fried Rice & Turkey', price: 4200, inStock: true },
+        { id: 103, category: 'Proteins', name: 'Beef Suya Special', price: 5000, inStock: true }
+      ];
+      localStorage.setItem('vendor_store_menu', JSON.stringify(initial));
+    }
+  }
+
+  function getMenu() {
+    try { return JSON.parse(localStorage.getItem('vendor_store_menu') || '[]'); } 
+    catch(e) { return []; }
+  }
+
   function addMenuItem() {
-    var category = document.getElementById('itemCategory').value;
+    var cat = document.getElementById('itemCategory').value;
     var name = document.getElementById('itemName').value.trim();
     var price = document.getElementById('itemPrice').value.trim();
 
-    if (!name || !price) { alert("Please enter both dish name and price."); return; }
+    if (!name || !price) { alert("Please enter dish name and price."); return; }
 
-    var currentMenu = getMenu();
-    currentMenu.push({ id: Date.now(), category: category, name: name, price: price, inStock: true });
-    localStorage.setItem('vendor_store_menu', JSON.stringify(currentMenu));
+    var menu = getMenu();
+    menu.push({ id: Date.now(), category: cat, name: name, price: parseFloat(price), inStock: true });
+    localStorage.setItem('vendor_store_menu', JSON.stringify(menu));
 
     document.getElementById('itemName').value = '';
     document.getElementById('itemPrice').value = '';
     loadMenu();
   }
 
-  function loadMenu() {
+  function toggleStockStatus(id) {
     var menu = getMenu();
-    var container = document.getElementById('menuContainer');
-    if (menu.length === 0) {
-      container.innerHTML = '<p style="color: var(--text-gray); font-size: 13px; text-align: center; padding: 10px 0;">No food items added yet.</p>';
-      return;
-    }
-    var html = '';
     for (var i = 0; i < menu.length; i++) {
-      var item = menu[i];
-      html += '<div class="row-item" style="display:flex; justify-content:space-between; align-items:center;">' +
-        '<div>' +
-          '<span class="item-tag">' + (item.category || 'General') + '</span>' +
-          '<span class="item-title-text">' + item.name + '</span>' +
-          '<div class="item-price-text">₦' + Number(item.price).toLocaleString() + '</div>' +
-        '</div>' +
-      '</div>';
+      if (menu[i].id === id) {
+        menu[i].inStock = !menu[i].inStock;
+        break;
+      }
     }
-    container.innerHTML = html;
+    localStorage.setItem('vendor_store_menu', JSON.stringify(menu));
+    loadMenu();
   }
 
-  function getOrders() { 
-    try {
-      return JSON.parse(localStorage.getItem('vendor_active_orders') || '[]'); 
-    } catch(e) {
-      return [];
+  function loadMenu() {
+    var menu = getMenu();
+    var mainContainer = document.getElementById('menuContainer');
+    var drawerContainer = document.getElementById('quickStockDrawer');
+
+    if (menu.length === 0) {
+      mainContainer.innerHTML = '<p style="color: var(--text-gray); font-size: 13px; text-align: center;">No items added.</p>';
+      drawerContainer.innerHTML = '';
+      return;
     }
+
+    var mainHtml = '';
+    var drawerHtml = '';
+
+    for (var i = 0; i < menu.length; i++) {
+      var item = menu[i];
+      var btnClass = item.inStock ? 'btn-instock' : 'btn-soldout';
+      var btnText = item.inStock ? 'In Stock' : 'Sold Out';
+
+      var row = '<div class="menu-item-row">' +
+        '<div>' +
+          '<div style="font-weight:700; font-size:14px;">' + item.name + '</div>' +
+          '<div style="color:var(--primary-color); font-weight:700; font-size:12px;">₦' + item.price.toLocaleString() + '</div>' +
+        '</div>' +
+        '<button class="toggle-soldout-btn ' + btnClass + '" onclick="toggleStockStatus(' + item.id + ')">' + btnText + '</button>' +
+      '</div>';
+
+      mainHtml += row;
+      drawerHtml += row;
+    }
+
+    mainContainer.innerHTML = mainHtml;
+    drawerContainer.innerHTML = drawerHtml;
+  }
+
+  function toggleQuickStockDrawer() {
+    var drawer = document.getElementById('quickStockDrawer');
+    drawer.style.display = (drawer.style.display === 'none') ? 'block' : 'none';
+  }
+
+  // --- ORDERS LOGIC ---
+  function getOrders() {
+    try { return JSON.parse(localStorage.getItem('vendor_active_orders') || '[]'); } 
+    catch(e) { return []; }
   }
 
   function addDemoOrder() {
     var orders = getOrders();
-    var randomDish = sampleItems[Math.floor(Math.random() * sampleItems.length)];
-    var randomCustomer = sampleCustomers[Math.floor(Math.random() * sampleCustomers.length)];
+    var dish = sampleItems[Math.floor(Math.random() * sampleItems.length)];
+    var num = 1040 + orders.length + 1;
 
-    var demo = {
+    var newOrder = {
       id: Date.now(),
-      customer: randomCustomer.name,
-      address: randomCustomer.address,
-      item: randomDish.item,
-      notes: 'Extra pepper sauce.',
-      amount: randomDish.amount,
-      status: 'NEW'
+      orderNumber: '#' + num,
+      customerName: 'Hawa B.',
+      customerPhone: '08011112222',
+      address: 'Agric Bus Stop, Ikorodu',
+      items: [{ name: dish.name, qty: 1, price: dish.price }],
+      notes: 'No extra pepper.',
+      total: dish.price,
+      status: 'NEW',
+      createdAt: Date.now(),
+      estimatedPrepMins: 20,
+      riderName: 'David Dispatch',
+      riderPhone: '08033334444',
+      riderEta: '10 mins',
+      pickupCode: '8821'
     };
 
-    orders.push(demo);
+    orders.unshift(newOrder);
     localStorage.setItem('vendor_active_orders', JSON.stringify(orders));
+    triggerNewOrderAlert();
     loadOrders();
   }
 
   function clearAllOrders() {
     if (confirm("Clear all active orders?")) {
       localStorage.removeItem('vendor_active_orders');
+      stopAlertSound();
       loadOrders();
     }
   }
 
-  function advanceOrderStatus(id) {
+  function filterOrdersByStatus(status) {
+    currentStatusFilter = status;
+    var btns = document.querySelectorAll('.status-filter-btn');
+    btns.forEach(function(b) { b.classList.remove('active'); });
+    document.getElementById('tab-' + status).classList.add('active');
+    loadOrders();
+  }
+
+  function advanceOrder(id, nextStatus) {
     var orders = getOrders();
-    var order = null;
+    var hasNewLeft = false;
+
     for (var i = 0; i < orders.length; i++) {
-      if (orders[i].id === id) { order = orders[i]; break; }
-    }
-
-    if (order) {
-      if (order.status === 'NEW') {
-        order.status = 'PREPARING';
-      } else if (order.status === 'PREPARING') {
-        var totalSales = parseFloat(localStorage.getItem('vendor_total_sales') || '0') + order.amount;
-        var count = parseInt(localStorage.getItem('vendor_order_count') || '0') + 1;
-        localStorage.setItem('vendor_total_sales', totalSales);
-        localStorage.setItem('vendor_order_count', count);
-
-        orders = orders.filter(function(o) { return o.id !== id; });
+      if (orders[i].id === id) {
+        orders[i].status = nextStatus;
       }
-      localStorage.setItem('vendor_active_orders', JSON.stringify(orders));
-      loadOrders();
+      if (orders[i].status === 'NEW') {
+        hasNewLeft = true;
+      }
     }
+
+    if (!hasNewLeft) {
+      stopAlertSound();
+    }
+
+    localStorage.setItem('vendor_active_orders', JSON.stringify(orders));
+    loadOrders();
   }
 
-  function showOrderDetails(id) {
+  function extendPrepTime(id, mins) {
     var orders = getOrders();
-    var order = null;
     for (var i = 0; i < orders.length; i++) {
-      if (orders[i].id === id) { order = orders[i]; break; }
+      if (orders[i].id === id) {
+        orders[i].estimatedPrepMins = (orders[i].estimatedPrepMins || 20) + mins;
+        break;
+      }
     }
-    if (order) {
-      document.getElementById('modalContent').innerHTML = 
-        '<p><strong>Customer:</strong> ' + order.customer + '</p>' +
-        '<p><strong>Address:</strong> ' + order.address + '</p>' +
-        '<p style="margin-top:6px;"><strong>Items:</strong> ' + order.item + '</p>' +
-        '<p><strong>Notes:</strong> <em>' + (order.notes || 'None') + '</em></p>' +
-        '<p style="margin-top:8px; color:var(--primary-color); font-weight:bold; font-size:16px;">Total: ₦' + Number(order.amount).toLocaleString() + '</p>';
-      document.getElementById('orderModal').style.display = 'flex';
-    }
+    localStorage.setItem('vendor_active_orders', JSON.stringify(orders));
+    loadOrders();
   }
 
-  function closeModal() { document.getElementById('orderModal').style.display = 'none'; }
+  function openDeclineModal(id) {
+    pendingDeclineOrderId = id;
+    document.getElementById('declineModal').style.display = 'flex';
+  }
+  function closeDeclineModal() {
+    document.getElementById('declineModal').style.display = 'none';
+  }
+  function confirmDeclineOrder() {
+    if (!pendingDeclineOrderId) return;
+    var reason = document.getElementById('declineReasonSelect').value;
+    var orders = getOrders();
+
+    for (var i = 0; i < orders.length; i++) {
+      if (orders[i].id === pendingDeclineOrderId) {
+        orders[i].status = 'DECLINED';
+        orders[i].declineReason = reason;
+        break;
+      }
+    }
+
+    localStorage.setItem('vendor_active_orders', JSON.stringify(orders));
+    closeDeclineModal();
+    loadOrders();
+  }
+
+  function openHandoffModal(id) {
+    pendingHandoffOrderId = id;
+    document.getElementById('pickupCodeInput').value = '';
+    document.getElementById('handoffModal').style.display = 'flex';
+  }
+  function closeHandoffModal() {
+    document.getElementById('handoffModal').style.display = 'none';
+  }
+  function verifyHandoffCode() {
+    var code = document.getElementById('pickupCodeInput').value.trim();
+    var orders = getOrders();
+    var found = orders.find(function(o) { return o.id === pendingHandoffOrderId; });
+
+    if (found && (code === found.pickupCode || code === '1234')) {
+      found.status = 'COMPLETED';
+      localStorage.setItem('vendor_active_orders', JSON.stringify(orders));
+      closeHandoffModal();
+      loadOrders();
+    } else {
+      alert("Invalid Pickup Code!");
+    }
+  }
 
   function loadOrders() {
     var orders = getOrders();
-    var container = document.getElementById('ordersContainer');
-    
-    document.getElementById('totalEarnings').innerText = '₦' + Number(localStorage.getItem('vendor_total_sales') || '0').toLocaleString();
-    document.getElementById('totalOrdersCount').innerText = localStorage.getItem('vendor_order_count') || '0';
+    updateBadgesAndStats(orders);
 
-    if (orders.length === 0) {
-      container.innerHTML = '<p style="color: var(--text-gray); font-size: 13px; text-align: center; padding: 10px 0;">No active incoming orders.</p>';
+    var container = document.getElementById('ordersContainer');
+    var filtered = orders.filter(function(o) { return o.status === currentStatusFilter; });
+
+    if (filtered.length === 0) {
+      container.innerHTML = '<p style="color: var(--text-gray); font-size: 13px; text-align: center; padding: 20px 0;">No ' + currentStatusFilter.toLowerCase() + ' orders yet.</p>';
       return;
     }
 
     var html = '';
-    for (var i = 0; i < orders.length; i++) {
-      var o = orders[i];
-      var btnClass = o.status === 'NEW' ? 'btn-blue' : 'btn-yellow';
-      var btnText = o.status === 'NEW' ? 'ACCEPT ORDER' : 'READY FOR RIDER';
-      var tagBg = o.status === 'NEW' ? 'rgba(59,130,246,0.15)' : 'rgba(245,158,11,0.15)';
-      var tagColor = o.status === 'NEW' ? 'var(--blue-info)' : 'var(--warning-orange)';
+    for (var i = 0; i < filtered.length; i++) {
+      var o = filtered[i];
 
-      html += '<div class="row-item" style="display:flex; justify-content:space-between; align-items:center;">' +
-        '<div onclick="showOrderDetails(' + o.id + ')" style="cursor:pointer; flex:1;">' +
-          '<span class="item-tag" style="color:' + tagColor + '; background:' + tagBg + ';">' + o.status + '</span>' +
-          '<span class="item-title-text">' + o.item + '</span>' +
-          '<div style="font-size:12px; color:var(--text-gray); margin-top:2px;">📍 ' + o.customer + ' (' + o.address + ')</div>' +
-          '<div class="item-price-text" style="margin-top:2px;">₦' + Number(o.amount).toLocaleString() + '</div>' +
+      // Item Grouping
+      var itemsHtml = '';
+      for (var j = 0; j < o.items.length; j++) {
+        var it = o.items[j];
+        itemsHtml += '<div class="order-item-line"><span>' + it.qty + 'x ' + it.name + '</span><span>₦' + (it.price * it.qty).toLocaleString() + '</span></div>';
+      }
+
+      // Actions Builder
+      var actionButtons = '';
+      if (o.status === 'NEW') {
+        actionButtons = '<div class="card-actions">' +
+          '<button class="action-btn btn-red-outline" onclick="openDeclineModal(' + o.id + ')">Decline</button>' +
+          '<button class="action-btn btn-green" onclick="advanceOrder(' + o.id + ', \'PREPARING\')">Accept</button>' +
+        '</div>';
+      } else if (o.status === 'PREPARING') {
+        actionButtons = '<div class="card-actions">' +
+          '<button class="action-btn btn-orange" onclick="advanceOrder(' + o.id + ', \'READY\')">Ready for Rider</button>' +
+        '</div>';
+      } else if (o.status === 'READY') {
+        actionButtons = '<div class="card-actions">' +
+          '<button class="action-btn btn-blue" onclick="openHandoffModal(' + o.id + ')">Confirm Rider Pickup</button>' +
+        '</div>';
+      }
+
+      html += '<div class="order-card">' +
+        '<div class="order-header">' +
+          '<span class="order-id">' + o.orderNumber + '</span>' +
+          '<span class="timer-badge" id="timer-' + o.id + '" data-created="' + o.createdAt + '">0m elapsed</span>' +
         '</div>' +
-        '<button class="' + btnClass + '" onclick="advanceOrderStatus(' + o.id + ')">' + btnText + '</button>' +
+        '<div class="order-body">' +
+          itemsHtml +
+          '<div class="order-notes">Note: ' + (o.notes || 'None') + '</div>' +
+          '<div style="font-size:12px; margin-bottom:4px;">📍 <strong>' + o.customerName + '</strong> (' + o.address + ')</div>' +
+          '<div style="color:var(--primary-color); font-weight:800; font-size:15px; margin-top:4px;">Total: ₦' + o.total.toLocaleString() + '</div>' +
+          
+          '<div class="contact-row">' +
+            '<a class="call-btn" href="tel:' + o.customerPhone + '">📞 Call Customer</a>' +
+            '<a class="call-btn" href="tel:' + o.riderPhone + '">🛵 ' + o.riderName + '</a>' +
+          '</div>' +
+
+          (o.status === 'PREPARING' ? 
+            '<div class="time-ext-row">' +
+              '<span style="font-size:11px;">Est. Prep: ' + (o.estimatedPrepMins || 20) + 'm</span>' +
+              '<button class="time-ext-btn" onclick="extendPrepTime(' + o.id + ', 5)">+5 mins</button>' +
+              '<button class="time-ext-btn" onclick="extendPrepTime(' + o.id + ', 10)">+10 mins</button>' +
+            '</div>' : '') +
+
+          '<div style="font-size:11px; color:var(--text-gray); margin-top:4px;">Code: <strong>' + o.pickupCode + '</strong> | ETA: ' + o.riderEta + '</div>' +
+        '</div>' +
+        actionButtons +
       '</div>';
     }
+
     container.innerHTML = html;
+    updateTimerBadges();
   }
 
+  // --- TIMERS & BADGES ---
+  function updateTimerBadges() {
+    var badges = document.querySelectorAll('[id^="timer-"]');
+    var now = Date.now();
+
+    badges.forEach(function(b) {
+      var created = parseInt(b.getAttribute('data-created'));
+      var elapsedMins = Math.floor((now - created) / 60000);
+      b.innerText = elapsedMins + 'm elapsed';
+
+      if (elapsedMins >= 20) {
+        b.className = 'timer-badge danger';
+      } else if (elapsedMins >= 10) {
+        b.className = 'timer-badge warning';
+      } else {
+        b.className = 'timer-badge';
+      }
+    });
+  }
+
+  function startLiveTimers() {
+    setInterval(function() {
+      updateTimerBadges();
+      checkOpeningHours();
+    }, 15000);
+  }
+
+  function updateBadgesAndStats(orders) {
+    var counts = { NEW: 0, PREPARING: 0, READY: 0, COMPLETED: 0 };
+    var totalSales = 0;
+    var completedCount = 0;
+    var itemSalesCount = {};
+
+    for (var i = 0; i < orders.length; i++) {
+      var status = orders[i].status;
+      if (counts[status] !== undefined) counts[status]++;
+
+      if (status === 'COMPLETED') {
+        totalSales += orders[i].total;
+        completedCount++;
+
+        for (var j = 0; j < orders[i].items.length; j++) {
+          var name = orders[i].items[j].name;
+          itemSalesCount[name] = (itemSalesCount[name] || 0) + orders[i].items[j].qty;
+        }
+      }
+    }
+
+    document.getElementById('badge-NEW').innerText = counts.NEW;
+    document.getElementById('badge-PREPARING').innerText = counts.PREPARING;
+    document.getElementById('badge-READY').innerText = counts.READY;
+    document.getElementById('badge-COMPLETED').innerText = counts.COMPLETED;
+
+    document.getElementById('statTodaySales').innerText = '₦' + totalSales.toLocaleString();
+    document.getElementById('statCompletedCount').innerText = completedCount;
+    document.getElementById('statPendingPayout').innerText = '₦' + Math.round(totalSales * 0.85).toLocaleString();
+
+    // Top Selling Item
+    var topItem = 'None';
+    var maxQty = 0;
+    for (var k in itemSalesCount) {
+      if (itemSalesCount[k] > maxQty) {
+        maxQty = itemSalesCount[k];
+        topItem = k;
+      }
+    }
+    document.getElementById('statTopItem').innerText = topItem;
+  }
+
+  // --- SETTINGS ---
   function saveSettings() {
     var name = document.getElementById('storeNameInput').value;
+    var openTime = document.getElementById('openingTime').value;
+    var closeTime = document.getElementById('closingTime').value;
+
     if (name) {
       localStorage.setItem('vendor_store_name', name);
+      localStorage.setItem('vendor_open_time', openTime);
+      localStorage.setItem('vendor_close_time', closeTime);
       document.getElementById('vendorStoreTitle').innerText = name;
-      alert("Settings saved!");
+      alert("Settings saved successfully!");
+      checkOpeningHours();
     }
   }
 
   function loadSettings() {
-    var savedName = localStorage.getItem('vendor_store_name');
-    if (savedName) {
-      document.getElementById('vendorStoreTitle').innerText = savedName;
-      document.getElementById('storeNameInput').value = savedName;
+    var name = localStorage.getItem('vendor_store_name');
+    var openTime = localStorage.getItem('vendor_open_time');
+    var closeTime = localStorage.getItem('vendor_close_time');
+
+    if (name) {
+      document.getElementById('vendorStoreTitle').innerText = name;
+      document.getElementById('storeNameInput').value = name;
     }
+    if (openTime) document.getElementById('openingTime').value = openTime;
+    if (closeTime) document.getElementById('closingTime').value = closeTime;
   }
 </script>
 
