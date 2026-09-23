@@ -33,19 +33,29 @@
     /* Form Fields */
     .input-group { margin-bottom: 14px; }
     .input-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
-    .input-group input { width: 100%; padding: 12px; background: #0F172A; border: 1px solid var(--border); color: var(--text); border-radius: 8px; font-size: 14px; outline: none; }
-    .input-group input:focus { border-color: var(--primary); }
+    .input-group input, .input-group select { width: 100%; padding: 12px; background: #0F172A; border: 1px solid var(--border); color: var(--text); border-radius: 8px; font-size: 14px; outline: none; }
+    .input-group input:focus, .input-group select:focus { border-color: var(--primary); }
 
     /* Buttons */
     .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; }
     .btn-primary { background-color: var(--primary); color: white; }
-    .btn-danger { background-color: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 6px 10px; font-size: 12px; border-radius: 6px; width: auto; }
+    .btn-danger { background-color: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; font-size: 11px; border-radius: 6px; }
 
     /* Menu Display List */
     .menu-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
     .menu-item:last-child { border-bottom: none; }
     .item-name { font-weight: 600; font-size: 15px; display: block; }
     .item-price { color: var(--primary); font-weight: 700; font-size: 14px; margin-top: 2px; }
+    .item-cat { font-size: 11px; color: var(--text-muted); background: #0F172A; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
+
+    /* Availability Toggle Switch */
+    .toggle-wrap { display: flex; align-items: center; gap: 8px; margin-right: 8px; }
+    .switch { position: relative; display: inline-block; width: 36px; height: 20px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #475569; transition: .3s; border-radius: 20px; }
+    .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+    input:checked + .slider { background-color: var(--primary); }
+    input:checked + .slider:before { transform: translateX(16px); }
   </style>
 </head>
 <body>
@@ -64,6 +74,16 @@
   <!-- Form: Add Menu Item -->
   <div class="card">
     <div class="section-title">Add New Dish / Food Item</div>
+
+    <div class="input-group">
+      <label for="itemCategory">Category</label>
+      <select id="itemCategory">
+        <option value="Main Dishes">Main Dishes (Rice, Swallows)</option>
+        <option value="Proteins">Proteins (Chicken, Meat, Fish)</option>
+        <option value="Sides & Extra">Sides & Extras (Plantain, Chips)</option>
+        <option value="Drinks & Beverages">Drinks & Beverages</option>
+      </select>
+    </div>
     
     <div class="input-group">
       <label for="itemName">Food / Dish Name</label>
@@ -91,7 +111,6 @@
 </div>
 
 <script>
-  // Load saved menu items when app opens
   document.addEventListener('DOMContentLoaded', loadMenu);
 
   function getMenu() {
@@ -99,9 +118,11 @@
   }
 
   function addMenuItem() {
+    const categoryInput = document.getElementById('itemCategory');
     const nameInput = document.getElementById('itemName');
     const priceInput = document.getElementById('itemPrice');
 
+    const category = categoryInput.value;
     const name = nameInput.value.trim();
     const price = priceInput.value.trim();
 
@@ -113,19 +134,28 @@
     const currentMenu = getMenu();
     currentMenu.push({
       id: Date.now(),
+      category: category,
       name: name,
-      price: price
+      price: price,
+      inStock: true
     });
 
-    // Save locally
     localStorage.setItem('vendor_store_menu', JSON.stringify(currentMenu));
 
-    // Clear form inputs
     nameInput.value = '';
     priceInput.value = '';
 
-    // Refresh list display
     loadMenu();
+  }
+
+  function toggleStock(id) {
+    const currentMenu = getMenu();
+    const item = currentMenu.find(i => i.id === id);
+    if (item) {
+      item.inStock = !item.inStock;
+      localStorage.setItem('vendor_store_menu', JSON.stringify(currentMenu));
+      loadMenu();
+    }
   }
 
   function deleteItem(id) {
@@ -148,12 +178,19 @@
     }
 
     container.innerHTML = menu.map(item => `
-      <div class="menu-item">
+      <div class="menu-item" style="opacity: ${item.inStock ? '1' : '0.5'};">
         <div>
-          <span class="item-name">${item.name}</span>
+          <span class="item-cat">${item.category || 'General'}</span>
+          <span class="item-name">${item.name} ${!item.inStock ? '<small style="color:var(--danger);">(Sold Out)</small>' : ''}</span>
           <div class="item-price">₦${Number(item.price).toLocaleString()}</div>
         </div>
-        <button class="btn btn-danger" onclick="deleteItem(${item.id})">Remove</button>
+        <div style="display:flex; align-items:center;">
+          <label class="switch" title="Toggle Stock Availability">
+            <input type="checkbox" ${item.inStock ? 'checked' : ''} onchange="toggleStock(${item.id})">
+            <span class="slider"></span>
+          </label>
+          <button class="btn btn-danger" onclick="deleteItem(${item.id})" style="margin-left:10px;">Delete</button>
+        </div>
       </div>
     `).join('');
   }
