@@ -4,423 +4,150 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Vendor Partner Portal</title>
-
-  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <style>
-    :root {
-      --primary: #00A859;
-      --primary-dark: #008546;
-      --bg: #0F172A;
-      --card-bg: #1E293B;
-      --text: #F8FAFC;
-      --text-muted: #94A3B8;
-      --border: #334155;
-      --danger: #EF4444;
-      --warning: #F59E0B;
-    }
-
-    * { 
-      box-sizing: border-box; 
-      margin: 0; 
-      padding: 0; 
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body { 
-      background-color: var(--bg); 
-      color: var(--text); 
-      display: flex; 
-      justify-content: center; 
-      min-height: 100vh; 
-      padding-bottom: 80px; 
-    }
-
-    .app-container { 
-      width: 100%; 
-      max-width: 480px; 
-      background-color: var(--bg); 
-      display: flex; 
-      flex-direction: column; 
-      min-height: 100vh; 
-      position: relative;
-    }
-
-    /* Top Bar */
-    .top-bar { 
-      background: var(--card-bg); 
-      padding: 16px; 
-      display: flex; 
-      align-items: center; 
-      justify-content: space-between; 
-      border-bottom: 1px solid var(--border); 
-      position: sticky; 
-      top: 0; 
-      z-index: 100; 
-    }
-
-    .vendor-info { display: flex; align-items: center; gap: 12px; }
-    .avatar { 
-      width: 40px; 
-      height: 40px; 
-      border-radius: 8px; 
-      background-color: #052E16; 
-      color: var(--primary); 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      font-weight: bold; 
-      font-size: 18px;
-    }
-
-    .status-toggle { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; }
-    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider { 
-      position: absolute; 
-      cursor: pointer; 
-      top: 0; left: 0; right: 0; bottom: 0; 
-      background-color: #475569; 
-      transition: .3s; 
-      border-radius: 24px; 
-    }
-    .slider:before { 
-      position: absolute; 
-      content: ""; 
-      height: 18px; 
-      width: 18px; 
-      left: 3px; 
-      bottom: 3px; 
-      background-color: white; 
-      transition: .3s; 
-      border-radius: 50%; 
-    }
-    input:checked + .slider { background-color: var(--primary); }
-    input:checked + .slider:before { transform: translateX(20px); }
-
-    /* Main Content Area */
-    .main-content { padding: 16px; flex: 1; }
-    .section-title { 
-      font-size: 13px; 
-      font-weight: 700; 
-      margin-bottom: 12px; 
-      color: var(--text-muted); 
-      text-transform: uppercase; 
-      letter-spacing: 0.5px; 
-    }
-
-    /* Tab Displays */
+    :root { --primary: #00A859; --bg: #0F172A; --card-bg: #1E293B; --text: #F8FAFC; --text-muted: #94A3B8; --border: #334155; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; padding-bottom: 80px; }
+    .app-container { width: 100%; max-width: 480px; min-height: 100vh; position: relative; }
+    .top-bar { background: var(--card-bg); padding: 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+    .main-content { padding: 16px; }
+    .section-title { font-size: 13px; font-weight: 700; margin-bottom: 12px; color: var(--text-muted); text-transform: uppercase; }
     .tab-section { display: none; }
     .tab-section.active { display: block; }
-
-    /* Performance Metrics Grid */
-    .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-    .metric-card { 
-      background: var(--card-bg); 
-      border-radius: 12px; 
-      padding: 16px; 
-      border: 1px solid var(--border); 
-      text-align: center; 
-    }
-    .metric-value { font-size: 22px; font-weight: 800; color: var(--primary); margin-top: 4px; }
-    .metric-label { font-size: 12px; color: var(--text-muted); }
-
-    /* Wallet / Revenue Banner */
-    .stats-card { 
-      background: var(--card-bg); 
-      border-radius: 12px; 
-      padding: 20px; 
-      border: 1px solid var(--border); 
-      margin-bottom: 16px; 
-      text-align: center; 
-    }
-    .stats-amount { font-size: 32px; font-weight: 800; color: var(--primary); margin: 8px 0; }
-
-    /* Order Cards */
-    .order-card { 
-      background: var(--card-bg); 
-      border-radius: 12px; 
-      padding: 16px; 
-      border: 1px solid var(--border); 
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2); 
-      margin-bottom: 12px; 
-    }
-    .order-header { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      padding-bottom: 10px; 
-      border-bottom: 1px dashed var(--border); 
-    }
-    .order-id { font-size: 15px; font-weight: 700; }
-    .order-total { font-size: 16px; font-weight: 800; color: var(--primary); }
-
-    .item-list { margin: 12px 0; display: flex; flex-direction: column; gap: 6px; }
-    .item-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text); }
-
-    /* Action Buttons */
-    .btn-group { display: flex; gap: 8px; margin-top: 12px; }
-    .btn { 
-      width: 100%; 
-      padding: 12px; 
-      border-radius: 8px; 
-      border: none; 
-      font-size: 14px; 
-      font-weight: 700; 
-      cursor: pointer; 
-      transition: background 0.2s; 
-    }
+    .card { background: var(--card-bg); border-radius: 12px; padding: 16px; border: 1px solid var(--border); margin-bottom: 12px; }
+    .btn { width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; }
     .btn-primary { background-color: var(--primary); color: white; }
-    .btn-outline { background-color: transparent; border: 1px solid var(--border); color: var(--text); }
-    .btn-danger { background-color: var(--danger); color: white; }
-
-    /* Menu Item Item List */
-    .menu-item-card { 
-      background: var(--card-bg); 
-      border-radius: 10px; 
-      padding: 14px; 
-      border: 1px solid var(--border); 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      margin-bottom: 10px; 
-    }
-
-    .empty-state { text-align: center; padding: 50px 20px; color: var(--text-muted); }
-
-    /* Bottom Navigation Bar */
-    .bottom-nav { 
-      position: fixed; 
-      bottom: 0; 
-      left: 50%; 
-      transform: translateX(-50%); 
-      width: 100%; 
-      max-width: 480px; 
-      background: var(--card-bg); 
-      border-top: 1px solid var(--border); 
-      display: flex; 
-      justify-content: space-around; 
-      padding: 12px 0; 
-      z-index: 9999; 
-      pointer-events: auto;
-    }
-    .nav-item { 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      color: var(--text-muted); 
-      font-size: 11px; 
-      cursor: pointer; 
-      user-select: none;
-      width: 25%;
-    }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .input-group { margin-bottom: 12px; }
+    .input-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+    .input-group input { width: 100%; padding: 10px; background: #0F172A; border: 1px solid var(--border); color: var(--text); border-radius: 6px; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center; }
+    .modal-content { background: var(--card-bg); padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; border: 1px solid var(--border); }
+    .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--card-bg); border-top: 1px solid var(--border); display: flex; padding: 12px 0; z-index: 9999; }
+    .nav-item { flex: 1; text-align: center; color: var(--text-muted); font-size: 11px; cursor: pointer; }
     .nav-item.active { color: var(--primary); font-weight: bold; }
-    .nav-icon { font-size: 18px; margin-bottom: 3px; }
   </style>
 </head>
 <body>
 
 <div class="app-container">
-  <!-- Top Header Bar -->
   <div class="top-bar">
-    <div class="vendor-info">
-      <div class="avatar">🏪</div>
-      <div>
-        <div style="font-weight:700; font-size:15px;">Ikorodu Kitchen</div>
-        <div style="font-size:12px; color:var(--text-muted);">Sabo Branch</div>
-      </div>
-    </div>
-    <div class="status-toggle">
-      <span id="status-text" style="color:var(--primary);">ACCEPTING ORDERS</span>
-      <label class="switch">
-        <input type="checkbox" id="online-switch" checked onchange="toggleStatus(this)">
-        <span class="slider"></span>
-      </label>
-    </div>
+    <div style="font-weight:700;">🏪 Ikorodu Kitchen</div>
+    <span style="color:var(--primary); font-size:12px; font-weight:bold;">ONLINE</span>
   </div>
 
   <div class="main-content">
-    
-    <!-- Tab 1: Live Incoming Orders -->
+    <!-- Orders Tab -->
     <div id="tab-orders" class="tab-section active">
-      <div class="section-title">New Incoming Orders</div>
-      
-      <!-- Live Order Example -->
-      <div class="order-card">
-        <div class="order-header">
-          <div>
-            <div class="order-id">Order #IKD-8492</div>
-            <div style="font-size:11px; color:var(--text-muted);">Customer: Hawa B. • 2 mins ago</div>
-          </div>
-          <div class="order-total">₦3,500</div>
-        </div>
-
-        <div class="item-list">
-          <div class="item-row">
-            <span>2x Jollof Rice + Fried Chicken</span>
-            <strong>₦2,800</strong>
-          </div>
-          <div class="item-row">
-            <span>1x Plantain Side</span>
-            <strong>₦700</strong>
-          </div>
-        </div>
-
-        <div style="font-size:12px; color:var(--warning); background:#1E1B4B; padding:8px 10px; border-radius:6px; margin-bottom:10px;">
-          📍 Delivery to: Agric Bus Stop (Rider assign pending)
-        </div>
-
-        <div class="btn-group">
-          <button class="btn btn-primary" onclick="acceptOrder(this)">ACCEPT ORDER</button>
-          <button class="btn btn-outline" onclick="alert('Order rejected')">DECLINE</button>
-        </div>
-      </div>
-
+      <div class="section-title">Live Orders</div>
+      <button class="btn btn-primary" onclick="createTestOrder()" style="margin-bottom:12px;">+ DISPATCH NEW TEST ORDER TO RIDER APP</button>
+      <div id="vendor-orders-list">Loading orders...</div>
     </div>
 
-    <!-- Tab 2: Menu Management -->
+    <!-- Menu Tab -->
     <div id="tab-menu" class="tab-section">
-      <div class="section-title">Manage Store Menu</div>
-
-      <div class="menu-item-card">
-        <div>
-          <strong style="display:block; font-size:14px;">Jollof Rice & Chicken</strong>
-          <span style="font-size:12px; color:var(--primary); font-weight:700;">₦1,400</span>
-        </div>
-        <label class="switch">
-          <input type="checkbox" checked>
-          <span class="slider"></span>
-        </label>
-      </div>
-
-      <div class="menu-item-card">
-        <div>
-          <strong style="display:block; font-size:14px;">Fried Rice & Fish</strong>
-          <span style="font-size:12px; color:var(--primary); font-weight:700;">₦1,600</span>
-        </div>
-        <label class="switch">
-          <input type="checkbox" checked>
-          <span class="slider"></span>
-        </label>
-      </div>
-
-      <div class="menu-item-card">
-        <div>
-          <strong style="display:block; font-size:14px;">Grilled Turkey (Extra)</strong>
-          <span style="font-size:12px; color:var(--primary); font-weight:700;">₦2,200</span>
-        </div>
-        <label class="switch">
-          <input type="checkbox">
-          <span class="slider"></span>
-        </label>
-      </div>
-
-      <button class="btn btn-outline" style="margin-top:10px;" onclick="alert('Opening menu creation form...')">+ ADD NEW MENU ITEM</button>
+      <div class="section-title">Menu Management</div>
+      <button class="btn btn-outline" onclick="openMenuModal()" style="margin-bottom:12px;">+ ADD NEW MENU ITEM</button>
+      <div id="vendor-menu-list">Loading menu...</div>
     </div>
-
-    <!-- Tab 3: Sales Revenue & Earnings -->
-    <div id="tab-earnings" class="tab-section">
-      <div class="section-title">Sales Overview</div>
-
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-label">Orders Today</div>
-          <div class="metric-value">28</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Pending Payout</div>
-          <div class="metric-value">₦42,500</div>
-        </div>
-      </div>
-
-      <div class="stats-card">
-        <div style="font-size: 13px; color: var(--text-muted);">Total Weekly Revenue</div>
-        <div class="stats-amount">₦218,000</div>
-        <button class="btn btn-primary" onclick="alert('Withdrawal request initiated!')">WITHDRAW TO BANK</button>
-      </div>
-    </div>
-
-    <!-- Tab 4: Store Settings & Profile -->
-    <div id="tab-settings" class="tab-section">
-      <div class="section-title">Store Profile</div>
-      <div class="order-card">
-        <div style="margin-bottom:12px;"><strong>Vendor Name:</strong> Ikorodu Kitchen</div>
-        <div style="margin-bottom:12px;"><strong>Branch Address:</strong> Sabo Roundabout, Ikorodu</div>
-        <div style="margin-bottom:12px;"><strong>Phone / WhatsApp:</strong> +234 812 345 6789</div>
-        <div><strong>Status:</strong> <span style="color:var(--primary);">Verified Partner Store</span></div>
-      </div>
-    </div>
-
   </div>
 
-  <!-- Bottom Navigation Bar -->
+  <!-- Add Menu Modal -->
+  <div id="menu-modal" class="modal">
+    <div class="modal-content">
+      <h3 style="margin-bottom:16px;">Add Menu Item</h3>
+      <div class="input-group">
+        <label>Item Name</label>
+        <input type="text" id="menu-name-input" placeholder="e.g. Jollof Rice & Chicken">
+      </div>
+      <div class="input-group">
+        <label>Price (₦)</label>
+        <input type="number" id="menu-price-input" placeholder="e.g. 2500">
+      </div>
+      <button class="btn btn-primary" onclick="saveMenuItem()" style="margin-bottom:8px;">SAVE ITEM</button>
+      <button class="btn btn-outline" onclick="closeMenuModal()">CANCEL</button>
+    </div>
+  </div>
+
+  <!-- Navigation -->
   <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('orders', this)">
-      <div class="nav-icon">📦</div>
-      <span>Orders</span>
-    </div>
-    <div class="nav-item" onclick="switchTab('menu', this)">
-      <div class="nav-icon">🍲</div>
-      <span>Menu</span>
-    </div>
-    <div class="nav-item" onclick="switchTab('earnings', this)">
-      <div class="nav-icon">💰</div>
-      <span>Earnings</span>
-    </div>
-    <div class="nav-item" onclick="switchTab('settings', this)">
-      <div class="nav-icon">⚙️</div>
-      <span>Settings</span>
-    </div>
+    <div class="nav-item active" onclick="switchTab('orders', this)">📦 Orders</div>
+    <div class="nav-item" onclick="switchTab('menu', this)">🍲 Menu</div>
   </div>
 </div>
 
 <script>
-  // Global Tab Switcher Function
-  window.switchTab = function(tabName, element) {
-    try {
-      const sections = document.querySelectorAll('.tab-section');
-      sections.forEach(el => el.classList.remove('active'));
+  // ⚠️ REPLACE WITH YOUR ACTUAL SUPABASE URL AND ANON KEY
+  const SUPABASE_URL = "https://YOUR_SUPABASE_URL.supabase.co";
+  const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY";
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-      const navItems = document.querySelectorAll('.nav-item');
-      navItems.forEach(el => el.classList.remove('active'));
-
-      const targetTab = document.getElementById('tab-' + tabName);
-      if (targetTab) {
-        targetTab.classList.add('active');
-      }
-
-      if (element) {
-        element.classList.add('active');
-      }
-    } catch (err) {
-      console.error("Tab Navigation Error:", err);
-    }
+  window.switchTab = function(tabName, el) {
+    document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('tab-' + tabName).classList.add('active');
+    el.classList.add('active');
   };
 
-  // Toggle Store Acceptance Status
-  window.toggleStatus = function(checkbox) {
-    const statusText = document.getElementById('status-text');
-    if (!statusText) return;
+  function openMenuModal() { document.getElementById('menu-modal').style.display = 'flex'; }
+  function closeMenuModal() { document.getElementById('menu-modal').style.display = 'none'; }
 
-    if (checkbox.checked) {
-      statusText.innerText = "ACCEPTING ORDERS";
-      statusText.style.color = "var(--primary)";
+  // Save new item to Supabase
+  async function saveMenuItem() {
+    const name = document.getElementById('menu-name-input').value;
+    const price = document.getElementById('menu-price-input').value;
+    if (!name || !price) return alert("Please fill in both fields");
+
+    const { error } = await supabase.from('menu_items').insert([
+      { vendor_name: 'Ikorodu Kitchen', item_name: name, price: parseFloat(price) }
+    ]);
+
+    if (error) {
+      alert("Error adding item: " + error.message);
     } else {
-      statusText.innerText = "STORE CLOSED";
-      statusText.style.color = "var(--danger)";
+      alert("Menu item added successfully!");
+      closeMenuModal();
+      fetchMenuItems();
     }
-  };
+  }
 
-  // Accept Order Function
-  window.acceptOrder = function(btn) {
-    btn.innerText = "PREPARING MEAL...";
-    btn.style.backgroundColor = "var(--warning)";
-    btn.disabled = true;
-    alert("Order accepted! Dispatching closest rider to your store.");
-  };
+  // Load menu items from Supabase
+  async function fetchMenuItems() {
+    const container = document.getElementById('vendor-menu-list');
+    const { data, error } = await supabase.from('menu_items').select('*').order('created_at', { ascending: false });
+    if (error || !data.length) {
+      container.innerHTML = "<p style='color:var(--text-muted);'>No items in menu yet.</p>";
+      return;
+    }
+    container.innerHTML = data.map(item => `
+      <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <strong>${item.item_name}</strong>
+          <div style="color:var(--primary); font-weight:bold;">₦${item.price}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Dispatch live order to database so rider app picks it up
+  async function createTestOrder() {
+    const { error } = await supabase.from('orders').insert([
+      {
+        vendor_name: 'Ikorodu Kitchen (Sabo)',
+        customer_name: 'Hawa B.',
+        delivery_address: 'Agric Bus Stop',
+        items: [{ name: 'Jollof Rice', qty: 2 }],
+        total_amount: 3500,
+        status: 'pending'
+      }
+    ]);
+
+    if (error) alert("Order dispatch failed: " + error.message);
+    else alert("Order created! Check the Rider App now.");
+  }
+
+  fetchMenuItems();
 </script>
-
 </body>
 </html>
