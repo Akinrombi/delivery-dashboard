@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Vendor Control Dashboard</title>
+  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root {
@@ -65,6 +67,13 @@
     /* Modal Backdrop */
     .modal-backdrop { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:100; justify-content:center; align-items:center; padding:16px; }
     .modal-card { background:var(--card-bg-dark); border:1px solid var(--border-dark); border-radius:12px; width:100%; max-width:400px; padding:20px; }
+
+    /* Printable Receipt Hide */
+    @media print {
+      body * { visibility: hidden; }
+      #printableTicket, #printableTicket * { visibility: visible; }
+      #printableTicket { position: absolute; left: 0; top: 0; width: 100%; color: black; background: white; padding: 20px; }
+    }
   </style>
 </head>
 <body>
@@ -150,7 +159,7 @@
   <!-- SETTINGS VIEW -->
   <div id="view-settings" style="display: none;">
     <div class="content-box">
-      <div class="box-title">Store Profile & Settings</div>
+      <div class="box-title">Store Operating Details</div>
       
       <div class="form-group">
         <label for="storeNameInput">Store Name</label>
@@ -160,6 +169,17 @@
       <div class="form-group">
         <label for="storePhoneInput">Store Contact Phone</label>
         <input type="tel" id="storePhoneInput" placeholder="08012345678">
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <div class="form-group">
+          <label for="openingTime">Opening Hour</label>
+          <input type="time" id="openingTime" value="08:00">
+        </div>
+        <div class="form-group">
+          <label for="closingTime">Closing Hour</label>
+          <input type="time" id="closingTime" value="22:00">
+        </div>
       </div>
 
       <div class="form-group">
@@ -182,17 +202,33 @@
   <div class="modal-card">
     <div class="box-title" style="margin-bottom:8px;">Order Details</div>
     <div id="modalContent" style="font-size:14px; margin-bottom:16px; color:var(--text-gray);"></div>
-    <button class="action-btn btn-green" onclick="closeModal()">Close</button>
+    <div style="display:flex; gap:8px;">
+      <button class="action-btn btn-blue" onclick="printReceipt()" style="padding:10px;">Print Kitchen Slip</button>
+      <button class="action-btn btn-green" onclick="closeModal()" style="padding:10px;">Close</button>
+    </div>
   </div>
 </div>
 
+<div id="printableTicket" style="display:none;"></div>
+
 <script>
+  // --- CONFIGURATION FOR SUPABASE ---
+  const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+  let supabase = null;
+
+  if (SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+
   let isStoreOpen = true;
+  let activeModalOrder = null;
 
   document.addEventListener('DOMContentLoaded', () => {
     loadMenu();
     loadOrders();
     loadSettings();
+    initRealtimeListener();
   });
 
   function showSection(sectionId, btnId) {
@@ -219,6 +255,18 @@
       btn.className = 'badge-status closed-state';
       btn.innerText = 'STORE CLOSED';
     }
+  }
+
+  // --- REALTIME BACKEND LISTENER ---
+  function initRealtimeListener() {
+    if (!supabase) return;
+    supabase
+      .channel('public:orders')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
+        playAlertSound();
+        loadOrders();
+      })
+      .subscribe();
   }
 
   // --- MENU FUNCTIONS ---
@@ -268,7 +316,7 @@
       const gain = audioCtx.createGain();
       osc.connect(gain);
       gain.connect(audioCtx.destination);
-      osc.frequency.value = 587.33; // D5 pitch
+      osc.frequency.value = 587.33;
       osc.start();
       setTimeout(() => osc.stop(), 300);
     } catch(e) {}
@@ -281,9 +329,10 @@
       customer: 'Hawa B.',
       address: 'Agric Bus Stop, Ikorodu',
       item: 'Jollof Rice & Fried Chicken x1',
-      notes: 'Please add extra pepper sauce.',
+      notes: 'Extra pepper sauce.',
       amount: 3500,
-      status: 'NEW'
+      status: 'NEW',
+      rider: 'David A. (Chowdeck Dispatch)'
     };
     orders.push(demo);
     localStorage.setItem('vendor_active_orders', JSON.stringify(orders));
@@ -298,7 +347,6 @@
       if (order.status === 'NEW') {
         order.status = 'PREPARING';
       } else if (order.status === 'PREPARING') {
-        // Complete order and move to earnings
         let totalSales = parseFloat(localStorage.getItem('vendor_total_sales') || '0') + order.amount;
         let count = parseInt(localStorage.getItem('vendor_order_count') || '0') + 1;
         localStorage.setItem('vendor_total_sales', totalSales);
@@ -313,20 +361,38 @@
 
   function showOrderDetails(id) {
     const orders = getOrders();
-    const order = orders.find(o => o.id === id);
-    if (order) {
+    activeModalOrder = orders.find(o => o.id === id);
+    if (activeModalOrder) {
       document.getElementById('modalContent').innerHTML = `
-        <p><strong>Customer:</strong> ${order.customer}</p>
-        <p><strong>Address:</strong> ${order.address}</p>
-        <p style="margin-top:8px;"><strong>Item:</strong> ${order.item}</p>
-        <p><strong>Notes:</strong> <em>${order.notes || 'None'}</em></p>
-        <p style="margin-top:8px; color:var(--primary-color); font-weight:bold; font-size:16px;">Total: ₦${Number(order.amount).toLocaleString()}</p>
+        <p><strong>Customer:</strong> ${activeModalOrder.customer}</p>
+        <p><strong>Address:</strong> ${activeModalOrder.address}</p>
+        <p style="margin-top:6px;"><strong>Items:</strong> ${activeModalOrder.item}</p>
+        <p><strong>Notes:</strong> <em>${activeModalOrder.notes || 'None'}</em></p>
+        <p style="margin-top:6px;"><strong>Assigned Rider:</strong> ${activeModalOrder.rider || 'Searching...'}</p>
+        <p style="margin-top:8px; color:var(--primary-color); font-weight:bold; font-size:16px;">Total: ₦${Number(activeModalOrder.amount).toLocaleString()}</p>
       `;
       document.getElementById('orderModal').style.display = 'flex';
     }
   }
 
   function closeModal() { document.getElementById('orderModal').style.display = 'none'; }
+
+  function printReceipt() {
+    if (!activeModalOrder) return;
+    const ticket = document.getElementById('printableTicket');
+    ticket.style.display = 'block';
+    ticket.innerHTML = `
+      <h2>${localStorage.getItem('vendor_store_name') || 'Vendor Store'}</h2>
+      <hr>
+      <p><strong>Order ID:</strong> #${activeModalOrder.id}</p>
+      <p><strong>Customer:</strong> ${activeModalOrder.customer}</p>
+      <p><strong>Items:</strong> ${activeModalOrder.item}</p>
+      <p><strong>Notes:</strong> ${activeModalOrder.notes || 'None'}</p>
+      <p><strong>Total Amount:</strong> ₦${Number(activeModalOrder.amount).toLocaleString()}</p>
+    `;
+    window.print();
+    ticket.style.display = 'none';
+  }
 
   function loadOrders() {
     const orders = getOrders();
@@ -366,7 +432,7 @@
     if (name) {
       localStorage.setItem('vendor_store_name', name);
       document.getElementById('vendorStoreTitle').innerText = name;
-      alert("Store settings saved!");
+      alert("Operating details saved!");
     }
   }
 
