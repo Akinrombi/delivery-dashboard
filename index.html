@@ -334,6 +334,21 @@
     });
     if (r.error) { alert(r.error.message); return; }
 
+    // FIXED: Save the vendor to the database so the WhatsApp bot can see them!
+    if (r.data.user) {
+      const { error: dbError } = await sb.from('vendors').insert({
+        owner_id: r.data.user.id,
+        store_name: store,
+        phone: phone,
+        address: address,
+        is_open: false // Defaults to closed until they log in and open it
+      });
+      if (dbError) {
+        alert('Account created but failed to create store profile: ' + dbError.message);
+        return;
+      }
+    }
+
     if (r.data.session) {
       initDashboard(r.data.user);
     } else {
