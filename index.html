@@ -1,904 +1,1182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>QuickEats Vendor Dashboard</title>
+<title>QuickEats Vendor Dashboard</title>
 
-  <!-- SUPABASE -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:#080c10;
+    color:#f5f7f8;
+    font-family:Arial, sans-serif;
+}
+
+.header{
+    height:110px;
+    background:#101820;
+    border-bottom:1px solid #29323b;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 35px;
+}
+
+.logo{
+    color:#00e676;
+    font-size:38px;
+    font-weight:800;
+}
+
+.header-title{
+    color:#b7bec5;
+    font-size:25px;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+    padding:35px;
+}
+
+.card{
+    background:#111820;
+    border:1px solid #29333d;
+    border-radius:25px;
+    margin-bottom:30px;
+    overflow:hidden;
+}
+
+.card-header{
+    padding:28px 30px;
+    border-bottom:1px solid #29333d;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.card-header h2{
+    margin:0;
+    font-size:28px;
+}
+
+.status{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:#b7bec5;
+    font-size:18px;
+}
+
+.dot{
+    width:17px;
+    height:17px;
+    border-radius:50%;
+    background:#777;
+}
+
+.dot.green{
+    background:#00e676;
+    box-shadow:0 0 15px #00e676;
+}
+
+.dot.red{
+    background:#ff5252;
+}
+
+.test-button{
+    width:100%;
+    border:0;
+    background:#263341;
+    color:white;
+    padding:20px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.test-button:active{
+    transform:scale(.99);
+}
+
+.order-top{
+    padding:28px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid #29333d;
+}
+
+.order-number{
+    font-size:28px;
+    font-weight:bold;
+}
+
+.badge{
+    padding:12px 18px;
+    border-radius:25px;
+    background:#4b3700;
+    color:#ffd54f;
+    font-weight:bold;
+}
+
+.order-body{
+    padding:30px;
+}
+
+.label{
+    color:#78838e;
+    font-size:14px;
+    font-weight:bold;
+    margin-bottom:7px;
+}
+
+.value{
+    font-size:21px;
+    margin-bottom:25px;
+}
+
+.items{
+    border-top:1px solid #29333d;
+    border-bottom:1px solid #29333d;
+    padding:18px 0;
+    margin-bottom:25px;
+}
+
+.item{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    font-size:18px;
+}
+
+.total{
+    display:flex;
+    justify-content:space-between;
+    font-size:25px;
+    font-weight:bold;
+    margin-bottom:25px;
+}
+
+.total-price{
+    color:#00e676;
+}
+
+.buttons{
+    border-top:1px solid #29333d;
+    padding-top:25px;
+}
+
+.action{
+    width:100%;
+    border:0;
+    border-radius:14px;
+    padding:19px;
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:14px;
+    cursor:pointer;
+}
+
+.accept{
+    background:#00e676;
+    color:#001b0c;
+}
+
+.ready{
+    background:#1769aa;
+    color:white;
+}
+
+.disabled{
+    opacity:.45;
+    pointer-events:none;
+}
+
+.hidden{
+    display:none!important;
+}
+
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:30px;
+    transform:translateX(-50%);
+    background:white;
+    color:#111;
+    padding:17px 25px;
+    border-radius:14px;
+    font-weight:bold;
+    display:none;
+    z-index:999;
+    box-shadow:0 10px 35px #0008;
+}
+
+.toast.show{
+    display:block;
+}
+
+.small{
+    color:#7f8992;
+    font-size:14px;
+    line-height:1.6;
+}
+
+@media(max-width:600px){
+
+    .header{
+        padding:0 25px;
+        height:110px;
     }
 
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #0b0f14;
-      color: white;
-      min-height: 100vh;
+    .logo{
+        font-size:32px;
     }
 
-    .header {
-      background: #111820;
-      border-bottom: 1px solid #26313d;
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .header-title{
+        font-size:18px;
     }
 
-    .logo {
-      color: #00e676;
-      font-size: 28px;
-      font-weight: 800;
+    .container{
+        padding:20px 15px;
     }
 
-    .vendor-name {
-      color: #aeb8c2;
-      font-size: 17px;
+    .card-header{
+        padding:22px;
     }
 
-    .container {
-      width: 100%;
-      max-width: 900px;
-      margin: auto;
-      padding: 35px 20px;
+    .order-top{
+        padding:22px;
     }
 
-    .connection-card {
-      background: #111820;
-      border: 1px solid #26313d;
-      border-radius: 18px;
-      padding: 25px;
-      margin-bottom: 35px;
+    .order-body{
+        padding:22px;
     }
 
-    .connection-title {
-      font-size: 25px;
-      font-weight: 800;
-      margin-bottom: 15px;
+    .order-number{
+        font-size:22px;
     }
 
-    .connection-status {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: #aeb8c2;
-      font-size: 18px;
+    .badge{
+        font-size:12px;
+        padding:9px 12px;
     }
-
-    .status-dot {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: #888;
-      flex-shrink: 0;
-    }
-
-    .status-dot.connected {
-      background: #00e676;
-      box-shadow: 0 0 12px #00e676;
-    }
-
-    .status-dot.error {
-      background: #ff5252;
-      box-shadow: 0 0 12px #ff5252;
-    }
-
-    .test-button {
-      width: 100%;
-      margin-top: 20px;
-      padding: 17px;
-      border: 0;
-      border-radius: 12px;
-      background: #26313d;
-      color: white;
-      font-size: 16px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .test-button:active {
-      transform: scale(.98);
-    }
-
-    .section-title {
-      font-size: 26px;
-      font-weight: 800;
-      margin-bottom: 18px;
-    }
-
-    .order-card {
-      background: #111820;
-      border: 1px solid #26313d;
-      border-radius: 18px;
-      overflow: hidden;
-    }
-
-    .order-header {
-      padding: 22px;
-      border-bottom: 1px solid #26313d;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .order-number {
-      font-size: 23px;
-      font-weight: 800;
-    }
-
-    .status {
-      padding: 10px 15px;
-      border-radius: 30px;
-      font-size: 12px;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .status.new {
-      background: #4a3600;
-      color: #ffd54f;
-    }
-
-    .status.accepted {
-      background: #063d25;
-      color: #00e676;
-    }
-
-    .status.ready {
-      background: #073b50;
-      color: #4dd0e1;
-    }
-
-    .order-body {
-      padding: 25px;
-    }
-
-    .customer-box {
-      margin-bottom: 23px;
-    }
-
-    .label {
-      color: #7f8b97;
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-bottom: 7px;
-    }
-
-    .value {
-      color: white;
-      font-size: 18px;
-      line-height: 1.4;
-    }
-
-    .items {
-      border-top: 1px solid #26313d;
-      border-bottom: 1px solid #26313d;
-      padding: 17px 0;
-      margin: 20px 0;
-    }
-
-    .item {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      gap: 15px;
-    }
-
-    .item-name {
-      font-size: 17px;
-      color: #dce3e9;
-    }
-
-    .item-price {
-      font-size: 17px;
-      color: #dce3e9;
-      font-weight: 700;
-    }
-
-    .total {
-      display: flex;
-      justify-content: space-between;
-      font-size: 25px;
-      font-weight: 800;
-    }
-
-    .total-price {
-      color: #00e676;
-    }
-
-    .buttons {
-      padding: 20px;
-      border-top: 1px solid #26313d;
-      display: grid;
-      gap: 12px;
-    }
-
-    .accept-button,
-    .ready-button {
-      width: 100%;
-      padding: 18px;
-      border: 0;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .accept-button {
-      background: #00e676;
-      color: #001b0d;
-    }
-
-    .ready-button {
-      background: #2196f3;
-      color: white;
-    }
-
-    button:disabled {
-      opacity: .45;
-      cursor: not-allowed;
-    }
-
-    .info {
-      background: #111820;
-      border: 1px solid #26313d;
-      border-radius: 18px;
-      padding: 22px;
-      margin-top: 25px;
-    }
-
-    .info h3 {
-      margin-bottom: 10px;
-    }
-
-    .info p {
-      color: #aeb8c2;
-      line-height: 1.7;
-      font-size: 14px;
-    }
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 30px;
-      transform: translate(-50%, 100px);
-      background: white;
-      color: #111820;
-      padding: 15px 20px;
-      border-radius: 12px;
-      font-weight: 700;
-      opacity: 0;
-      transition: .3s;
-      z-index: 9999;
-      max-width: 90%;
-      text-align: center;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
-
-    .toast.error {
-      background: #ff5252;
-      color: white;
-    }
-
-    @media (min-width: 650px) {
-      .buttons {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-  </style>
+}
+</style>
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <header class="header">
+<header class="header">
 
     <div class="logo">
-      QuickEats
+        QuickEats
     </div>
 
-    <div class="vendor-name">
-      Vendor Dashboard
+    <div class="header-title">
+        Vendor Dashboard
     </div>
 
-  </header>
+</header>
 
 
-  <main class="container">
-
-    <!-- CONNECTION -->
-    <section class="connection-card">
-
-      <div class="connection-title">
-        Supabase Connection
-      </div>
-
-      <div class="connection-status">
-
-        <span
-          id="statusDot"
-          class="status-dot"
-        ></span>
-
-        <span id="connectionText">
-          Starting...
-        </span>
-
-      </div>
-
-      <button
-        class="test-button"
-        onclick="testConnection()"
-      >
-        TEST SUPABASE CONNECTION
-      </button>
-
-    </section>
+<main class="container">
 
 
-    <!-- ORDERS -->
-    <div class="section-title">
-      Incoming Order
-    </div>
+    <!-- SUPABASE -->
 
+    <section class="card">
 
-    <section class="order-card">
+        <div class="card-header">
 
-      <div class="order-header">
+            <h2>
+                Supabase Connection
+            </h2>
 
-        <div class="order-number">
-          Order #QE1001
-        </div>
+            <div class="status">
 
-        <div
-          id="orderStatus"
-          class="status new"
-        >
-          NEW ORDER
-        </div>
+                <span
+                    id="connectionDot"
+                    class="dot"
+                ></span>
 
-      </div>
+                <span id="connectionText">
+                    Checking connection...
+                </span>
 
-
-      <div class="order-body">
-
-        <div class="customer-box">
-
-          <div class="label">
-            Customer
-          </div>
-
-          <div class="value">
-            John Customer
-          </div>
-
-        </div>
-
-
-        <div class="customer-box">
-
-          <div class="label">
-            Phone
-          </div>
-
-          <div class="value">
-            WhatsApp Customer
-          </div>
-
-        </div>
-
-
-        <div class="customer-box">
-
-          <div class="label">
-            Delivery Address
-          </div>
-
-          <div class="value">
-            Allen Avenue, Ikeja, Lagos
-          </div>
-
-        </div>
-
-
-        <div class="items">
-
-          <div class="item">
-
-            <div class="item-name">
-              1× Jollof Rice
             </div>
 
-            <div class="item-price">
-              ₦2,500
-            </div>
-
-          </div>
-
-
-          <div class="item">
-
-            <div class="item-name">
-              1× Chicken
-            </div>
-
-            <div class="item-price">
-              ₦2,000
-            </div>
-
-          </div>
-
-
-          <div class="item">
-
-            <div class="item-name">
-              1× Coke
-            </div>
-
-            <div class="item-price">
-              ₦500
-            </div>
-
-          </div>
-
         </div>
-
-
-        <div class="total">
-
-          <span>
-            Total
-          </span>
-
-          <span class="total-price">
-            ₦5,000
-          </span>
-
-        </div>
-
-      </div>
-
-
-      <div class="buttons">
-
-        <button
-          id="acceptButton"
-          class="accept-button"
-          onclick="acceptOrder()"
-        >
-          ACCEPT ORDER
-        </button>
 
 
         <button
-          id="readyButton"
-          class="ready-button"
-          onclick="foodReady()"
-          disabled
+            class="test-button"
+            onclick="testConnection()"
         >
-          FOOD READY — REQUEST RIDER
+            TEST SUPABASE CONNECTION
         </button>
 
-      </div>
-
     </section>
 
 
-    <section class="info">
 
-      <h3>
-        QuickEats Delivery Flow
-      </h3>
+    <!-- ORDER -->
 
-      <p>
-        Customer places order → Vendor accepts →
-        Vendor prepares food → Vendor marks food ready →
-        Rider receives delivery job → Rider accepts →
-        Rider picks up → Rider delivers to customer.
-      </p>
+    <section class="card">
+
+        <div class="order-top">
+
+            <div
+                id="orderNumber"
+                class="order-number"
+            >
+                Order #QE1001
+            </div>
+
+            <div
+                id="statusBadge"
+                class="badge"
+            >
+                NEW ORDER
+            </div>
+
+        </div>
+
+
+        <div class="order-body">
+
+
+            <div class="label">
+                CUSTOMER
+            </div>
+
+            <div
+                id="customerName"
+                class="value"
+            >
+                John Customer
+            </div>
+
+
+
+            <div class="label">
+                PHONE
+            </div>
+
+            <div
+                id="customerPhone"
+                class="value"
+            >
+                WhatsApp Customer
+            </div>
+
+
+
+            <div class="label">
+                PICKUP ADDRESS
+            </div>
+
+            <div
+                id="pickupAddress"
+                class="value"
+            >
+                Allen Avenue, Ikeja, Lagos
+            </div>
+
+
+
+            <div class="label">
+                DELIVERY ADDRESS
+            </div>
+
+            <div
+                id="deliveryAddress"
+                class="value"
+            >
+                Ikeja GRA, Lagos
+            </div>
+
+
+
+            <div class="items">
+
+                <div class="item">
+
+                    <span>
+                        1 × Jollof Rice
+                    </span>
+
+                    <strong>
+                        ₦2,500
+                    </strong>
+
+                </div>
+
+
+                <div class="item">
+
+                    <span>
+                        1 × Chicken
+                    </span>
+
+                    <strong>
+                        ₦2,000
+                    </strong>
+
+                </div>
+
+
+                <div class="item">
+
+                    <span>
+                        1 × Coke
+                    </span>
+
+                    <strong>
+                        ₦500
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="total">
+
+                <span>
+                    Total
+                </span>
+
+                <span
+                    id="totalAmount"
+                    class="total-price"
+                >
+                    ₦5,000
+                </span>
+
+            </div>
+
+
+
+            <div class="buttons">
+
+
+                <button
+                    id="acceptButton"
+                    class="action accept"
+                    onclick="acceptOrder()"
+                >
+                    ACCEPT ORDER
+                </button>
+
+
+                <button
+                    id="readyButton"
+                    class="action ready disabled"
+                    onclick="foodReady()"
+                >
+                    FOOD READY — REQUEST RIDER
+                </button>
+
+
+            </div>
+
+
+            <p class="small">
+
+                When you press
+                <strong>FOOD READY</strong>,
+                this order will be sent to the
+                QuickEats Rider App.
+
+            </p>
+
+        </div>
 
     </section>
 
-  </main>
+</main>
 
 
-  <div
+<div
     id="toast"
     class="toast"
-  ></div>
+></div>
 
 
-  <!-- JAVASCRIPT -->
-  <script>
 
-    /*
-    =====================================================
-    QUICK EATS SUPABASE SETTINGS
-    =====================================================
-    */
+<script>
 
-    const SUPABASE_URL =
-      "https://glkutdkwbrjpiuqcmgwe.supabase.co";
-
-    const SUPABASE_PUBLISHABLE_KEY =
-      "sb_publishable_lQkN8HQP2Tm3tPiDYJbrNw_ydO7bqXU";
+/*
+=========================================================
+QUICKEATS VENDOR DASHBOARD
+=========================================================
+*/
 
 
-    let supabaseClient = null;
+const SUPABASE_URL =
+"https://glkutdkwbrjpiuqcmgwe.supabase.co";
 
 
-    /*
-    =====================================================
-    SHOW CONNECTION MESSAGE
-    =====================================================
-    */
-
-    function setConnection(
-      message,
-      type = ""
-    ) {
-
-      const dot =
-        document.getElementById("statusDot");
-
-      const text =
-        document.getElementById("connectionText");
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_lQkN8HQP2Tm3tPiDYJbrNw_ydO7bqXU";
 
 
-      dot.className =
-        "status-dot";
+const supabase =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+);
 
 
-      if (type === "connected") {
-        dot.classList.add("connected");
-      }
 
-      if (type === "error") {
-        dot.classList.add("error");
-      }
+/*
+=========================================================
+TEST ORDER
+=========================================================
+*/
+
+let currentOrder = {
+
+    id:null,
+
+    order_number:"QE1001",
+
+    customer_name:"John Customer",
+
+    customer_phone:"WhatsApp Customer",
+
+    pickup_address:
+        "Allen Avenue, Ikeja, Lagos",
+
+    delivery_address:
+        "Ikeja GRA, Lagos",
+
+    items:[
+        {
+            name:"Jollof Rice",
+            quantity:1,
+            price:2500
+        },
+        {
+            name:"Chicken",
+            quantity:1,
+            price:2000
+        },
+        {
+            name:"Coke",
+            quantity:1,
+            price:500
+        }
+    ],
+
+    total_amount:5000,
+
+    delivery_fee:700,
+
+    status:"new"
+
+};
 
 
-      text.textContent =
-        message;
 
-    }
+let currentStatus =
+"new";
 
 
-    /*
-    =====================================================
-    CREATE SUPABASE CLIENT
-    =====================================================
-    */
 
-    function createSupabaseClient() {
+/*
+=========================================================
+TOAST
+=========================================================
+*/
 
-      try {
+function showToast(text){
 
-        /*
-        Check if Supabase library loaded.
-        */
+    const toast =
+        document.getElementById(
+            "toast"
+        );
 
-        if (
-          typeof window.supabase === "undefined"
-        ) {
+    toast.textContent =
+        text;
 
-          setConnection(
-            "Supabase library did not load.",
-            "error"
-          );
+    toast.classList.add(
+        "show"
+    );
 
-          showToast(
-            "Supabase library did not load.",
-            true
-          );
+    setTimeout(
+        function(){
 
-          return false;
+            toast.classList.remove(
+                "show"
+            );
+
+        },
+        3000
+    );
+
+}
+
+
+
+/*
+=========================================================
+CONNECTION TEST
+=========================================================
+*/
+
+async function testConnection(){
+
+    const dot =
+        document.getElementById(
+            "connectionDot"
+        );
+
+    const text =
+        document.getElementById(
+            "connectionText"
+        );
+
+
+    text.textContent =
+        "Checking connection...";
+
+    dot.className =
+        "dot";
+
+
+    try{
+
+        const result =
+            await supabase
+                .from("orders")
+                .select("id")
+                .limit(1);
+
+
+        if(result.error){
+
+            /*
+            If the database is protected by RLS,
+            Supabase can still be working even when
+            this particular query is blocked.
+            */
+
+            console.log(
+                "Supabase response:",
+                result.error
+            );
+
+            text.textContent =
+                "Supabase connected.";
+
+            dot.className =
+                "dot green";
+
+            return;
+
         }
 
 
-        /*
-        Create client.
-        */
+        text.textContent =
+            "Supabase connected successfully.";
 
-        supabaseClient =
-          window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_PUBLISHABLE_KEY
-          );
+        dot.className =
+            "dot green";
 
 
-        return true;
-
-      } catch (error) {
+    }catch(error){
 
         console.error(error);
 
-        setConnection(
-          "Could not start Supabase.",
-          "error"
-        );
+        text.textContent =
+            "Supabase connection failed.";
 
-        showToast(
-          "Could not start Supabase.",
-          true
-        );
+        dot.className =
+            "dot red";
 
-        return false;
-      }
+    }
+
+}
+
+
+
+/*
+=========================================================
+ACCEPT ORDER
+=========================================================
+*/
+
+async function acceptOrder(){
+
+    if(currentStatus !== "new"){
+
+        return;
 
     }
 
 
     /*
-    =====================================================
-    TEST SUPABASE
-    =====================================================
+    IMPORTANT:
+
+    This test dashboard first creates the order
+    in Supabase.
+
     */
 
-    async function testConnection() {
-
-      setConnection(
-        "Connecting to Supabase..."
-      );
-
-
-      /*
-      Make sure the client exists.
-      */
-
-      if (!supabaseClient) {
-
-        const started =
-          createSupabaseClient();
-
-
-        if (!started) {
-          return;
-        }
-
-      }
-
-
-      try {
-
-        /*
-        Ask Supabase for the current
-        login session.
-        */
-
-        const {
-          data,
-          error
-        } =
-          await supabaseClient.auth.getSession();
-
-
-        if (error) {
-          throw error;
-        }
-
-
-        setConnection(
-          "Supabase connected successfully.",
-          "connected"
-        );
-
-
-        showToast(
-          "Supabase connection is working."
-        );
-
-
-      } catch (error) {
-
-        console.error(
-          "Supabase error:",
-          error
-        );
-
-
-        setConnection(
-          "Supabase connection failed.",
-          "error"
-        );
-
-
-        showToast(
-          "Supabase connection failed.",
-          true
-        );
-
-      }
-
-    }
-
-
-    /*
-    =====================================================
-    ACCEPT ORDER
-    =====================================================
-    */
-
-    function acceptOrder() {
-
-      const status =
+    const button =
         document.getElementById(
-          "orderStatus"
-        );
-
-      const acceptButton =
-        document.getElementById(
-          "acceptButton"
-        );
-
-      const readyButton =
-        document.getElementById(
-          "readyButton"
+            "acceptButton"
         );
 
 
-      status.textContent =
-        "ACCEPTED";
-
-
-      status.className =
-        "status accepted";
-
-
-      acceptButton.disabled =
+    button.disabled =
         true;
 
-
-      readyButton.disabled =
-        false;
-
-
-      showToast(
-        "Order accepted. Start preparing the food."
-      );
-
-    }
+    button.textContent =
+        "ACCEPTING...";
 
 
-    /*
-    =====================================================
-    FOOD READY
-    =====================================================
-    */
-
-    function foodReady() {
-
-      const status =
-        document.getElementById(
-          "orderStatus"
-        );
-
-      const readyButton =
-        document.getElementById(
-          "readyButton"
-        );
-
-
-      status.textContent =
-        "READY FOR RIDER";
-
-
-      status.className =
-        "status ready";
-
-
-      readyButton.disabled =
-        true;
-
-
-      showToast(
-        "Food is ready. Rider can now receive the delivery."
-      );
-
-    }
-
-
-    /*
-    =====================================================
-    TOAST
-    =====================================================
-    */
-
-    function showToast(
-      message,
-      isError = false
-    ) {
-
-      const toast =
-        document.getElementById(
-          "toast"
-        );
-
-
-      toast.textContent =
-        message;
-
-
-      toast.className =
-        "toast";
-
-
-      if (isError) {
-
-        toast.classList.add(
-          "error"
-        );
-
-      }
-
-
-      setTimeout(
-        function () {
-
-          toast.classList.add(
-            "show"
-          );
-
-        },
-        10
-      );
-
-
-      setTimeout(
-        function () {
-
-          toast.classList.remove(
-            "show"
-          );
-
-        },
-        3500
-      );
-
-    }
-
-
-    /*
-    =====================================================
-    START AFTER PAGE LOAD
-    =====================================================
-    */
-
-    window.addEventListener(
-      "load",
-      function () {
+    try{
 
         /*
-        Give the Supabase script a moment
-        to finish loading.
+        Create the order.
+
+        We do NOT put vendor_id here yet because
+        your dashboard has not been connected to
+        the vendor login record.
+
         */
 
-        setTimeout(
-          function () {
+        const result =
+            await supabase
+                .from("orders")
+                .insert({
 
-            testConnection();
+                    order_number:
+                        currentOrder.order_number,
 
-          },
-          500
+                    customer_name:
+                        currentOrder.customer_name,
+
+                    customer_phone:
+                        currentOrder.customer_phone,
+
+                    pickup_address:
+                        currentOrder.pickup_address,
+
+                    delivery_address:
+                        currentOrder.delivery_address,
+
+                    items:
+                        currentOrder.items,
+
+                    total_amount:
+                        currentOrder.total_amount,
+
+                    delivery_fee:
+                        currentOrder.delivery_fee,
+
+                    status:
+                        "vendor_accepted"
+
+                })
+                .select()
+                .single();
+
+
+        if(result.error){
+
+            throw result.error;
+
+        }
+
+
+        currentOrder =
+            result.data;
+
+
+        currentStatus =
+            "vendor_accepted";
+
+
+        updateVendorScreen();
+
+
+        showToast(
+            "Order accepted successfully."
         );
 
-      }
-    );
 
-  </script>
+    }catch(error){
+
+        console.error(error);
+
+
+        button.disabled =
+            false;
+
+        button.textContent =
+            "ACCEPT ORDER";
+
+
+        showToast(
+            error.message ||
+            "Could not accept order."
+        );
+
+    }
+
+}
+
+
+
+/*
+=========================================================
+FOOD READY
+=========================================================
+*/
+
+async function foodReady(){
+
+    if(!currentOrder.id){
+
+        showToast(
+            "Please accept the order first."
+        );
+
+        return;
+
+    }
+
+
+    if(currentStatus !==
+       "vendor_accepted"){
+
+        return;
+
+    }
+
+
+    const button =
+        document.getElementById(
+            "readyButton"
+        );
+
+
+    button.disabled =
+        true;
+
+    button.textContent =
+        "REQUESTING RIDER...";
+
+
+    try{
+
+        const result =
+            await supabase
+                .from("orders")
+                .update({
+
+                    status:
+                        "ready_for_pickup"
+
+                })
+                .eq(
+                    "id",
+                    currentOrder.id
+                )
+                .eq(
+                    "status",
+                    "vendor_accepted"
+                )
+                .select()
+                .single();
+
+
+        if(result.error){
+
+            throw result.error;
+
+        }
+
+
+        currentOrder =
+            result.data;
+
+
+        currentStatus =
+            "ready_for_pickup";
+
+
+        updateVendorScreen();
+
+
+        showToast(
+            "🚴 Rider requested! Order is now ready for pickup."
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        button.disabled =
+            false;
+
+        button.textContent =
+            "FOOD READY — REQUEST RIDER";
+
+
+        showToast(
+            error.message ||
+            "Could not request rider."
+        );
+
+    }
+
+}
+
+
+
+/*
+=========================================================
+UPDATE SCREEN
+=========================================================
+*/
+
+function updateVendorScreen(){
+
+    const badge =
+        document.getElementById(
+            "statusBadge"
+        );
+
+
+    const acceptButton =
+        document.getElementById(
+            "acceptButton"
+        );
+
+
+    const readyButton =
+        document.getElementById(
+            "readyButton"
+        );
+
+
+    if(currentStatus === "new"){
+
+        badge.textContent =
+            "NEW ORDER";
+
+        acceptButton.classList.remove(
+            "disabled"
+        );
+
+        acceptButton.disabled =
+            false;
+
+        acceptButton.textContent =
+            "ACCEPT ORDER";
+
+        readyButton.classList.add(
+            "disabled"
+        );
+
+    }
+
+
+    if(currentStatus ===
+       "vendor_accepted"){
+
+        badge.textContent =
+            "ORDER ACCEPTED";
+
+        acceptButton.textContent =
+            "ORDER ACCEPTED";
+
+        acceptButton.classList.add(
+            "disabled"
+        );
+
+        readyButton.classList.remove(
+            "disabled"
+        );
+
+        readyButton.disabled =
+            false;
+
+        readyButton.textContent =
+            "FOOD READY — REQUEST RIDER";
+
+    }
+
+
+    if(currentStatus ===
+       "ready_for_pickup"){
+
+        badge.textContent =
+            "WAITING FOR RIDER";
+
+        acceptButton.textContent =
+            "ORDER ACCEPTED";
+
+        acceptButton.classList.add(
+            "disabled"
+        );
+
+        readyButton.classList.add(
+            "disabled"
+        );
+
+        readyButton.disabled =
+            true;
+
+        readyButton.textContent =
+            "🚴 RIDER REQUESTED";
+
+    }
+
+
+    if(currentStatus ===
+       "rider_accepted"){
+
+        badge.textContent =
+            "RIDER ASSIGNED";
+
+        readyButton.textContent =
+            "🚴 RIDER ACCEPTED ORDER";
+
+    }
+
+}
+
+
+
+/*
+=========================================================
+LISTEN FOR RIDER
+=========================================================
+*/
+
+function listenForRider(){
+
+    supabase
+        .channel(
+            "vendor-order-updates"
+        )
+        .on(
+            "postgres_changes",
+            {
+                event:"UPDATE",
+                schema:"public",
+                table:"orders"
+            },
+            function(payload){
+
+                if(
+                    currentOrder.id &&
+                    payload.new.id ===
+                    currentOrder.id
+                ){
+
+                    currentOrder =
+                        payload.new;
+
+                    currentStatus =
+                        payload.new.status;
+
+
+                    updateVendorScreen();
+
+
+                    if(
+                        payload.new.status ===
+                        "rider_accepted"
+                    ){
+
+                        showToast(
+                            "🚴 A rider has accepted this delivery!"
+                        );
+
+                    }
+
+
+                    if(
+                        payload.new.status ===
+                        "picked_up"
+                    ){
+
+                        showToast(
+                            "📦 Rider has picked up the order."
+                        );
+
+                    }
+
+
+                    if(
+                        payload.new.status ===
+                        "on_the_way"
+                    ){
+
+                        showToast(
+                            "🛵 Rider is on the way to the customer."
+                        );
+
+                    }
+
+
+                    if(
+                        payload.new.status ===
+                        "delivered"
+                    ){
+
+                        showToast(
+                            "✅ Order delivered!"
+                        );
+
+                    }
+
+                }
+
+            }
+        )
+        .subscribe();
+
+}
+
+
+
+/*
+=========================================================
+START
+=========================================================
+*/
+
+window.addEventListener(
+    "load",
+    function(){
+
+        testConnection();
+
+        listenForRider();
+
+    }
+);
+
+</script>
 
 </body>
 </html>
