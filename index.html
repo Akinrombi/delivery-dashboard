@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QuickEats Vendor</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -16,221 +16,235 @@
 
 body{
   font-family:Arial,Helvetica,sans-serif;
-  background:#f5f7f6;
-  color:#17221d;
+  background:#f5f6f8;
+  color:#171717;
 }
 
-button,input,textarea,select{
+button,
+input,
+select{
   font:inherit;
 }
 
 button{
   cursor:pointer;
-  border:0;
 }
 
 .hidden{
   display:none!important;
 }
 
-#authPage{
+/* AUTH */
+
+.auth-screen{
   min-height:100vh;
   display:flex;
   align-items:center;
   justify-content:center;
   padding:20px;
-  background:linear-gradient(145deg,#effff6,#fff);
+  background:linear-gradient(135deg,#fff7ed,#f5f6f8);
 }
 
-.authBox{
+.auth-box{
   width:100%;
-  max-width:440px;
-  background:#fff;
-  border-radius:24px;
-  padding:28px;
-  box-shadow:0 12px 40px rgba(0,0,0,.08);
+  max-width:430px;
+  background:white;
+  border-radius:20px;
+  padding:30px;
+  box-shadow:0 10px 35px rgba(0,0,0,.08);
 }
 
 .logo{
   text-align:center;
-  color:#12a05a;
-  font-size:31px;
-  font-weight:900;
+  font-size:30px;
+  font-weight:800;
+  margin-bottom:8px;
+}
+
+.logo span{
+  color:#f97316;
 }
 
 .subtitle{
   text-align:center;
-  color:#77817c;
-  margin:6px 0 25px;
+  color:#777;
+  margin-bottom:25px;
 }
 
-.tabs{
-  display:flex;
-  background:#eef2ef;
-  border-radius:12px;
-  padding:4px;
-  margin-bottom:22px;
-}
-
-.tabs button{
-  flex:1;
-  padding:12px;
-  background:transparent;
-  border-radius:9px;
-  font-weight:800;
-  color:#68736d;
-}
-
-.tabs button.active{
-  background:#fff;
-  color:#12a05a;
-  box-shadow:0 2px 7px rgba(0,0,0,.06);
+.auth-box h2{
+  margin-bottom:18px;
 }
 
 .field{
-  margin-bottom:15px;
+  margin-bottom:14px;
 }
 
 .field label{
   display:block;
-  font-size:13px;
-  font-weight:800;
-  margin-bottom:7px;
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:6px;
 }
 
 .field input,
-.field textarea,
-.field select{
+.field select,
+.field textarea{
   width:100%;
   padding:13px;
-  border:1px solid #dce3df;
-  border-radius:11px;
+  border:1px solid #ddd;
+  border-radius:10px;
   outline:none;
-  background:#fff;
 }
 
 .field input:focus,
-.field textarea:focus,
-.field select:focus{
-  border-color:#12a05a;
+.field select:focus,
+.field textarea:focus{
+  border-color:#f97316;
 }
 
-.primaryBtn{
+.primary{
   width:100%;
+  border:0;
+  border-radius:10px;
   padding:14px;
-  background:#12a05a;
-  color:#fff;
-  border-radius:12px;
-  font-weight:900;
+  background:#f97316;
+  color:white;
+  font-weight:700;
 }
 
-.secondaryBtn{
-  padding:12px 15px;
-  background:#eef2ef;
-  color:#26332d;
-  border-radius:10px;
-  font-weight:800;
+.primary:hover{
+  background:#ea580c;
 }
 
-.dangerBtn{
-  padding:11px 14px;
-  background:#ffe9e9;
-  color:#c0392b;
+.secondary{
+  width:100%;
+  border:1px solid #ddd;
   border-radius:10px;
-  font-weight:800;
+  padding:13px;
+  background:white;
+  font-weight:600;
+}
+
+.auth-switch{
+  text-align:center;
+  margin-top:18px;
+  color:#777;
+}
+
+.auth-switch button{
+  border:0;
+  background:none;
+  color:#f97316;
+  font-weight:700;
 }
 
 .message{
-  display:none;
-  margin-top:14px;
   padding:12px;
   border-radius:10px;
+  margin-bottom:15px;
   font-size:14px;
-}
-
-.message.show{
-  display:block;
-}
-
-.message.success{
-  background:#e8fff1;
-  color:#08763d;
+  display:none;
 }
 
 .message.error{
-  background:#fff0f0;
-  color:#b42318;
+  display:block;
+  background:#fee2e2;
+  color:#991b1b;
 }
+
+.message.success{
+  display:block;
+  background:#dcfce7;
+  color:#166534;
+}
+
+/* APP */
 
 #app{
+  display:none;
   min-height:100vh;
-}
-
-.topbar{
-  height:68px;
-  background:#fff;
-  border-bottom:1px solid #e6ebe8;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 20px;
-  position:sticky;
-  top:0;
-  z-index:30;
-}
-
-.brand{
-  color:#12a05a;
-  font-size:23px;
-  font-weight:900;
-}
-
-.vendorName{
-  color:#68736e;
-  font-size:14px;
-}
-
-.logout{
-  background:#fff0f0;
-  color:#b42318;
-  padding:9px 12px;
-  border-radius:9px;
-  font-weight:800;
 }
 
 .layout{
   display:flex;
-  min-height:calc(100vh - 68px);
+  min-height:100vh;
 }
+
+/* SIDEBAR */
 
 .sidebar{
-  width:230px;
-  background:#fff;
-  border-right:1px solid #e6ebe8;
-  padding:18px 12px;
+  width:240px;
+  background:#111827;
+  color:white;
+  padding:22px 15px;
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
 }
 
-.navBtn{
-  width:100%;
-  text-align:left;
-  padding:13px;
-  margin-bottom:6px;
-  border-radius:10px;
-  background:transparent;
-  color:#5e6964;
+.sidebar-logo{
+  font-size:24px;
   font-weight:800;
+  padding:5px 10px 25px;
 }
 
-.navBtn.active{
-  background:#e9fff2;
-  color:#078b49;
+.sidebar-logo span{
+  color:#fb923c;
 }
+
+.nav-btn{
+  width:100%;
+  display:block;
+  text-align:left;
+  border:0;
+  background:transparent;
+  color:#cbd5e1;
+  padding:13px 14px;
+  border-radius:10px;
+  margin-bottom:5px;
+}
+
+.nav-btn:hover,
+.nav-btn.active{
+  background:#f97316;
+  color:white;
+}
+
+.sidebar-bottom{
+  position:absolute;
+  left:15px;
+  right:15px;
+  bottom:20px;
+}
+
+/* MAIN */
 
 .main{
-  flex:1;
-  padding:24px;
-  max-width:1400px;
+  margin-left:240px;
+  width:calc(100% - 240px);
+  padding:25px;
 }
+
+.topbar{
+  background:white;
+  border-radius:14px;
+  padding:18px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:22px;
+}
+
+.topbar h1{
+  font-size:24px;
+}
+
+.vendor-name{
+  color:#666;
+}
+
+/* PAGES */
 
 .page{
   display:none;
@@ -240,231 +254,324 @@ button{
   display:block;
 }
 
-.pageTitle{
-  font-size:28px;
-  font-weight:900;
-  margin-bottom:5px;
-}
-
-.pageSub{
-  color:#7a847f;
-  margin-bottom:22px;
-}
+/* CARDS */
 
 .stats{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:15px;
-  margin-bottom:24px;
-}
-
-.stat{
-  background:#fff;
-  padding:20px;
-  border-radius:16px;
-  border:1px solid #e8edea;
-}
-
-.statLabel{
-  color:#7b8580;
-  font-size:13px;
-  margin-bottom:9px;
-}
-
-.statValue{
-  font-size:26px;
-  font-weight:900;
+  margin-bottom:22px;
 }
 
 .card{
-  background:#fff;
-  border:1px solid #e6ebe8;
-  border-radius:17px;
+  background:white;
+  border-radius:15px;
   padding:20px;
-  margin-bottom:18px;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
 }
 
-.cardTitle{
-  font-size:18px;
-  font-weight:900;
+.stat-title{
+  color:#777;
+  font-size:14px;
+}
+
+.stat-value{
+  font-size:28px;
+  font-weight:800;
+  margin-top:8px;
+}
+
+.section-title{
+  font-size:20px;
   margin-bottom:15px;
 }
 
-.grid2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
-}
+/* ORDERS */
 
-.menuGrid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:16px;
-}
-
-.menuItem{
-  background:#fff;
-  border:1px solid #e5ebe7;
+.order-card{
+  background:white;
   border-radius:15px;
-  padding:17px;
-}
-
-.menuName{
-  font-weight:900;
-  font-size:17px;
-}
-
-.category{
-  color:#7a8580;
-  font-size:12px;
-  margin-top:5px;
-}
-
-.price{
-  color:#12a05a;
-  font-size:18px;
-  font-weight:900;
-  margin:12px 0;
-}
-
-.stock{
-  display:inline-block;
-  padding:6px 9px;
-  border-radius:20px;
-  font-size:11px;
-  font-weight:800;
-}
-
-.stock.in{
-  background:#e7fff0;
-  color:#078b49;
-}
-
-.stock.out{
-  background:#fff0f0;
-  color:#b42318;
-}
-
-.menuActions{
-  display:flex;
-  gap:8px;
-  margin-top:15px;
-}
-
-.menuActions button{
-  flex:1;
-}
-
-.orderCard{
-  background:#fff;
-  border:1px solid #e3e9e5;
-  border-radius:16px;
   padding:18px;
-  margin-bottom:13px;
+  margin-bottom:12px;
+  border:1px solid #eee;
 }
 
-.orderHead{
+.order-head{
   display:flex;
+  align-items:center;
   justify-content:space-between;
-  gap:10px;
-  margin-bottom:13px;
+  margin-bottom:14px;
 }
 
-.orderNumber{
-  font-weight:900;
+.order-number{
+  font-weight:800;
 }
 
 .status{
+  display:inline-block;
   padding:6px 10px;
   border-radius:20px;
-  background:#eef3ef;
-  font-size:11px;
-  font-weight:800;
+  font-size:12px;
+  font-weight:700;
+  background:#f3f4f6;
 }
 
-.orderInfo{
-  color:#69736e;
-  line-height:1.7;
+.status.new{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+.status.vendor_accepted{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.status.ready_for_pickup{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.status.rider_accepted,
+.status.arrived_pickup{
+  background:#ede9fe;
+  color:#6d28d9;
+}
+
+.status.picked_up,
+.status.on_the_way{
+  background:#cffafe;
+  color:#155e75;
+}
+
+.status.delivered{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.status.cancelled{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.order-info{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  margin-bottom:15px;
+}
+
+.order-info div{
   font-size:14px;
 }
 
-.orderTotal{
-  margin-top:10px;
-  font-size:18px;
-  font-weight:900;
+.order-info strong{
+  display:block;
+  margin-bottom:3px;
 }
 
-.orderActions{
+.order-actions{
   display:flex;
   gap:8px;
   flex-wrap:wrap;
-  margin-top:15px;
 }
 
-.actionBtn{
-  padding:10px 13px;
+.action-btn{
+  border:0;
+  padding:10px 14px;
   border-radius:9px;
-  background:#eafff2;
-  color:#078b49;
-  font-weight:800;
+  font-weight:700;
 }
 
-.rejectBtn{
-  padding:10px 13px;
-  border-radius:9px;
-  background:#fff0f0;
-  color:#b42318;
-  font-weight:800;
+.accept{
+  background:#16a34a;
+  color:white;
 }
 
-.profileGrid{
+.reject{
+  background:#dc2626;
+  color:white;
+}
+
+.ready{
+  background:#f97316;
+  color:white;
+}
+
+.disabled-btn{
+  background:#eee;
+  color:#777;
+}
+
+/* MENU */
+
+.toolbar{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.menu-grid{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
 }
 
-.empty{
-  text-align:center;
-  padding:45px 20px;
-  color:#7b8580;
+.menu-card{
+  background:white;
+  border-radius:15px;
+  padding:18px;
+  border:1px solid #eee;
 }
 
-.notification{
-  position:fixed;
-  right:20px;
-  top:85px;
-  width:330px;
-  max-width:calc(100% - 40px);
-  background:#fff;
-  border-left:5px solid #12a05a;
-  border-radius:14px;
-  padding:16px;
-  box-shadow:0 12px 35px rgba(0,0,0,.15);
-  z-index:100;
-  display:none;
+.menu-card h3{
+  margin-bottom:7px;
 }
 
-.notification.show{
-  display:block;
+.menu-category{
+  color:#777;
+  font-size:13px;
+  margin-bottom:10px;
 }
 
-.notificationTitle{
-  font-weight:900;
-  margin-bottom:5px;
+.menu-price{
+  font-size:20px;
+  font-weight:800;
+  margin-bottom:12px;
 }
 
-.notificationText{
-  color:#68736e;
+.menu-actions{
+  display:flex;
+  gap:7px;
+}
+
+.small-btn{
+  border:0;
+  padding:8px 10px;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:700;
+}
+
+.edit-btn{
+  background:#e0f2fe;
+  color:#0369a1;
+}
+
+.delete-btn{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.stock-btn{
+  background:#dcfce7;
+  color:#166534;
+}
+
+/* TABLE */
+
+.table-wrap{
+  background:white;
+  border-radius:15px;
+  overflow:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,
+td{
+  padding:14px;
+  border-bottom:1px solid #eee;
+  text-align:left;
   font-size:14px;
 }
 
-.balance{
-  font-size:32px;
-  font-weight:900;
-  color:#12a05a;
+th{
+  background:#fafafa;
 }
 
-.mobileNav{
+/* FORMS */
+
+.form-card{
+  background:white;
+  border-radius:15px;
+  padding:22px;
+  margin-bottom:18px;
+  max-width:700px;
+}
+
+.form-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+/* MODAL */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:100;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-box{
+  width:100%;
+  max-width:500px;
+  background:white;
+  border-radius:18px;
+  padding:25px;
+  max-height:90vh;
+  overflow:auto;
+}
+
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:18px;
+}
+
+.close{
+  border:0;
+  background:#eee;
+  border-radius:50%;
+  width:32px;
+  height:32px;
+}
+
+/* TOAST */
+
+.toast{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  background:#111827;
+  color:white;
+  padding:14px 18px;
+  border-radius:10px;
+  display:none;
+  z-index:300;
+  max-width:350px;
+}
+
+.toast.show{
+  display:block;
+}
+
+/* MOBILE */
+
+.mobile-header{
   display:none;
 }
 
@@ -475,78 +582,64 @@ button{
   }
 
   .main{
-    padding:17px;
-    padding-bottom:90px;
+    margin-left:0;
+    width:100%;
+    padding:15px;
+  }
+
+  .mobile-header{
+    display:flex;
+    background:#111827;
+    color:white;
+    padding:15px;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+    border-radius:12px;
+  }
+
+  .mobile-header select{
+    padding:7px;
+    border-radius:7px;
+  }
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .menu-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:600px){
+
+  .topbar{
+    display:block;
+  }
+
+  .vendor-name{
+    margin-top:5px;
   }
 
   .stats{
     grid-template-columns:1fr 1fr;
   }
 
-  .menuGrid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .grid2,
-  .profileGrid{
-    grid-template-columns:1fr;
-  }
-
-  .mobileNav{
-    display:flex;
-    position:fixed;
-    bottom:0;
-    left:0;
-    right:0;
-    height:67px;
-    background:#fff;
-    border-top:1px solid #ddd;
-    z-index:50;
-  }
-
-  .mobileNav button{
-    flex:1;
-    background:#fff;
-    color:#69736e;
-    font-size:11px;
-    font-weight:700;
-  }
-
-  .mobileNav button.active{
-    color:#12a05a;
-  }
-}
-
-@media(max-width:600px){
-
-  .authBox{
-    padding:22px;
-  }
-
-  .vendorName{
-    display:none;
-  }
-
-  .pageTitle{
+  .stat-value{
     font-size:23px;
   }
 
-  .stat{
-    padding:14px;
-  }
-
-  .statValue{
-    font-size:20px;
-  }
-
-  .menuGrid{
+  .order-info{
     grid-template-columns:1fr;
   }
 
-  .notification{
-    right:10px;
-    top:78px;
-    max-width:calc(100% - 20px);
+  .form-row{
+    grid-template-columns:1fr;
+  }
+
+  .auth-box{
+    padding:22px;
   }
 }
 </style>
@@ -554,52 +647,44 @@ button{
 
 <body>
 
-<!-- AUTH -->
-<section id="authPage">
+<!-- ================= AUTH ================= -->
 
-  <div class="authBox">
+<div id="authScreen" class="auth-screen">
 
-    <div class="logo">QuickEats</div>
+  <div class="auth-box">
 
-    <div class="subtitle">Vendor Portal</div>
-
-    <div class="tabs">
-
-      <button id="loginTab" class="active" type="button">
-        Login
-      </button>
-
-      <button id="registerTab" type="button">
-        Create Account
-      </button>
-
+    <div class="logo">
+      Quick<span>Eats</span>
     </div>
+
+    <p class="subtitle">Vendor Portal</p>
+
+    <div id="authMessage" class="message"></div>
 
     <!-- LOGIN -->
 
     <div id="loginForm">
 
+      <h2>Vendor Login</h2>
+
       <div class="field">
         <label>Email</label>
-        <input id="loginEmail"
-               type="email"
-               autocomplete="email"
-               placeholder="vendor@email.com">
+        <input id="loginEmail" type="email" placeholder="you@example.com">
       </div>
 
       <div class="field">
         <label>Password</label>
-        <input id="loginPassword"
-               type="password"
-               autocomplete="current-password"
-               placeholder="Password">
+        <input id="loginPassword" type="password" placeholder="Password">
       </div>
 
-      <button id="loginBtn"
-              class="primaryBtn"
-              type="button">
-        LOGIN
+      <button class="primary" onclick="loginVendor()">
+        Login
       </button>
+
+      <div class="auth-switch">
+        Don't have a vendor account?
+        <button onclick="showRegister()">Create account</button>
+      </div>
 
     </div>
 
@@ -607,195 +692,153 @@ button{
 
     <div id="registerForm" class="hidden">
 
-      <div class="field">
-        <label>Restaurant / Business Name</label>
-        <input id="regStore"
-               placeholder="e.g. David's Kitchen">
-      </div>
+      <h2>Create Vendor Account</h2>
 
       <div class="field">
-        <label>Phone Number</label>
-        <input id="regPhone"
-               placeholder="08012345678">
+        <label>Restaurant Name</label>
+        <input id="regStoreName" type="text" placeholder="My Restaurant">
       </div>
 
       <div class="field">
         <label>Restaurant Address</label>
-        <textarea id="regAddress"
-                  rows="3"
-                  placeholder="Full restaurant address"></textarea>
+        <input id="regAddress" type="text" placeholder="Restaurant address">
+      </div>
+
+      <div class="field">
+        <label>Phone</label>
+        <input id="regPhone" type="tel" placeholder="08012345678">
       </div>
 
       <div class="field">
         <label>Email</label>
-        <input id="regEmail"
-               type="email"
-               autocomplete="email"
-               placeholder="vendor@email.com">
+        <input id="regEmail" type="email" placeholder="you@example.com">
       </div>
 
       <div class="field">
         <label>Password</label>
-        <input id="regPassword"
-               type="password"
-               autocomplete="new-password"
-               placeholder="At least 6 characters">
+        <input id="regPassword" type="password" placeholder="At least 6 characters">
       </div>
 
-      <button id="registerBtn"
-              class="primaryBtn"
-              type="button">
-        CREATE VENDOR ACCOUNT
+      <button class="primary" onclick="registerVendor()">
+        Create Vendor Account
       </button>
 
-    </div>
+      <div class="auth-switch">
+        Already have an account?
+        <button onclick="showLogin()">Login</button>
+      </div>
 
-    <div id="authMessage" class="message"></div>
+    </div>
 
   </div>
 
-</section>
+</div>
 
 
-<!-- APP -->
+<!-- ================= APP ================= -->
 
-<section id="app" class="hidden">
-
-  <header class="topbar">
-
-    <div class="brand">QuickEats</div>
-
-    <div class="vendorName" id="topVendorName">
-      Vendor
-    </div>
-
-    <button id="logoutBtn"
-            class="logout"
-            type="button">
-      Logout
-    </button>
-
-  </header>
-
+<div id="app">
 
   <div class="layout">
 
+    <!-- SIDEBAR -->
+
     <aside class="sidebar">
 
-      <button class="navBtn active"
-              data-page="dashboard"
-              type="button">
-        📊 Dashboard
+      <div class="sidebar-logo">
+        Quick<span>Eats</span>
+      </div>
+
+      <button class="nav-btn active" onclick="showPage('dashboard',this)">
+        🏠 Dashboard
       </button>
 
-      <button class="navBtn"
-              data-page="orders"
-              type="button">
+      <button class="nav-btn" onclick="showPage('orders',this)">
         🛍 Orders
       </button>
 
-      <button class="navBtn"
-              data-page="menu"
-              type="button">
+      <button class="nav-btn" onclick="showPage('menu',this)">
         🍔 Menu
       </button>
 
-      <button class="navBtn"
-              data-page="restaurant"
-              type="button">
+      <button class="nav-btn" onclick="showPage('restaurant',this)">
         🏪 Restaurant
       </button>
 
-      <button class="navBtn"
-              data-page="earnings"
-              type="button">
+      <button class="nav-btn" onclick="showPage('earnings',this)">
         💰 Earnings
       </button>
+
+      <div class="sidebar-bottom">
+
+        <button class="nav-btn" onclick="logoutVendor()">
+          🚪 Logout
+        </button>
+
+      </div>
 
     </aside>
 
 
+    <!-- MAIN -->
+
     <main class="main">
 
-      <!-- DASHBOARD -->
+      <div class="mobile-header">
 
-      <section id="dashboardPage" class="page active">
+        <strong>QuickEats</strong>
 
-        <div class="pageTitle">
-          Dashboard
+        <select onchange="mobileNavigate(this.value)">
+          <option value="dashboard">Dashboard</option>
+          <option value="orders">Orders</option>
+          <option value="menu">Menu</option>
+          <option value="restaurant">Restaurant</option>
+          <option value="earnings">Earnings</option>
+        </select>
+
+      </div>
+
+
+      <div class="topbar">
+
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+          <div class="vendor-name" id="vendorName">
+            Loading...
+          </div>
         </div>
 
-        <div class="pageSub">
-          Welcome back. Here's what's happening today.
+        <div id="restaurantStatus">
+          Checking...
         </div>
+
+      </div>
+
+
+      <!-- ================= DASHBOARD ================= -->
+
+      <section id="dashboard" class="page active">
 
         <div class="stats">
 
-          <div class="stat">
-            <div class="statLabel">Today's Orders</div>
-            <div class="statValue" id="statOrders">0</div>
+          <div class="card">
+            <div class="stat-title">New Orders</div>
+            <div class="stat-value" id="statNew">0</div>
           </div>
-
-          <div class="stat">
-            <div class="statLabel">Today's Sales</div>
-            <div class="statValue" id="statSales">₦0</div>
-          </div>
-
-          <div class="stat">
-            <div class="statLabel">Pending Orders</div>
-            <div class="statValue" id="statPending">0</div>
-          </div>
-
-          <div class="stat">
-            <div class="statLabel">Menu Items</div>
-            <div class="statValue" id="statMenu">0</div>
-          </div>
-
-        </div>
-
-
-        <div class="grid2">
 
           <div class="card">
-
-            <div class="cardTitle">
-              Restaurant Status
-            </div>
-
-            <div id="restaurantStatus"
-                 style="font-size:22px;font-weight:900;margin-bottom:15px">
-              Loading...
-            </div>
-
-            <button id="restaurantToggleBtn"
-                    class="primaryBtn"
-                    type="button">
-              ...
-            </button>
-
+            <div class="stat-title">Preparing</div>
+            <div class="stat-value" id="statPreparing">0</div>
           </div>
 
+          <div class="card">
+            <div class="stat-title">Ready</div>
+            <div class="stat-value" id="statReady">0</div>
+          </div>
 
           <div class="card">
-
-            <div class="cardTitle">
-              Quick Actions
-            </div>
-
-            <button id="quickMenuBtn"
-                    class="secondaryBtn"
-                    style="width:100%;margin-bottom:9px"
-                    type="button">
-              + Add Menu Item
-            </button>
-
-            <button id="quickOrdersBtn"
-                    class="secondaryBtn"
-                    style="width:100%"
-                    type="button">
-              View Orders
-            </button>
-
+            <div class="stat-title">Delivered</div>
+            <div class="stat-value" id="statDelivered">0</div>
           </div>
 
         </div>
@@ -803,347 +846,215 @@ button{
 
         <div class="card">
 
-          <div class="cardTitle">
+          <h2 class="section-title">
             Recent Orders
-          </div>
+          </h2>
 
-          <div id="recentOrders">
-            <div class="empty">
-              Loading orders...
-            </div>
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- ORDERS -->
-
-      <section id="ordersPage" class="page">
-
-        <div class="pageTitle">
-          Orders
-        </div>
-
-        <div class="pageSub">
-          Manage your customer orders.
-        </div>
-
-        <div id="ordersList">
-          <div class="empty">
+          <div id="dashboardOrders">
             Loading orders...
           </div>
-        </div>
-
-      </section>
-
-
-      <!-- MENU -->
-
-      <section id="menuPage" class="page">
-
-        <div style="
-          display:flex;
-          justify-content:space-between;
-          align-items:center;
-          gap:10px;
-          margin-bottom:22px;
-        ">
-
-          <div>
-
-            <div class="pageTitle">
-              Menu
-            </div>
-
-            <div class="pageSub" style="margin-bottom:0">
-              Add and manage your food.
-            </div>
-
-          </div>
-
-          <button id="addFoodBtn"
-                  class="primaryBtn"
-                  style="width:auto"
-                  type="button">
-            + Add Food
-          </button>
-
-        </div>
-
-
-        <div id="menuFormCard"
-             class="card hidden">
-
-          <div class="cardTitle"
-               id="menuFormTitle">
-            Add Menu Item
-          </div>
-
-          <input type="hidden" id="menuEditId">
-
-          <div class="grid2">
-
-            <div class="field">
-              <label>Food Name</label>
-              <input id="menuName"
-                     placeholder="e.g. Jollof Rice">
-            </div>
-
-            <div class="field">
-              <label>Category</label>
-              <input id="menuCategory"
-                     placeholder="e.g. Rice">
-            </div>
-
-          </div>
-
-          <div class="grid2">
-
-            <div class="field">
-              <label>Price (₦)</label>
-              <input id="menuPrice"
-                     type="number"
-                     min="0"
-                     placeholder="2500">
-            </div>
-
-            <div class="field">
-
-              <label>Availability</label>
-
-              <select id="menuStock">
-
-                <option value="true">
-                  Available
-                </option>
-
-                <option value="false">
-                  Out of stock
-                </option>
-
-              </select>
-
-            </div>
-
-          </div>
-
-          <button id="saveMenuBtn"
-                  class="primaryBtn"
-                  type="button">
-            SAVE FOOD
-          </button>
-
-          <button id="cancelMenuBtn"
-                  class="secondaryBtn"
-                  style="width:100%;margin-top:8px"
-                  type="button">
-            Cancel
-          </button>
-
-        </div>
-
-
-        <div id="menuList" class="menuGrid">
-
-          <div class="empty">
-            Loading menu...
-          </div>
 
         </div>
 
       </section>
 
 
-      <!-- RESTAURANT -->
+      <!-- ================= ORDERS ================= -->
 
-      <section id="restaurantPage" class="page">
-
-        <div class="pageTitle">
-          Restaurant
-        </div>
-
-        <div class="pageSub">
-          Manage your restaurant information.
-        </div>
-
+      <section id="orders" class="page">
 
         <div class="card">
 
-          <div class="profileGrid">
+          <h2 class="section-title">
+            Orders
+          </h2>
 
-            <div class="field">
-              <label>Restaurant Name</label>
-              <input id="profileStore">
-            </div>
-
-            <div class="field">
-              <label>Phone</label>
-              <input id="profilePhone">
-            </div>
-
+          <div id="ordersList">
+            Loading orders...
           </div>
 
+        </div>
+
+      </section>
+
+
+      <!-- ================= MENU ================= -->
+
+      <section id="menu" class="page">
+
+        <div class="toolbar">
+
+          <h2 class="section-title">
+            Menu
+          </h2>
+
+          <button class="primary"
+                  style="width:auto"
+                  onclick="openMenuModal()">
+            + Add Item
+          </button>
+
+        </div>
+
+        <div id="menuList" class="menu-grid">
+          Loading menu...
+        </div>
+
+      </section>
+
+
+      <!-- ================= RESTAURANT ================= -->
+
+      <section id="restaurant" class="page">
+
+        <div class="form-card">
+
+          <h2 class="section-title">
+            Restaurant Settings
+          </h2>
 
           <div class="field">
+            <label>Restaurant Name</label>
+            <input id="restaurantName">
+          </div>
 
+          <div class="field">
             <label>Address</label>
-
-            <textarea id="profileAddress"
-                      rows="3"></textarea>
-
+            <input id="restaurantAddress">
           </div>
 
+          <div class="field">
+            <label>Phone</label>
+            <input id="restaurantPhone">
+          </div>
 
-          <div class="profileGrid">
+          <div class="form-row">
 
             <div class="field">
-
               <label>Opening Time</label>
-
-              <input id="profileOpen"
-                     type="time">
-
+              <input id="openTime" type="time">
             </div>
 
             <div class="field">
-
               <label>Closing Time</label>
-
-              <input id="profileClose"
-                     type="time">
-
+              <input id="closeTime" type="time">
             </div>
 
           </div>
 
-
-          <button id="saveRestaurantBtn"
-                  class="primaryBtn"
-                  type="button">
-            SAVE RESTAURANT
+          <button class="primary"
+                  onclick="saveRestaurant()">
+            Save Restaurant
           </button>
-
-          <div id="restaurantMessage"
-               class="message">
-          </div>
 
         </div>
 
 
-        <div class="card">
+        <div class="form-card">
 
-          <div class="cardTitle">
-            Bank Information
-          </div>
+          <h2 class="section-title">
+            Restaurant Availability
+          </h2>
 
-          <div class="profileGrid">
+          <p id="availabilityText">
+            Loading...
+          </p>
 
-            <div class="field">
+          <br>
 
-              <label>Bank Name</label>
-
-              <input id="bankName">
-
-            </div>
-
-            <div class="field">
-
-              <label>Account Number</label>
-
-              <input id="accountNumber"
-                     inputmode="numeric"
-                     maxlength="20">
-
-            </div>
-
-          </div>
-
-          <button id="saveBankBtn"
-                  class="primaryBtn"
-                  type="button">
-            SAVE BANK DETAILS
+          <button id="toggleButton"
+                  class="secondary"
+                  onclick="toggleRestaurant()">
+            Change Status
           </button>
 
-          <div id="bankMessage"
-               class="message">
+        </div>
+
+
+        <div class="form-card">
+
+          <h2 class="section-title">
+            Bank Details
+          </h2>
+
+          <div class="field">
+            <label>Bank Name</label>
+            <input id="bankName">
           </div>
+
+          <div class="field">
+            <label>Account Number</label>
+            <input id="accountNumber"
+                   inputmode="numeric">
+          </div>
+
+          <button class="primary"
+                  onclick="saveBank()">
+            Save Bank Details
+          </button>
 
         </div>
 
       </section>
 
 
-      <!-- EARNINGS -->
+      <!-- ================= EARNINGS ================= -->
 
-      <section id="earningsPage" class="page">
-
-        <div class="pageTitle">
-          Earnings
-        </div>
-
-        <div class="pageSub">
-          Track your restaurant sales.
-        </div>
-
+      <section id="earnings" class="page">
 
         <div class="stats">
 
-          <div class="stat">
-            <div class="statLabel">Today</div>
-            <div class="statValue" id="earnToday">₦0</div>
-          </div>
-
-          <div class="stat">
-            <div class="statLabel">This Month</div>
-            <div class="statValue" id="earnMonth">₦0</div>
-          </div>
-
-          <div class="stat">
-            <div class="statLabel">Completed Orders</div>
-            <div class="statValue" id="earnOrders">0</div>
-          </div>
-
-          <div class="stat">
-            <div class="statLabel">Commission Rate</div>
-            <div class="statValue" id="earnCommission">0%</div>
-          </div>
-
-        </div>
-
-
-        <div class="card">
-
-          <div class="cardTitle">
-            Available Balance
-          </div>
-
-          <div class="balance" id="vendorBalance">
-            ₦0
-          </div>
-
-          <div style="
-            color:#7b8580;
-            margin-top:7px;
-            font-size:13px;
-          ">
-            Based on completed orders.
-          </div>
-
-        </div>
-
-
-        <div class="card">
-
-          <div class="cardTitle">
-            Recent Sales
-          </div>
-
-          <div id="salesList">
-            <div class="empty">
-              Loading...
+          <div class="card">
+            <div class="stat-title">
+              Today's Sales
             </div>
+            <div class="stat-value"
+                 id="todaySales">
+              ₦0
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="stat-title">
+              This Month
+            </div>
+            <div class="stat-value"
+                 id="monthSales">
+              ₦0
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="stat-title">
+              Commission
+            </div>
+            <div class="stat-value"
+                 id="commissionAmount">
+              ₦0
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="stat-title">
+              Estimated Balance
+            </div>
+            <div class="stat-value"
+                 id="vendorBalance">
+              ₦0
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <h2 class="section-title">
+            Completed Orders
+          </h2>
+
+          <div id="earningsTable">
+            Loading...
           </div>
 
         </div>
@@ -1154,61 +1065,65 @@ button{
 
   </div>
 
+</div>
 
-  <nav class="mobileNav">
 
-    <button class="active"
-            data-page="dashboard"
-            type="button">
-      📊<br>Home
+<!-- ================= MENU MODAL ================= -->
+
+<div id="menuModal" class="modal">
+
+  <div class="modal-box">
+
+    <div class="modal-head">
+
+      <h2 id="menuModalTitle">
+        Add Menu Item
+      </h2>
+
+      <button class="close"
+              onclick="closeMenuModal()">
+        ×
+      </button>
+
+    </div>
+
+    <input id="editingMenuId"
+           type="hidden">
+
+    <div class="field">
+      <label>Name</label>
+      <input id="menuName"
+             placeholder="Jollof Rice">
+    </div>
+
+    <div class="field">
+      <label>Category</label>
+      <input id="menuCategory"
+             placeholder="Rice">
+    </div>
+
+    <div class="field">
+      <label>Price (₦)</label>
+      <input id="menuPrice"
+             type="number"
+             min="0"
+             placeholder="2500">
+    </div>
+
+    <button class="primary"
+            onclick="saveMenuItem()">
+      Save Menu Item
     </button>
 
-    <button data-page="orders"
-            type="button">
-      🛍<br>Orders
-    </button>
-
-    <button data-page="menu"
-            type="button">
-      🍔<br>Menu
-    </button>
-
-    <button data-page="restaurant"
-            type="button">
-      🏪<br>Store
-    </button>
-
-    <button data-page="earnings"
-            type="button">
-      💰<br>Money
-    </button>
-
-  </nav>
-
-</section>
-
-
-<!-- ORDER NOTIFICATION -->
-
-<div id="notification"
-     class="notification">
-
-  <div class="notificationTitle">
-    🔔 New QuickEats Order
-  </div>
-
-  <div id="notificationText"
-       class="notificationText">
-    You have a new order.
   </div>
 
 </div>
 
 
+<div id="toast" class="toast"></div>
+
+
 <script>
-
-"use strict";
-
 
 /* =====================================================
    SUPABASE
@@ -1220,93 +1135,181 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_lQkN8HQP2Tm3tPiDYJbrNw_ydO7bqXU";
 
-let supabaseClient=null;
-let currentUser=null;
-let vendor=null;
-let orders=[];
-let menuItems=[];
-let realtimeChannel=null;
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =====================================================
+   GLOBAL STATE
+===================================================== */
+
+let currentUser = null;
+let vendor = null;
+let orders = [];
+let menuItems = [];
+let realtimeChannel = null;
 
 
 /* =====================================================
    HELPERS
 ===================================================== */
 
-function $(id){
-  return document.getElementById(id);
+function money(value){
+
+  return new Intl.NumberFormat(
+    "en-NG",
+    {
+      style:"currency",
+      currency:"NGN",
+      maximumFractionDigits:0
+    }
+  ).format(Number(value || 0));
+
 }
 
-function money(value){
-  return "₦"+Number(value||0).toLocaleString("en-NG");
-}
 
 function escapeHtml(value){
-  return String(value??"")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
 }
 
-function showMessage(id,text,type="success"){
 
-  const el=$(id);
+function toast(message){
 
-  if(!el)return;
+  const el =
+    document.getElementById("toast");
 
-  el.textContent=text;
-  el.className="message show "+type;
+  el.textContent = message;
+
+  el.classList.add("show");
+
+  clearTimeout(window.toastTimer);
+
+  window.toastTimer =
+    setTimeout(
+      ()=>el.classList.remove("show"),
+      3000
+    );
+
 }
 
-function showAuthMessage(text,type="error"){
-  showMessage("authMessage",text,type);
+
+function showAuthMessage(message,type="error"){
+
+  const el =
+    document.getElementById("authMessage");
+
+  el.textContent = message;
+
+  el.className =
+    "message " + type;
+
+}
+
+
+function clearAuthMessage(){
+
+  const el =
+    document.getElementById("authMessage");
+
+  el.textContent = "";
+
+  el.className = "message";
+
 }
 
 
 /* =====================================================
-   AUTH
+   AUTH SCREEN
 ===================================================== */
 
 function showLogin(){
 
-  $("loginForm").classList.remove("hidden");
-  $("registerForm").classList.add("hidden");
+  clearAuthMessage();
 
-  $("loginTab").classList.add("active");
-  $("registerTab").classList.remove("active");
+  document
+    .getElementById("loginForm")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("registerForm")
+    .classList.add("hidden");
 
 }
+
 
 function showRegister(){
 
-  $("loginForm").classList.add("hidden");
-  $("registerForm").classList.remove("hidden");
+  clearAuthMessage();
 
-  $("loginTab").classList.remove("active");
-  $("registerTab").classList.add("active");
+  document
+    .getElementById("loginForm")
+    .classList.add("hidden");
+
+  document
+    .getElementById("registerForm")
+    .classList.remove("hidden");
 
 }
 
 
+/* =====================================================
+   REGISTER
+===================================================== */
+
 async function registerVendor(){
 
-  const store=$("regStore").value.trim();
-  const phone=$("regPhone").value.trim();
-  const address=$("regAddress").value.trim();
-  const email=$("regEmail").value.trim();
-  const password=$("regPassword").value;
+  clearAuthMessage();
 
-  if(!store||!phone||!address||!email||!password){
+  const storeName =
+    document
+      .getElementById("regStoreName")
+      .value.trim();
+
+  const address =
+    document
+      .getElementById("regAddress")
+      .value.trim();
+
+  const phone =
+    document
+      .getElementById("regPhone")
+      .value.trim();
+
+  const email =
+    document
+      .getElementById("regEmail")
+      .value.trim();
+
+  const password =
+    document
+      .getElementById("regPassword")
+      .value;
+
+  if(
+    !storeName ||
+    !address ||
+    !email ||
+    !password
+  ){
 
     showAuthMessage(
-      "Please complete all fields."
+      "Please complete all required fields."
     );
 
     return;
   }
 
-  if(password.length<6){
+  if(password.length < 6){
 
     showAuthMessage(
       "Password must be at least 6 characters."
@@ -1315,14 +1318,20 @@ async function registerVendor(){
     return;
   }
 
-  showAuthMessage(
-    "Creating your account...",
-    "success"
+
+  localStorage.setItem(
+    "quickeats_vendor_profile",
+    JSON.stringify({
+      store_name:storeName,
+      address:address,
+      phone:phone
+    })
   );
+
 
   try{
 
-    const result=
+    const result =
       await supabaseClient.auth.signUp({
 
         email,
@@ -1330,178 +1339,71 @@ async function registerVendor(){
 
         options:{
           data:{
-            role:"vendor",
-            store_name:store,
-            phone:phone,
-            address:address
+            store_name:storeName,
+            address:address,
+            phone:phone
           }
         }
 
       });
 
+
     if(result.error){
-      throw result.error;
-    }
-
-    currentUser=result.data.user;
-
-    localStorage.setItem(
-      "quickeats_vendor_profile",
-      JSON.stringify({
-        store,
-        phone,
-        address,
-        email
-      })
-    );
-
-
-    /*
-      If Supabase automatically logs
-      the user in, create profile now.
-    */
-
-    if(result.data.session){
-
-      const ok=
-        await createVendorProfile(
-          currentUser.id,
-          store,
-          phone,
-          address
-        );
-
-      if(!ok)return;
-
-      await loadApp();
-
-      return;
-    }
-
-
-    /*
-      Email confirmation is enabled.
-    */
-
-    showLogin();
-
-    $("loginEmail").value=email;
-
-    showAuthMessage(
-      "Account created. Check your email, confirm your email address, then log in.",
-      "success"
-    );
-
-  }catch(error){
-
-    console.error(error);
-
-    if(
-      String(error.message||"")
-        .toLowerCase()
-        .includes("already registered")
-    ){
-
-      showLogin();
-
-      $("loginEmail").value=email;
 
       showAuthMessage(
-        "This email already has an account. Please log in.",
-        "error"
+        result.error.message
       );
 
       return;
     }
 
+
+    /*
+      If email confirmation is disabled,
+      Supabase may immediately give us a session.
+    */
+
+    if(result.data.session){
+
+      currentUser =
+        result.data.user;
+
+      await createVendorProfile(
+        currentUser
+      );
+
+      return;
+    }
+
+
+    /*
+      If email confirmation is enabled,
+      the user must confirm email and then login.
+    */
+
     showAuthMessage(
-      error.message||
-      "Could not create account."
+      "Account created. Check your email to confirm your account, then log in.",
+      "success"
     );
-  }
-}
 
+    showLogin();
 
-/* =====================================================
-   CREATE VENDOR PROFILE
-===================================================== */
+    document
+      .getElementById("loginEmail")
+      .value = email;
 
-async function createVendorProfile(
-  userId,
-  store,
-  phone,
-  address
-){
-
-  try{
-
-    /*
-      First check whether profile
-      already exists.
-    */
-
-    const existing=
-      await supabaseClient
-        .from("vendors")
-        .select("id")
-        .eq("owner_id",userId)
-        .maybeSingle();
-
-    if(existing.error){
-      throw existing.error;
-    }
-
-    if(existing.data){
-
-      await loadVendor();
-
-      return true;
-    }
-
-
-    /*
-      Important:
-      Do NOT use .select() after insert.
-      This avoids RLS SELECT problems.
-    */
-
-    const result=
-      await supabaseClient
-        .from("vendors")
-        .insert({
-
-          owner_id:userId,
-          store_name:store,
-          address:address,
-          phone:phone,
-          is_open:true
-
-        });
-
-
-    if(result.error){
-      throw result.error;
-    }
-
-
-    await loadVendor();
-
-    return !!vendor;
 
   }catch(error){
 
-    console.error(
-      "Vendor profile error:",
-      error
-    );
+    console.error(error);
 
     showAuthMessage(
-      "Account created, but restaurant setup failed: "+
-      error.message
+      error.message ||
+      "Registration failed."
     );
 
-    return false;
   }
+
 }
 
 
@@ -1511,10 +1413,20 @@ async function createVendorProfile(
 
 async function loginVendor(){
 
-  const email=$("loginEmail").value.trim();
-  const password=$("loginPassword").value;
+  clearAuthMessage();
 
-  if(!email||!password){
+  const email =
+    document
+      .getElementById("loginEmail")
+      .value.trim();
+
+  const password =
+    document
+      .getElementById("loginPassword")
+      .value;
+
+
+  if(!email || !password){
 
     showAuthMessage(
       "Enter your email and password."
@@ -1523,49 +1435,180 @@ async function loginVendor(){
     return;
   }
 
-  showAuthMessage(
-    "Logging in...",
-    "success"
-  );
 
   try{
 
-    const result=
-      await supabaseClient
-        .auth
+    const result =
+      await supabaseClient.auth
         .signInWithPassword({
           email,
           password
         });
 
+
     if(result.error){
-      throw result.error;
+
+      showAuthMessage(
+        result.error.message
+      );
+
+      return;
     }
 
-    currentUser=result.data.user;
+
+    currentUser =
+      result.data.user;
+
 
     await loadApp();
+
 
   }catch(error){
 
     console.error(error);
 
-    let message=
-      error.message||
-      "Login failed.";
+    showAuthMessage(
+      error.message ||
+      "Login failed."
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   CREATE VENDOR PROFILE
+===================================================== */
+
+async function createVendorProfile(user){
+
+  if(!user){
+
+    return false;
+
+  }
+
+
+  const existing =
+    await supabaseClient
+      .from("vendors")
+      .select("id")
+      .eq("owner_id",user.id)
+      .maybeSingle();
+
+
+  if(existing.error){
+
+    console.error(existing.error);
+
+    showAuthMessage(
+      existing.error.message
+    );
+
+    return false;
+
+  }
+
+
+  if(existing.data){
+
+    return true;
+
+  }
+
+
+  let savedProfile = {};
+
+  try{
+
+    savedProfile =
+      JSON.parse(
+        localStorage.getItem(
+          "quickeats_vendor_profile"
+        ) || "{}"
+      );
+
+  }catch(e){
+
+    savedProfile = {};
+
+  }
+
+
+  const metadata =
+    user.user_metadata || {};
+
+
+  const storeName =
+    savedProfile.store_name ||
+    metadata.store_name ||
+    "My Restaurant";
+
+  const address =
+    savedProfile.address ||
+    metadata.address ||
+    "Nigeria";
+
+  const phone =
+    savedProfile.phone ||
+    metadata.phone ||
+    "";
+
+
+  const result =
+    await supabaseClient
+      .from("vendors")
+      .insert({
+
+        owner_id:user.id,
+
+        store_name:storeName,
+
+        address:address,
+
+        phone:phone,
+
+        is_open:false
+
+      });
+
+
+  if(result.error){
+
+    /*
+      Another browser tab/request may have
+      created the profile already.
+    */
 
     if(
-      message
-        .toLowerCase()
-        .includes("email not confirmed")
+      result.error.code === "23505"
     ){
 
-      message=
-        "Your email has not been confirmed yet. Check your email and confirm it first.";
+      return true;
+
     }
 
-    showAuthMessage(message);
+
+    console.error(result.error);
+
+    showAuthMessage(
+      "Could not create restaurant profile: " +
+      result.error.message
+    );
+
+    return false;
+
   }
+
+
+  localStorage.removeItem(
+    "quickeats_vendor_profile"
+  );
+
+
+  return true;
+
 }
 
 
@@ -1575,176 +1618,116 @@ async function loginVendor(){
 
 async function loadApp(){
 
-  try{
+  const auth =
+    await supabaseClient.auth.getUser();
 
-    if(!currentUser){
+  if(auth.error || !auth.data.user){
 
-      const result=
-        await supabaseClient.auth.getUser();
+    showLogin();
 
-      currentUser=result.data.user;
-    }
+    return;
 
-    if(!currentUser){
-      return;
-    }
-
-    await loadVendor();
-
-
-    /*
-      If Auth account exists but vendor
-      profile is missing, don't trap user.
-    */
-
-    if(!vendor){
-
-      const saved=
-        localStorage.getItem(
-          "quickeats_vendor_profile"
-        );
-
-      let profile={};
-
-      try{
-        profile=JSON.parse(saved||"{}");
-      }catch(e){}
-
-      const metadata=
-        currentUser.user_metadata||{};
-
-      const store=
-        profile.store||
-        metadata.store_name||
-        "";
-
-      const phone=
-        profile.phone||
-        metadata.phone||
-        "";
-
-      const address=
-        profile.address||
-        metadata.address||
-        "";
-
-      /*
-        Automatically try to finish profile.
-      */
-
-      if(store&&address){
-
-        const ok=
-          await createVendorProfile(
-            currentUser.id,
-            store,
-            phone,
-            address
-          );
-
-        if(ok){
-
-          localStorage.removeItem(
-            "quickeats_vendor_profile"
-          );
-
-          return loadApp();
-        }
-      }
-
-      showAuthMessage(
-        "Your account is logged in, but your restaurant profile is missing. Please contact QuickEats support."
-      );
-
-      return;
-    }
-
-
-    $("authPage")
-      .classList
-      .add("hidden");
-
-    $("app")
-      .classList
-      .remove("hidden");
-
-    $("topVendorName")
-      .textContent=
-        vendor.store_name||"Vendor";
-
-    fillRestaurantForm();
-
-    await loadMenu();
-    await loadOrders();
-    await loadEarnings();
-
-    updateRestaurantStatus();
-
-    subscribeRealtime();
-
-  }catch(error){
-
-    console.error(error);
-
-    showAuthMessage(
-      "Could not load dashboard: "+
-      error.message
-    );
   }
-}
 
 
-/* =====================================================
-   LOAD VENDOR
-===================================================== */
+  currentUser =
+    auth.data.user;
 
-async function loadVendor(){
 
-  const result=
+  let vendorResult =
     await supabaseClient
       .from("vendors")
       .select("*")
       .eq("owner_id",currentUser.id)
       .maybeSingle();
 
-  if(result.error){
 
-    console.error(result.error);
+  if(vendorResult.error){
+
+    console.error(vendorResult.error);
 
     showAuthMessage(
-      "Could not load restaurant: "+
-      result.error.message
+      vendorResult.error.message
     );
 
-    vendor=null;
+    return;
+
+  }
+
+
+  if(!vendorResult.data){
+
+    const created =
+      await createVendorProfile(
+        currentUser
+      );
+
+
+    if(!created){
+
+      showAuthMessage(
+        "Your account exists, but your vendor profile could not be created."
+      );
+
+      return;
+
+    }
+
+
+    vendorResult =
+      await supabaseClient
+        .from("vendors")
+        .select("*")
+        .eq("owner_id",currentUser.id)
+        .maybeSingle();
+
+  }
+
+
+  if(
+    vendorResult.error ||
+    !vendorResult.data
+  ){
+
+    showAuthMessage(
+      "Vendor profile not found."
+    );
 
     return;
+
   }
 
-  vendor=result.data;
-}
+
+  vendor =
+    vendorResult.data;
 
 
-/* =====================================================
-   LOGOUT
-===================================================== */
+  document
+    .getElementById("authScreen")
+    .style.display = "none";
 
-async function logoutVendor(){
 
-  if(realtimeChannel){
+  document
+    .getElementById("app")
+    .style.display = "block";
 
-    await supabaseClient
-      .removeChannel(realtimeChannel);
 
-    realtimeChannel=null;
-  }
+  document
+    .getElementById("vendorName")
+    .textContent =
+      vendor.store_name;
 
-  await supabaseClient.auth.signOut();
 
-  currentUser=null;
-  vendor=null;
+  await loadVendorSettings();
 
-  location.reload();
+  await loadOrders();
+
+  await loadMenu();
+
+  await loadEarnings();
+
+  setupRealtime();
+
 }
 
 
@@ -1752,44 +1735,89 @@ async function logoutVendor(){
    NAVIGATION
 ===================================================== */
 
-function showPage(page){
+function showPage(pageId,button){
 
   document
     .querySelectorAll(".page")
-    .forEach(el=>{
-      el.classList.remove("active");
-    });
+    .forEach(page =>
+      page.classList.remove("active")
+    );
 
-  const selected=$(page+"Page");
 
-  if(selected){
-    selected.classList.add("active");
+  const page =
+    document.getElementById(pageId);
+
+
+  if(page){
+
+    page.classList.add("active");
+
   }
+
 
   document
-    .querySelectorAll(".navBtn,.mobileNav button")
-    .forEach(btn=>{
-      btn.classList.toggle(
-        "active",
-        btn.dataset.page===page
-      );
-    });
+    .querySelectorAll(".nav-btn")
+    .forEach(btn =>
+      btn.classList.remove("active")
+    );
 
-  if(page==="dashboard"){
-    loadOrders();
+
+  if(button){
+
+    button.classList.add("active");
+
   }
 
-  if(page==="orders"){
+
+  const titles = {
+
+    dashboard:"Dashboard",
+
+    orders:"Orders",
+
+    menu:"Menu",
+
+    restaurant:"Restaurant",
+
+    earnings:"Earnings"
+
+  };
+
+
+  document
+    .getElementById("pageTitle")
+    .textContent =
+      titles[pageId] || "QuickEats";
+
+
+  if(pageId === "orders"){
+
     loadOrders();
+
   }
 
-  if(page==="menu"){
+
+  if(pageId === "menu"){
+
     loadMenu();
+
   }
 
-  if(page==="earnings"){
+
+  if(pageId === "earnings"){
+
     loadEarnings();
+
   }
+
+
+}
+
+
+function mobileNavigate(page){
+
+  showPage(page,null);
+
 }
 
 
@@ -1797,196 +1825,273 @@ function showPage(page){
    RESTAURANT
 ===================================================== */
 
-function fillRestaurantForm(){
+async function loadVendorSettings(){
 
-  if(!vendor)return;
+  if(!vendor){
 
-  $("profileStore").value=
-    vendor.store_name||"";
+    return;
 
-  $("profilePhone").value=
-    vendor.phone||"";
+  }
 
-  $("profileAddress").value=
-    vendor.address||"";
 
-  $("profileOpen").value=
-    vendor.open_time||"";
+  document
+    .getElementById("restaurantName")
+    .value =
+      vendor.store_name || "";
 
-  $("profileClose").value=
-    vendor.close_time||"";
 
-  $("bankName").value=
-    vendor.bank_name||"";
+  document
+    .getElementById("restaurantAddress")
+    .value =
+      vendor.address || "";
 
-  $("accountNumber").value=
-    vendor.account_number||"";
+
+  document
+    .getElementById("restaurantPhone")
+    .value =
+      vendor.phone || "";
+
+
+  document
+    .getElementById("openTime")
+    .value =
+      vendor.open_time || "";
+
+
+  document
+    .getElementById("closeTime")
+    .value =
+      vendor.close_time || "";
+
+
+  document
+    .getElementById("bankName")
+    .value =
+      vendor.bank_name || "";
+
+
+  document
+    .getElementById("accountNumber")
+    .value =
+      vendor.account_number || "";
+
 
   updateRestaurantStatus();
+
+}
+
+
+function updateRestaurantStatus(){
+
+  const open =
+    vendor &&
+    vendor.is_open === true;
+
+
+  document
+    .getElementById("restaurantStatus")
+    .textContent =
+      open
+        ? "🟢 Open"
+        : "🔴 Closed";
+
+
+  document
+    .getElementById("availabilityText")
+    .textContent =
+      open
+        ? "Your restaurant is currently accepting orders."
+        : "Your restaurant is currently closed.";
+
+
+  document
+    .getElementById("toggleButton")
+    .textContent =
+      open
+        ? "Close Restaurant"
+        : "Open Restaurant";
+
 }
 
 
 async function saveRestaurant(){
 
-  if(!vendor)return;
-
-  const updates={
-
-    store_name:
-      $("profileStore").value.trim(),
-
-    phone:
-      $("profilePhone").value.trim(),
-
-    address:
-      $("profileAddress").value.trim(),
-
-    open_time:
-      $("profileOpen").value,
-
-    close_time:
-      $("profileClose").value
-  };
-
-  if(!updates.store_name||
-     !updates.address){
-
-    showMessage(
-      "restaurantMessage",
-      "Restaurant name and address are required.",
-      "error"
-    );
+  if(!vendor){
 
     return;
+
   }
 
-  const result=
+
+  const updates = {
+
+    store_name:
+      document
+        .getElementById("restaurantName")
+        .value.trim(),
+
+    address:
+      document
+        .getElementById("restaurantAddress")
+        .value.trim(),
+
+    phone:
+      document
+        .getElementById("restaurantPhone")
+        .value.trim(),
+
+    open_time:
+      document
+        .getElementById("openTime")
+        .value || null,
+
+    close_time:
+      document
+        .getElementById("closeTime")
+        .value || null
+
+  };
+
+
+  const result =
     await supabaseClient
       .from("vendors")
       .update(updates)
-      .eq("id",vendor.id)
-      .eq("owner_id",currentUser.id)
-      .select()
-      .single();
+      .eq("id",vendor.id);
+
 
   if(result.error){
 
-    showMessage(
-      "restaurantMessage",
-      result.error.message,
-      "error"
+    alert(
+      "Could not save restaurant:\n\n" +
+      result.error.message
     );
 
     return;
+
   }
 
-  vendor=result.data;
 
-  $("topVendorName")
-    .textContent=
+  vendor = {
+    ...vendor,
+    ...updates
+  };
+
+
+  document
+    .getElementById("vendorName")
+    .textContent =
       vendor.store_name;
 
-  showMessage(
-    "restaurantMessage",
-    "Restaurant information saved."
-  );
-}
 
+  toast("Restaurant details saved.");
 
-/* =====================================================
-   BANK
-===================================================== */
-
-async function saveBank(){
-
-  const result=
-    await supabaseClient
-      .from("vendors")
-      .update({
-
-        bank_name:
-          $("bankName").value.trim(),
-
-        account_number:
-          $("accountNumber").value.trim()
-
-      })
-      .eq("id",vendor.id)
-      .eq("owner_id",currentUser.id)
-      .select()
-      .single();
-
-  if(result.error){
-
-    showMessage(
-      "bankMessage",
-      result.error.message,
-      "error"
-    );
-
-    return;
-  }
-
-  vendor=result.data;
-
-  showMessage(
-    "bankMessage",
-    "Bank details saved."
-  );
-}
-
-
-/* =====================================================
-   RESTAURANT OPEN/CLOSE
-===================================================== */
-
-function updateRestaurantStatus(){
-
-  if(!vendor)return;
-
-  if(vendor.is_open){
-
-    $("restaurantStatus")
-      .textContent="🟢 OPEN";
-
-    $("restaurantToggleBtn")
-      .textContent="CLOSE RESTAURANT";
-
-  }else{
-
-    $("restaurantStatus")
-      .textContent="🔴 CLOSED";
-
-    $("restaurantToggleBtn")
-      .textContent="OPEN RESTAURANT";
-  }
 }
 
 
 async function toggleRestaurant(){
 
-  if(!vendor)return;
+  if(!vendor){
 
-  const result=
+    return;
+
+  }
+
+
+  const newStatus =
+    vendor.is_open !== true;
+
+
+  const result =
     await supabaseClient
       .from("vendors")
       .update({
-        is_open:!vendor.is_open
+        is_open:newStatus
       })
-      .eq("id",vendor.id)
-      .eq("owner_id",currentUser.id)
-      .select()
-      .single();
+      .eq("id",vendor.id);
+
 
   if(result.error){
 
-    alert(result.error.message);
+    alert(
+      "Could not change restaurant status:\n\n" +
+      result.error.message
+    );
+
     return;
+
   }
 
-  vendor=result.data;
+
+  vendor.is_open =
+    newStatus;
+
 
   updateRestaurantStatus();
+
+  toast(
+    newStatus
+      ? "Restaurant is now open."
+      : "Restaurant is now closed."
+  );
+
+}
+
+
+async function saveBank(){
+
+  if(!vendor){
+
+    return;
+
+  }
+
+
+  const bankName =
+    document
+      .getElementById("bankName")
+      .value.trim();
+
+  const accountNumber =
+    document
+      .getElementById("accountNumber")
+      .value.trim();
+
+
+  const result =
+    await supabaseClient
+      .from("vendors")
+      .update({
+
+        bank_name:bankName,
+
+        account_number:accountNumber
+
+      })
+      .eq("id",vendor.id);
+
+
+  if(result.error){
+
+    alert(
+      "Could not save bank details:\n\n" +
+      result.error.message
+    );
+
+    return;
+
+  }
+
+
+  vendor.bank_name =
+    bankName;
+
+  vendor.account_number =
+    accountNumber;
+
+
+  toast("Bank details saved.");
+
 }
 
 
@@ -1996,9 +2101,14 @@ async function toggleRestaurant(){
 
 async function loadMenu(){
 
-  if(!vendor)return;
+  if(!vendor){
 
-  const result=
+    return;
+
+  }
+
+
+  const result =
     await supabaseClient
       .from("menu_items")
       .select("*")
@@ -2006,287 +2116,383 @@ async function loadMenu(){
       .order("category")
       .order("name");
 
+
   if(result.error){
 
-    $("menuList").innerHTML=`
-      <div class="empty">
-        Could not load menu.<br><br>
-        ${escapeHtml(result.error.message)}
-      </div>
-    `;
+    console.error(result.error);
+
+    document
+      .getElementById("menuList")
+      .innerHTML =
+        "<p>Could not load menu.</p>";
 
     return;
+
   }
 
-  menuItems=result.data||[];
+
+  menuItems =
+    result.data || [];
+
 
   renderMenu();
 
-  $("statMenu")
-    .textContent=menuItems.length;
 }
 
 
 function renderMenu(){
 
-  const list=$("menuList");
+  const container =
+    document.getElementById("menuList");
 
-  if(!menuItems.length){
 
-    list.innerHTML=`
-      <div class="empty">
-        No food has been added yet.
-        <br><br>
-        Tap <b>+ Add Food</b>.
-      </div>
-    `;
+  if(menuItems.length === 0){
+
+    container.innerHTML =
+      `<div class="card">
+        <p>Your menu is empty.</p>
+       </div>`;
 
     return;
+
   }
 
-  list.innerHTML=
-    menuItems.map(item=>`
 
-      <div class="menuItem">
+  container.innerHTML =
+    menuItems.map(item => `
 
-        <div style="
-          display:flex;
-          justify-content:space-between;
-          gap:10px;
-        ">
+      <div class="menu-card">
 
-          <div>
+        <h3>
+          ${escapeHtml(item.name)}
+        </h3>
 
-            <div class="menuName">
-              ${escapeHtml(item.name)}
-            </div>
-
-            <div class="category">
-              ${escapeHtml(item.category||"Food")}
-            </div>
-
-          </div>
-
-          <span class="stock ${
-            item.in_stock?"in":"out"
-          }">
-
-            ${item.in_stock?
-              "AVAILABLE":
-              "OUT OF STOCK"}
-
-          </span>
-
+        <div class="menu-category">
+          ${escapeHtml(item.category || "General")}
         </div>
 
-        <div class="price">
+        <div class="menu-price">
           ${money(item.price)}
         </div>
 
-        <div class="menuActions">
+        <div style="margin-bottom:12px">
+          ${
+            item.in_stock
+              ? "🟢 In stock"
+              : "🔴 Out of stock"
+          }
+        </div>
+
+        <div class="menu-actions">
 
           <button
-            class="secondaryBtn editMenuBtn"
-            data-id="${item.id}"
-            type="button">
+            class="small-btn edit-btn"
+            onclick="editMenuItem('${item.id}')">
             Edit
           </button>
 
           <button
-            class="dangerBtn deleteMenuBtn"
-            data-id="${item.id}"
-            type="button">
+            class="small-btn stock-btn"
+            onclick="toggleStock('${item.id}',${item.in_stock})">
+            ${item.in_stock ? "Out of stock" : "Stock"}
+          </button>
+
+          <button
+            class="small-btn delete-btn"
+            onclick="deleteMenuItem('${item.id}')">
             Delete
           </button>
 
         </div>
 
-        <button
-          class="actionBtn stockMenuBtn"
-          data-id="${item.id}"
-          data-stock="${item.in_stock}"
-          style="width:100%;margin-top:8px"
-          type="button">
-
-          ${item.in_stock?
-            "Mark Out of Stock":
-            "Mark Available"}
-
-        </button>
-
       </div>
 
     `).join("");
+
 }
 
 
-function openMenuForm(item=null){
+function openMenuModal(item=null){
 
-  $("menuFormCard")
-    .classList
-    .remove("hidden");
+  document
+    .getElementById("menuModal")
+    .classList.add("show");
 
-  $("menuFormTitle")
-    .textContent=
-      item?
-      "Edit Menu Item":
-      "Add Menu Item";
 
-  $("menuEditId").value=
-    item?.id||"";
+  if(item){
 
-  $("menuName").value=
-    item?.name||"";
+    document
+      .getElementById("menuModalTitle")
+      .textContent =
+        "Edit Menu Item";
 
-  $("menuCategory").value=
-    item?.category||"";
 
-  $("menuPrice").value=
-    item?.price??"";
+    document
+      .getElementById("editingMenuId")
+      .value =
+        item.id;
 
-  $("menuStock").value=
-    item?.in_stock===false?
-    "false":
-    "true";
 
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
+    document
+      .getElementById("menuName")
+      .value =
+        item.name || "";
+
+
+    document
+      .getElementById("menuCategory")
+      .value =
+        item.category || "";
+
+
+    document
+      .getElementById("menuPrice")
+      .value =
+        item.price || "";
+
+
+  }else{
+
+    document
+      .getElementById("menuModalTitle")
+      .textContent =
+        "Add Menu Item";
+
+
+    document
+      .getElementById("editingMenuId")
+      .value = "";
+
+
+    document
+      .getElementById("menuName")
+      .value = "";
+
+
+    document
+      .getElementById("menuCategory")
+      .value = "";
+
+
+    document
+      .getElementById("menuPrice")
+      .value = "";
+
+  }
+
 }
 
 
-function closeMenuForm(){
+function closeMenuModal(){
 
-  $("menuFormCard")
-    .classList
-    .add("hidden");
+  document
+    .getElementById("menuModal")
+    .classList.remove("show");
+
+}
+
+
+function editMenuItem(id){
+
+  const item =
+    menuItems.find(
+      x => x.id === id
+    );
+
+
+  if(item){
+
+    openMenuModal(item);
+
+  }
+
 }
 
 
 async function saveMenuItem(){
 
-  const id=$("menuEditId").value;
+  if(!vendor){
 
-  const name=$("menuName")
-    .value
-    .trim();
+    return;
 
-  const category=
-    $("menuCategory")
-      .value
-      .trim()||"Food";
+  }
 
-  const price=
+
+  const id =
+    document
+      .getElementById("editingMenuId")
+      .value;
+
+
+  const name =
+    document
+      .getElementById("menuName")
+      .value.trim();
+
+
+  const category =
+    document
+      .getElementById("menuCategory")
+      .value.trim();
+
+
+  const price =
     Number(
-      $("menuPrice").value
+      document
+        .getElementById("menuPrice")
+        .value
     );
 
-  const inStock=
-    $("menuStock").value==="true";
 
   if(!name){
 
-    alert("Enter the food name.");
+    alert("Enter the menu item name.");
+
     return;
+
   }
 
-  if(Number.isNaN(price)||price<0){
+
+  if(!price || price < 0){
 
     alert("Enter a valid price.");
+
     return;
+
   }
+
 
   let result;
 
+
   if(id){
 
-    result=
+    result =
       await supabaseClient
         .from("menu_items")
         .update({
+
           name,
           category,
-          price,
-          in_stock:inStock
+          price
+
         })
         .eq("id",id)
         .eq("vendor_id",vendor.id);
 
   }else{
 
-    result=
+    result =
       await supabaseClient
         .from("menu_items")
         .insert({
+
           vendor_id:vendor.id,
+
           name,
+
           category,
+
           price,
-          in_stock:inStock
+
+          in_stock:true
+
         });
+
   }
+
 
   if(result.error){
 
-    alert(result.error.message);
+    alert(
+      "Could not save menu item:\n\n" +
+      result.error.message
+    );
+
     return;
+
   }
 
-  closeMenuForm();
+
+  closeMenuModal();
 
   await loadMenu();
+
+  toast(
+    id
+      ? "Menu item updated."
+      : "Menu item added."
+  );
+
+}
+
+
+async function toggleStock(id,currentStock){
+
+  const result =
+    await supabaseClient
+      .from("menu_items")
+      .update({
+        in_stock:!currentStock
+      })
+      .eq("id",id)
+      .eq("vendor_id",vendor.id);
+
+
+  if(result.error){
+
+    alert(
+      "Could not update stock:\n\n" +
+      result.error.message
+    );
+
+    return;
+
+  }
+
+
+  await loadMenu();
+
 }
 
 
 async function deleteMenuItem(id){
 
-  const item=
-    menuItems.find(x=>x.id===id);
+  if(
+    !confirm(
+      "Delete this menu item?"
+    )
+  ){
 
-  if(!item)return;
-
-  if(!confirm(
-    `Delete "${item.name}" from your menu?`
-  )){
     return;
+
   }
 
-  const result=
+
+  const result =
     await supabaseClient
       .from("menu_items")
       .delete()
       .eq("id",id)
       .eq("vendor_id",vendor.id);
 
-  if(result.error){
-
-    alert(result.error.message);
-    return;
-  }
-
-  await loadMenu();
-}
-
-
-async function toggleStock(id,current){
-
-  const result=
-    await supabaseClient
-      .from("menu_items")
-      .update({
-        in_stock:!current
-      })
-      .eq("id",id)
-      .eq("vendor_id",vendor.id);
 
   if(result.error){
 
-    alert(result.error.message);
+    alert(
+      "Could not delete menu item:\n\n" +
+      result.error.message
+    );
+
     return;
+
   }
 
+
   await loadMenu();
+
+  toast("Menu item deleted.");
+
 }
 
 
@@ -2296,296 +2502,435 @@ async function toggleStock(id,current){
 
 async function loadOrders(){
 
-  if(!vendor)return;
+  if(!vendor){
 
-  const result=
+    return;
+
+  }
+
+
+  const result =
     await supabaseClient
       .from("orders")
       .select("*")
       .eq("vendor_id",vendor.id)
       .order("created_at",{ascending:false});
 
+
   if(result.error){
 
-    $("ordersList").innerHTML=`
-      <div class="empty">
-        Could not load orders.<br><br>
-        ${escapeHtml(result.error.message)}
-      </div>
-    `;
+    console.error(result.error);
+
+    document
+      .getElementById("ordersList")
+      .innerHTML =
+        "<p>Could not load orders.</p>";
 
     return;
+
   }
 
-  orders=result.data||[];
+
+  orders =
+    result.data || [];
+
 
   renderOrders();
 
-  updateStats();
+  updateDashboardStats();
+
 }
 
 
-function formatStatus(status){
+function statusLabel(status){
 
-  const names={
+  const labels = {
 
-    new:"NEW",
+    new:"New",
 
-    vendor_accepted:"ACCEPTED",
+    vendor_accepted:"Accepted",
 
-    ready_for_pickup:"FOOD READY",
+    ready_for_pickup:"Ready for Pickup",
 
-    rider_accepted:"RIDER ASSIGNED",
+    rider_accepted:"Rider Accepted",
 
-    arrived_pickup:"RIDER ARRIVED",
+    arrived_pickup:"Rider Arrived",
 
-    picked_up:"PICKED UP",
+    picked_up:"Picked Up",
 
-    on_the_way:"ON THE WAY",
+    on_the_way:"On The Way",
 
-    delivered:"DELIVERED",
+    delivered:"Delivered",
 
-    cancelled:"CANCELLED"
+    cancelled:"Cancelled"
+
   };
 
-  return names[status]||status||"NEW";
+
+  return labels[status] || status;
+
 }
 
 
 function getOrderActions(order){
 
-  const status=order.status||"new";
+  const status =
+    order.status;
 
-  if(status==="new"){
 
-    return `
-
-      <button
-        class="actionBtn orderActionBtn"
-        data-id="${order.id}"
-        data-status="vendor_accepted"
-        type="button">
-        ACCEPT ORDER
-      </button>
-
-      <button
-        class="rejectBtn orderActionBtn"
-        data-id="${order.id}"
-        data-status="cancelled"
-        type="button">
-        REJECT
-      </button>
-    `;
-  }
-
-  if(status==="vendor_accepted"){
+  if(status === "new"){
 
     return `
 
       <button
-        class="actionBtn orderActionBtn"
-        data-id="${order.id}"
-        data-status="ready_for_pickup"
-        type="button">
-        FOOD READY
+        class="action-btn accept"
+        onclick="updateOrder('${order.id}','vendor_accepted')">
+        Accept
+      </button>
+
+      <button
+        class="action-btn reject"
+        onclick="updateOrder('${order.id}','cancelled')">
+        Reject
       </button>
 
     `;
+
   }
 
-  if(status==="ready_for_pickup"){
+
+  if(status === "vendor_accepted"){
 
     return `
-      <span style="color:#078b49;font-weight:800">
-        🚴 Waiting for rider
-      </span>
+
+      <button
+        class="action-btn ready"
+        onclick="updateOrder('${order.id}','ready_for_pickup')">
+        Food Ready
+      </button>
+
     `;
+
   }
 
-  if(status==="rider_accepted"){
+
+  if(status === "ready_for_pickup"){
 
     return `
-      <span style="color:#078b49;font-weight:800">
-        🚴 Rider assigned
-      </span>
+      <button
+        class="action-btn disabled-btn"
+        disabled>
+        Waiting for Rider
+      </button>
     `;
+
   }
 
-  if(status==="arrived_pickup"){
+
+  if(status === "rider_accepted"){
 
     return `
-      <span style="color:#078b49;font-weight:800">
-        🚴 Rider has arrived
-      </span>
+      <button
+        class="action-btn disabled-btn"
+        disabled>
+        Rider Assigned
+      </button>
     `;
+
   }
 
-  if(status==="picked_up"){
+
+  if(status === "arrived_pickup"){
 
     return `
-      <span style="color:#078b49;font-weight:800">
-        📦 Food picked up
-      </span>
+      <button
+        class="action-btn disabled-btn"
+        disabled>
+        Rider Arrived
+      </button>
     `;
+
   }
 
-  if(status==="on_the_way"){
+
+  if(status === "picked_up"){
 
     return `
-      <span style="color:#078b49;font-weight:800">
-        🚴 Customer delivery in progress
-      </span>
+      <button
+        class="action-btn disabled-btn"
+        disabled>
+        Food Picked Up
+      </button>
     `;
+
   }
 
-  if(status==="delivered"){
+
+  if(status === "on_the_way"){
 
     return `
-      <span style="color:#078b49;font-weight:800">
-        ✓ Order delivered
-      </span>
+      <button
+        class="action-btn disabled-btn"
+        disabled>
+        Being Delivered
+      </button>
     `;
+
   }
+
+
+  if(status === "delivered"){
+
+    return `
+      <button
+        class="action-btn disabled-btn"
+        disabled>
+        Delivered
+      </button>
+    `;
+
+  }
+
 
   return "";
+
 }
 
 
-function renderOrderCard(order){
+function renderOrder(order){
+
+  const orderNumber =
+    order.order_number ||
+    order.id.substring(0,8);
+
+
+  const customer =
+    order.customer_name ||
+    "Customer";
+
+
+  const total =
+    order.total_amount || 0;
+
+
+  const created =
+    order.created_at
+      ? new Date(
+          order.created_at
+        ).toLocaleString()
+      : "";
+
 
   return `
 
-    <div class="orderCard">
+    <div class="order-card">
 
-      <div class="orderHead">
+      <div class="order-head">
+
+        <div class="order-number">
+          Order #${escapeHtml(orderNumber)}
+        </div>
+
+        <span class="status ${escapeHtml(order.status)}">
+          ${escapeHtml(statusLabel(order.status))}
+        </span>
+
+      </div>
+
+
+      <div class="order-info">
 
         <div>
-
-          <div class="orderNumber">
-            ${escapeHtml(
-              order.order_number||"Order"
-            )}
-          </div>
-
-          <div style="
-            font-size:12px;
-            color:#89918d;
-            margin-top:4px;
-          ">
-
-            ${
-              order.created_at
-              ?new Date(
-                order.created_at
-              ).toLocaleString("en-NG")
-              :""
-            }
-
-          </div>
-
+          <strong>Customer</strong>
+          ${escapeHtml(customer)}
         </div>
 
-        <div class="status">
-          ${escapeHtml(
-            formatStatus(order.status)
-          )}
+        <div>
+          <strong>Total</strong>
+          ${money(total)}
+        </div>
+
+        <div>
+          <strong>Rider</strong>
+          ${
+            order.rider_id
+              ? "Assigned"
+              : "Not assigned"
+          }
+        </div>
+
+        <div>
+          <strong>Time</strong>
+          ${escapeHtml(created)}
         </div>
 
       </div>
 
 
-      <div class="orderInfo">
+      <div class="order-actions">
 
-        <b>Customer:</b>
-        ${escapeHtml(
-          order.customer_name||"Customer"
-        )}
-
-        <br>
-
-        <b>Delivery:</b>
-        ${escapeHtml(
-          order.delivery_address||
-          "Address not provided"
-        )}
-
-      </div>
-
-
-      <div class="orderTotal">
-        ${money(order.total_amount)}
-      </div>
-
-
-      <div class="orderActions">
         ${getOrderActions(order)}
+
       </div>
 
     </div>
 
   `;
+
 }
 
 
 function renderOrders(){
 
-  const list=$("ordersList");
-  const recent=$("recentOrders");
+  const container =
+    document.getElementById("ordersList");
 
-  if(!orders.length){
 
-    list.innerHTML=`
-      <div class="empty">
-        No orders yet.
-      </div>
-    `;
+  if(orders.length === 0){
 
-    recent.innerHTML=`
-      <div class="empty">
-        No orders yet.
-      </div>
-    `;
+    container.innerHTML =
+      `<p>No orders yet.</p>`;
+
+    document
+      .getElementById("dashboardOrders")
+      .innerHTML =
+        `<p>No orders yet.</p>`;
 
     return;
+
   }
 
-  list.innerHTML=
-    orders.map(renderOrderCard).join("");
 
-  recent.innerHTML=
+  container.innerHTML =
     orders
-      .slice(0,5)
-      .map(renderOrderCard)
+      .map(renderOrder)
       .join("");
+
+
+  document
+    .getElementById("dashboardOrders")
+    .innerHTML =
+      orders
+        .slice(0,5)
+        .map(renderOrder)
+        .join("");
+
 }
 
 
 /* =====================================================
-   UPDATE ORDER
+   SECURE ORDER STATUS UPDATE
 ===================================================== */
 
 async function updateOrder(id,status){
 
-  const result=
-    await supabaseClient
-      .from("orders")
-      .update({
-        status
-      })
-      .eq("id",id)
-      .eq("vendor_id",vendor.id);
-
-  if(result.error){
-
-    alert(
-      "Could not update order: "+
-      result.error.message
+  const order =
+    orders.find(
+      x => x.id === id
     );
 
+
+  if(!order){
+
+    alert("Order not found.");
+
     return;
+
   }
 
-  await loadOrders();
+
+  if(status === "cancelled"){
+
+    if(
+      !confirm(
+        "Are you sure you want to reject this order?"
+      )
+    ){
+
+      return;
+
+    }
+
+  }
+
+
+  if(status === "vendor_accepted"){
+
+    if(
+      !confirm(
+        "Accept this order?"
+      )
+    ){
+
+      return;
+
+    }
+
+  }
+
+
+  if(status === "ready_for_pickup"){
+
+    if(
+      !confirm(
+        "Confirm that this order is ready for pickup?"
+      )
+    ){
+
+      return;
+
+    }
+
+  }
+
+
+  try{
+
+    const result =
+      await supabaseClient.rpc(
+        "vendor_update_order_status",
+        {
+          p_order_id:id,
+          p_status:status
+        }
+      );
+
+
+    if(result.error){
+
+      console.error(result.error);
+
+      alert(
+        "Could not update order:\n\n" +
+        result.error.message
+      );
+
+      return;
+
+    }
+
+
+    await loadOrders();
+
+    await loadEarnings();
+
+
+    toast(
+      "Order updated successfully."
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Could not update order:\n\n" +
+      error.message
+    );
+
+  }
+
 }
 
 
@@ -2593,55 +2938,38 @@ async function updateOrder(id,status){
    DASHBOARD STATS
 ===================================================== */
 
-function updateStats(){
+function updateDashboardStats(){
 
-  const now=new Date();
+  const count =
+    status =>
+      orders.filter(
+        x => x.status === status
+      ).length;
 
-  const today=
-    now.toLocaleDateString("en-CA");
 
-  const todaysOrders=
-    orders.filter(order=>{
+  document
+    .getElementById("statNew")
+    .textContent =
+      count("new");
 
-      if(!order.created_at)return false;
 
-      return new Date(
-        order.created_at
-      ).toLocaleDateString("en-CA")===today;
+  document
+    .getElementById("statPreparing")
+    .textContent =
+      count("vendor_accepted");
 
-    });
 
-  const sales=
-    todaysOrders.reduce(
-      (total,order)=>
-        total+
-        Number(order.total_amount||0),
-      0
-    );
+  document
+    .getElementById("statReady")
+    .textContent =
+      count("ready_for_pickup");
 
-  const pending=
-    orders.filter(order=>
-      ![
-        "delivered",
-        "cancelled"
-      ].includes(order.status)
-    ).length;
 
-  $("statOrders")
-    .textContent=
-      todaysOrders.length;
+  document
+    .getElementById("statDelivered")
+    .textContent =
+      count("delivered");
 
-  $("statSales")
-    .textContent=
-      money(sales);
-
-  $("statPending")
-    .textContent=
-      pending;
-
-  $("statMenu")
-    .textContent=
-      menuItems.length;
 }
 
 
@@ -2651,155 +2979,225 @@ function updateStats(){
 
 async function loadEarnings(){
 
-  if(!vendor)return;
-
-  const completed=
-    orders.filter(
-      order=>
-        order.status==="delivered"
-    );
-
-  const now=new Date();
-
-  const today=
-    now.toLocaleDateString("en-CA");
-
-  const month=
-    today.slice(0,7);
-
-  const todaySales=
-    completed
-      .filter(order=>
-        order.created_at &&
-        new Date(
-          order.created_at
-        ).toLocaleDateString("en-CA")===today
-      )
-      .reduce(
-        (total,order)=>
-          total+
-          Number(order.total_amount||0),
-        0
-      );
-
-  const monthSales=
-    completed
-      .filter(order=>
-        order.created_at &&
-        new Date(
-          order.created_at
-        ).toLocaleDateString("en-CA").slice(0,7)
-          ===month
-      )
-      .reduce(
-        (total,order)=>
-          total+
-          Number(order.total_amount||0),
-        0
-      );
-
-  const commission=
-    Number(
-      vendor.commission_rate||0
-    );
-
-  const estimatedBalance=
-    completed.reduce(
-      (total,order)=>{
-
-        const amount=
-          Number(order.total_amount||0);
-
-        const vendorAmount=
-          amount-
-          (amount*commission/100);
-
-        return total+vendorAmount;
-
-      },
-      0
-    );
-
-  $("earnToday")
-    .textContent=
-      money(todaySales);
-
-  $("earnMonth")
-    .textContent=
-      money(monthSales);
-
-  $("earnOrders")
-    .textContent=
-      completed.length;
-
-  $("earnCommission")
-    .textContent=
-      commission+"%";
-
-  $("vendorBalance")
-    .textContent=
-      money(estimatedBalance);
-
-
-  const salesList=$("salesList");
-
-  if(!completed.length){
-
-    salesList.innerHTML=`
-      <div class="empty">
-        No completed sales yet.
-      </div>
-    `;
+  if(!vendor){
 
     return;
+
   }
 
-  salesList.innerHTML=
+
+  /*
+    This is still an estimated calculation from orders.
+    A proper wallet/withdrawal ledger should be added
+    before public financial launch.
+  */
+
+  const completed =
+    orders.filter(
+      x => x.status === "delivered"
+    );
+
+
+  const now =
+    new Date();
+
+
+  const todayStart =
+    new Date(now);
+
+  todayStart.setHours(
+    0,0,0,0
+  );
+
+
+  const monthStart =
+    new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      1
+    );
+
+
+  let todaySales = 0;
+
+  let monthSales = 0;
+
+  let totalSales = 0;
+
+
+  completed.forEach(order => {
+
+    const amount =
+      Number(
+        order.total_amount || 0
+      );
+
+
+    totalSales += amount;
+
+
+    const date =
+      order.delivered_at
+        ? new Date(
+            order.delivered_at
+          )
+        : new Date(
+            order.created_at
+          );
+
+
+    if(date >= todayStart){
+
+      todaySales += amount;
+
+    }
+
+
+    if(date >= monthStart){
+
+      monthSales += amount;
+
+    }
+
+  });
+
+
+  const commissionRate =
+    Number(
+      vendor.commission_rate || 0
+    );
+
+
+  const commission =
+    totalSales *
+    commissionRate /
+    100;
+
+
+  const balance =
+    totalSales -
+    commission;
+
+
+  document
+    .getElementById("todaySales")
+    .textContent =
+      money(todaySales);
+
+
+  document
+    .getElementById("monthSales")
+    .textContent =
+      money(monthSales);
+
+
+  document
+    .getElementById("commissionAmount")
+    .textContent =
+      money(commission);
+
+
+  document
+    .getElementById("vendorBalance")
+    .textContent =
+      money(balance);
+
+
+  renderEarningsTable(
     completed
-      .slice(0,20)
-      .map(order=>`
+  );
 
-        <div style="
-          display:flex;
-          justify-content:space-between;
-          padding:13px 0;
-          border-bottom:1px solid #edf0ee;
-        ">
+}
 
-          <div>
 
-            <b>
-              ${escapeHtml(
-                order.order_number||"Order"
-              )}
-            </b>
+function renderEarningsTable(completed){
 
-            <div style="
-              color:#7c8581;
-              font-size:12px;
-              margin-top:4px;
-            ">
+  const container =
+    document.getElementById(
+      "earningsTable"
+    );
 
-              ${
-                order.created_at
-                ?new Date(
-                  order.created_at
-                ).toLocaleString("en-NG")
-                :""
-              }
 
-            </div>
+  if(completed.length === 0){
 
-          </div>
+    container.innerHTML =
+      "<p>No completed orders yet.</p>";
 
-          <b style="color:#12a05a">
-            ${money(order.total_amount)}
-          </b>
+    return;
 
-        </div>
+  }
 
-      `)
-      .join("");
+
+  container.innerHTML = `
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Order</th>
+
+            <th>Date</th>
+
+            <th>Total</th>
+
+            <th>Status</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${
+            completed
+              .slice(0,50)
+              .map(order => `
+
+                <tr>
+
+                  <td>
+                    #${escapeHtml(
+                      order.order_number ||
+                      order.id.substring(0,8)
+                    )}
+                  </td>
+
+                  <td>
+                    ${
+                      order.delivered_at
+                        ? new Date(
+                            order.delivered_at
+                          ).toLocaleString()
+                        : "-"
+                    }
+                  </td>
+
+                  <td>
+                    ${money(order.total_amount)}
+                  </td>
+
+                  <td>
+                    Delivered
+                  </td>
+
+                </tr>
+
+              `)
+              .join("")
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
 }
 
 
@@ -2807,32 +3205,14 @@ async function loadEarnings(){
    REALTIME
 ===================================================== */
 
-function showNewOrderNotification(order){
+function setupRealtime(){
 
-  $("notificationText")
-    .textContent=
-      `${
-        order.order_number||"New order"
-      } — ${
-        order.customer_name||"Customer"
-      } — ${
-        money(order.total_amount)
-      }`;
+  if(!vendor){
 
-  const notification=
-    $("notification");
+    return;
 
-  notification.classList.add("show");
+  }
 
-  setTimeout(()=>{
-    notification.classList.remove("show");
-  },7000);
-}
-
-
-function subscribeRealtime(){
-
-  if(!vendor)return;
 
   if(realtimeChannel){
 
@@ -2840,12 +3220,14 @@ function subscribeRealtime(){
       .removeChannel(
         realtimeChannel
       );
+
   }
 
-  realtimeChannel=
+
+  realtimeChannel =
     supabaseClient
       .channel(
-        "vendor-orders-"+vendor.id
+        "vendor-orders-" + vendor.id
       )
       .on(
         "postgres_changes",
@@ -2854,338 +3236,159 @@ function subscribeRealtime(){
           schema:"public",
           table:"orders",
           filter:
-            "vendor_id=eq."+vendor.id
+            "vendor_id=eq." +
+            vendor.id
         },
-        async payload=>{
+        payload => {
+
+          console.log(
+            "Order realtime update:",
+            payload
+          );
+
+
+          loadOrders();
+
+          loadEarnings();
+
 
           if(
-            payload.eventType==="INSERT"
+            payload.eventType === "INSERT"
           ){
 
-            showNewOrderNotification(
-              payload.new
+            toast(
+              "🔔 New order received!"
+            );
+
+          }else{
+
+            toast(
+              "Order status updated."
             );
 
           }
 
-          await loadOrders();
-          await loadEarnings();
-
         }
       )
       .subscribe();
+
 }
 
 
 /* =====================================================
-   EVENTS
+   LOGOUT
 ===================================================== */
 
-function setupEvents(){
+async function logoutVendor(){
 
-  $("loginTab")
-    .addEventListener(
-      "click",
-      showLogin
-    );
+  if(
+    !confirm(
+      "Are you sure you want to logout?"
+    )
+  ){
 
-  $("registerTab")
-    .addEventListener(
-      "click",
-      showRegister
-    );
+    return;
 
-  $("loginBtn")
-    .addEventListener(
-      "click",
-      loginVendor
-    );
+  }
 
-  $("registerBtn")
-    .addEventListener(
-      "click",
-      registerVendor
-    );
 
-  $("logoutBtn")
-    .addEventListener(
-      "click",
-      logoutVendor
-    );
+  if(realtimeChannel){
+
+    await supabaseClient
+      .removeChannel(
+        realtimeChannel
+      );
+
+    realtimeChannel = null;
+
+  }
+
+
+  await supabaseClient.auth.signOut();
+
+
+  currentUser = null;
+
+  vendor = null;
+
+  orders = [];
+
+  menuItems = [];
 
 
   document
-    .querySelectorAll(
-      ".navBtn,.mobileNav button"
-    )
-    .forEach(button=>{
-
-      button.addEventListener(
-        "click",
-        ()=>{
-          showPage(
-            button.dataset.page
-          );
-        }
-      );
-
-    });
+    .getElementById("app")
+    .style.display = "none";
 
 
-  $("restaurantToggleBtn")
-    .addEventListener(
-      "click",
-      toggleRestaurant
-    );
-
-  $("saveRestaurantBtn")
-    .addEventListener(
-      "click",
-      saveRestaurant
-    );
-
-  $("saveBankBtn")
-    .addEventListener(
-      "click",
-      saveBank
-    );
+  document
+    .getElementById("authScreen")
+    .style.display = "flex";
 
 
-  $("quickMenuBtn")
-    .addEventListener(
-      "click",
-      ()=>showPage("menu")
-    );
+  showLogin();
 
-  $("quickOrdersBtn")
-    .addEventListener(
-      "click",
-      ()=>showPage("orders")
-    );
-
-
-  $("addFoodBtn")
-    .addEventListener(
-      "click",
-      ()=>openMenuForm()
-    );
-
-  $("cancelMenuBtn")
-    .addEventListener(
-      "click",
-      closeMenuForm
-    );
-
-  $("saveMenuBtn")
-    .addEventListener(
-      "click",
-      saveMenuItem
-    );
-
-
-  document.addEventListener(
-    "click",
-    event=>{
-
-      const edit=
-        event.target.closest(
-          ".editMenuBtn"
-        );
-
-      if(edit){
-
-        const item=
-          menuItems.find(
-            x=>x.id===edit.dataset.id
-          );
-
-        if(item){
-          openMenuForm(item);
-        }
-
-        return;
-      }
-
-
-      const del=
-        event.target.closest(
-          ".deleteMenuBtn"
-        );
-
-      if(del){
-
-        deleteMenuItem(
-          del.dataset.id
-        );
-
-        return;
-      }
-
-
-      const stock=
-        event.target.closest(
-          ".stockMenuBtn"
-        );
-
-      if(stock){
-
-        toggleStock(
-          stock.dataset.id,
-          stock.dataset.stock==="true"
-        );
-
-        return;
-      }
-
-
-      const order=
-        event.target.closest(
-          ".orderActionBtn"
-        );
-
-      if(order){
-
-        updateOrder(
-          order.dataset.id,
-          order.dataset.status
-        );
-
-      }
-
-    }
-  );
-
-
-  /*
-    Press Enter to login.
-  */
-
-  $("loginPassword")
-    .addEventListener(
-      "keydown",
-      event=>{
-
-        if(event.key==="Enter"){
-          loginVendor();
-        }
-
-      }
-    );
-
-
-  /*
-    Press Enter to register.
-  */
-
-  $("regPassword")
-    .addEventListener(
-      "keydown",
-      event=>{
-
-        if(event.key==="Enter"){
-          registerVendor();
-        }
-
-      }
-    );
+  toast("Logged out.");
 
 }
 
 
 /* =====================================================
-   START
+   AUTH STATE
 ===================================================== */
 
-async function startApp(){
+supabaseClient.auth.onAuthStateChange(
+  async (event,session) => {
 
-  if(
-    !window.supabase||
-    !window.supabase.createClient
-  ){
-
-    showAuthMessage(
-      "Supabase could not load. Check your internet connection and refresh."
+    console.log(
+      "Auth event:",
+      event
     );
 
-    return;
-  }
 
-  supabaseClient=
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+    if(
+      session &&
+      !vendor
+    ){
 
-  setupEvents();
+      /*
+        Avoid doing this for SIGNED_OUT.
+      */
 
-  try{
-
-    const result=
-      await supabaseClient
-        .auth
-        .getSession();
-
-    if(result.data.session){
-
-      currentUser=
-        result.data.session.user;
+      currentUser =
+        session.user;
 
       await loadApp();
 
-    }else{
-
-      $("authPage")
-        .classList
-        .remove("hidden");
-
-      $("app")
-        .classList
-        .add("hidden");
-
     }
 
-  }catch(error){
+  }
+);
 
-    console.error(error);
 
-    showAuthMessage(
-      error.message||
-      "QuickEats could not start."
-    );
+/* =====================================================
+   INITIAL SESSION CHECK
+===================================================== */
+
+(async function(){
+
+  const result =
+    await supabaseClient.auth.getSession();
+
+
+  if(
+    result.data &&
+    result.data.session
+  ){
+
+    currentUser =
+      result.data.session.user;
+
+    await loadApp();
+
   }
 
-
-  /*
-    Keep session synchronized.
-  */
-
-  supabaseClient
-    .auth
-    .onAuthStateChange(
-      (event,session)=>{
-
-        if(
-          event==="SIGNED_OUT"
-        ){
-
-          currentUser=null;
-          vendor=null;
-
-          $("app")
-            .classList
-            .add("hidden");
-
-          $("authPage")
-            .classList
-            .remove("hidden");
-        }
-
-      }
-    );
-}
-
-
-startApp();
+})();
 
 </script>
 
