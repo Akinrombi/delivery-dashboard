@@ -519,50 +519,218 @@
   ></div>
 
 
-  <script>
+<script>
 
-    /* =========================================================
-       SUPABASE SETTINGS
-       ========================================================= */
+  /* =========================================
+     SUPABASE
+  ========================================= */
 
-    const SUPABASE_URL =
-      "https://glkutdkwbrjpiuqcmgwe.supabase.co";
+  const SUPABASE_URL =
+    "https://glkutdkwbrjpiuqcmgwe.supabase.co";
 
-    const SUPABASE_PUBLISHABLE_KEY =
-      "sb_publishable_lQkN8HQP2Tm3tPiDYJbrNw_ydO7bqXU";
+  const SUPABASE_PUBLISHABLE_KEY =
+    "PASTE_THE_SAME_sb_publishable_KEY_HERE";
 
 
-    /* =========================================================
-       CREATE SUPABASE CLIENT
-       ========================================================= */
+  const supabase =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
 
-    const supabase =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
+
+  /* =========================================
+     TEST SUPABASE CONNECTION
+  ========================================= */
+
+  async function testConnection() {
+
+    const dot =
+      document.getElementById("statusDot");
+
+    const text =
+      document.getElementById("connectionText");
+
+    text.textContent =
+      "Connecting to Supabase...";
+
+    dot.className =
+      "status-dot";
+
+
+    try {
+
+      /*
+       * getSession() contacts your Supabase
+       * project without requiring an order
+       * or database table.
+       */
+
+      const { data, error } =
+        await supabase.auth.getSession();
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      dot.className =
+        "status-dot connected";
+
+      text.textContent =
+        "Supabase connected successfully.";
+
+      showToast(
+        "Supabase connection is working."
       );
 
 
-    /* =========================================================
-       TEST CONNECTION
-       ========================================================= */
+    } catch (error) {
 
-    async function testConnection() {
+      console.error(
+        "Supabase error:",
+        error
+      );
 
-      const dot =
-        document.getElementById("statusDot");
-
-      const text =
-        document.getElementById("connectionText");
-
-      text.textContent =
-        "Testing Supabase...";
 
       dot.className =
-        "status-dot";
+        "status-dot error";
+
+      text.textContent =
+        "Supabase connection failed.";
 
 
-      try {
+      showToast(
+        "Supabase connection failed.",
+        true
+      );
+
+    }
+
+  }
+
+
+  /* =========================================
+     ACCEPT ORDER
+  ========================================= */
+
+  function acceptOrder() {
+
+    const status =
+      document.getElementById("orderStatus");
+
+    const acceptButton =
+      document.getElementById("acceptButton");
+
+    const readyButton =
+      document.getElementById("readyButton");
+
+
+    status.textContent =
+      "ACCEPTED";
+
+    status.className =
+      "status accepted";
+
+
+    acceptButton.disabled =
+      true;
+
+    readyButton.disabled =
+      false;
+
+
+    showToast(
+      "Order accepted. Start preparing the food."
+    );
+
+  }
+
+
+  /* =========================================
+     FOOD READY
+  ========================================= */
+
+  function foodReady() {
+
+    const status =
+      document.getElementById("orderStatus");
+
+    const readyButton =
+      document.getElementById("readyButton");
+
+
+    status.textContent =
+      "READY FOR RIDER";
+
+    status.className =
+      "status ready";
+
+
+    readyButton.disabled =
+      true;
+
+
+    showToast(
+      "Food is ready. Rider can now receive the delivery."
+    );
+
+  }
+
+
+  /* =========================================
+     TOAST
+  ========================================= */
+
+  function showToast(
+    message,
+    isError = false
+  ) {
+
+    const toast =
+      document.getElementById("toast");
+
+
+    toast.textContent =
+      message;
+
+
+    toast.className =
+      "toast";
+
+
+    if (isError) {
+      toast.classList.add("error");
+    }
+
+
+    setTimeout(() => {
+      toast.classList.add("show");
+    }, 10);
+
+
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 3000);
+
+  }
+
+
+  /* =========================================
+     START CONNECTION TEST
+  ========================================= */
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+      testConnection();
+
+    }
+  );
+
+</script>
 
         /*
          * We check that the Supabase client
