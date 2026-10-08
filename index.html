@@ -3,1178 +3,2779 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>QuickEats Vendor Dashboard</title>
+<title>QuickEats Vendor</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{
-    box-sizing:border-box;
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
 body{
-    margin:0;
-    background:#080c10;
-    color:#f5f7f8;
-    font-family:Arial, sans-serif;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f5f7f6;
+  color:#17221d;
 }
 
-.header{
-    height:110px;
-    background:#101820;
-    border-bottom:1px solid #29323b;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 35px;
+button,input,textarea,select{
+  font:inherit;
 }
 
-.logo{
-    color:#00e676;
-    font-size:38px;
-    font-weight:800;
-}
-
-.header-title{
-    color:#b7bec5;
-    font-size:25px;
-}
-
-.container{
-    max-width:1000px;
-    margin:auto;
-    padding:35px;
-}
-
-.card{
-    background:#111820;
-    border:1px solid #29333d;
-    border-radius:25px;
-    margin-bottom:30px;
-    overflow:hidden;
-}
-
-.card-header{
-    padding:28px 30px;
-    border-bottom:1px solid #29333d;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-}
-
-.card-header h2{
-    margin:0;
-    font-size:28px;
-}
-
-.status{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    color:#b7bec5;
-    font-size:18px;
-}
-
-.dot{
-    width:17px;
-    height:17px;
-    border-radius:50%;
-    background:#777;
-}
-
-.dot.green{
-    background:#00e676;
-    box-shadow:0 0 15px #00e676;
-}
-
-.dot.red{
-    background:#ff5252;
-}
-
-.test-button{
-    width:100%;
-    border:0;
-    background:#263341;
-    color:white;
-    padding:20px;
-    font-size:18px;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-.test-button:active{
-    transform:scale(.99);
-}
-
-.order-top{
-    padding:28px 30px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    border-bottom:1px solid #29333d;
-}
-
-.order-number{
-    font-size:28px;
-    font-weight:bold;
-}
-
-.badge{
-    padding:12px 18px;
-    border-radius:25px;
-    background:#4b3700;
-    color:#ffd54f;
-    font-weight:bold;
-}
-
-.order-body{
-    padding:30px;
-}
-
-.label{
-    color:#78838e;
-    font-size:14px;
-    font-weight:bold;
-    margin-bottom:7px;
-}
-
-.value{
-    font-size:21px;
-    margin-bottom:25px;
-}
-
-.items{
-    border-top:1px solid #29333d;
-    border-bottom:1px solid #29333d;
-    padding:18px 0;
-    margin-bottom:25px;
-}
-
-.item{
-    display:flex;
-    justify-content:space-between;
-    padding:10px 0;
-    font-size:18px;
-}
-
-.total{
-    display:flex;
-    justify-content:space-between;
-    font-size:25px;
-    font-weight:bold;
-    margin-bottom:25px;
-}
-
-.total-price{
-    color:#00e676;
-}
-
-.buttons{
-    border-top:1px solid #29333d;
-    padding-top:25px;
-}
-
-.action{
-    width:100%;
-    border:0;
-    border-radius:14px;
-    padding:19px;
-    font-size:18px;
-    font-weight:bold;
-    margin-bottom:14px;
-    cursor:pointer;
-}
-
-.accept{
-    background:#00e676;
-    color:#001b0c;
-}
-
-.ready{
-    background:#1769aa;
-    color:white;
-}
-
-.disabled{
-    opacity:.45;
-    pointer-events:none;
+button{
+  cursor:pointer;
+  border:0;
 }
 
 .hidden{
-    display:none!important;
+  display:none!important;
 }
 
-.toast{
-    position:fixed;
-    left:50%;
-    bottom:30px;
-    transform:translateX(-50%);
-    background:white;
-    color:#111;
-    padding:17px 25px;
-    border-radius:14px;
-    font-weight:bold;
+/* AUTH */
+
+#authPage{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  background:linear-gradient(145deg,#f1fff7,#ffffff);
+}
+
+.authBox{
+  width:100%;
+  max-width:430px;
+  background:white;
+  border-radius:24px;
+  padding:28px;
+  box-shadow:0 12px 40px rgba(0,0,0,.08);
+}
+
+.logo{
+  text-align:center;
+  font-size:30px;
+  font-weight:800;
+  color:#12a05a;
+  margin-bottom:5px;
+}
+
+.subtitle{
+  text-align:center;
+  color:#77817c;
+  margin-bottom:25px;
+}
+
+.tabs{
+  display:flex;
+  background:#eef2ef;
+  border-radius:12px;
+  padding:4px;
+  margin-bottom:22px;
+}
+
+.tabs button{
+  flex:1;
+  padding:12px;
+  border-radius:9px;
+  background:transparent;
+  color:#66716b;
+  font-weight:700;
+}
+
+.tabs button.active{
+  background:white;
+  color:#12a05a;
+  box-shadow:0 2px 7px rgba(0,0,0,.06);
+}
+
+.field{
+  margin-bottom:15px;
+}
+
+.field label{
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:7px;
+}
+
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  padding:13px 14px;
+  border:1px solid #dce3df;
+  border-radius:11px;
+  outline:none;
+  background:#fff;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus{
+  border-color:#12a05a;
+}
+
+.primaryBtn{
+  width:100%;
+  padding:14px;
+  background:#12a05a;
+  color:white;
+  border-radius:12px;
+  font-weight:800;
+}
+
+.secondaryBtn{
+  padding:12px 15px;
+  background:#eef2ef;
+  color:#26332d;
+  border-radius:10px;
+  font-weight:700;
+}
+
+.dangerBtn{
+  padding:11px 14px;
+  background:#ffe9e9;
+  color:#c0392b;
+  border-radius:10px;
+  font-weight:700;
+}
+
+.message{
+  margin-top:14px;
+  padding:12px;
+  border-radius:10px;
+  display:none;
+  font-size:14px;
+}
+
+.message.show{
+  display:block;
+}
+
+.message.success{
+  background:#e8fff1;
+  color:#08763d;
+}
+
+.message.error{
+  background:#fff0f0;
+  color:#b42318;
+}
+
+/* APP */
+
+#app{
+  min-height:100vh;
+}
+
+.topbar{
+  height:68px;
+  background:white;
+  border-bottom:1px solid #e6ebe8;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
+  position:sticky;
+  top:0;
+  z-index:20;
+}
+
+.brand{
+  color:#12a05a;
+  font-size:22px;
+  font-weight:900;
+}
+
+.vendorName{
+  font-size:14px;
+  color:#68736e;
+}
+
+.logout{
+  background:#fff0f0;
+  color:#b42318;
+  padding:9px 12px;
+  border-radius:9px;
+  font-weight:700;
+}
+
+.layout{
+  display:flex;
+  min-height:calc(100vh - 68px);
+}
+
+.sidebar{
+  width:230px;
+  background:white;
+  border-right:1px solid #e6ebe8;
+  padding:18px 12px;
+}
+
+.navBtn{
+  width:100%;
+  text-align:left;
+  padding:13px 14px;
+  margin-bottom:6px;
+  border-radius:10px;
+  background:transparent;
+  color:#5e6964;
+  font-weight:700;
+}
+
+.navBtn.active{
+  background:#e9fff2;
+  color:#078b49;
+}
+
+.main{
+  flex:1;
+  padding:24px;
+  max-width:1300px;
+}
+
+.page{
+  display:none;
+}
+
+.page.active{
+  display:block;
+}
+
+.pageTitle{
+  font-size:28px;
+  font-weight:900;
+  margin-bottom:5px;
+}
+
+.pageSub{
+  color:#7a847f;
+  margin-bottom:22px;
+}
+
+/* DASHBOARD */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:24px;
+}
+
+.stat{
+  background:white;
+  padding:20px;
+  border-radius:16px;
+  border:1px solid #e8edea;
+}
+
+.statLabel{
+  color:#7b8580;
+  font-size:13px;
+  margin-bottom:9px;
+}
+
+.statValue{
+  font-size:26px;
+  font-weight:900;
+}
+
+.card{
+  background:white;
+  border:1px solid #e6ebe8;
+  border-radius:17px;
+  padding:20px;
+  margin-bottom:18px;
+}
+
+.cardTitle{
+  font-size:18px;
+  font-weight:900;
+  margin-bottom:15px;
+}
+
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+/* MENU */
+
+.menuGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+
+.menuItem{
+  background:white;
+  border:1px solid #e5ebe7;
+  border-radius:15px;
+  padding:17px;
+}
+
+.menuTop{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.menuName{
+  font-weight:900;
+  font-size:17px;
+}
+
+.category{
+  color:#7a8580;
+  font-size:12px;
+  margin-top:5px;
+}
+
+.price{
+  color:#12a05a;
+  font-size:18px;
+  font-weight:900;
+  margin:12px 0;
+}
+
+.stock{
+  display:inline-block;
+  padding:6px 9px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:800;
+}
+
+.stock.in{
+  background:#e7fff0;
+  color:#078b49;
+}
+
+.stock.out{
+  background:#fff0f0;
+  color:#b42318;
+}
+
+.menuActions{
+  display:flex;
+  gap:8px;
+  margin-top:15px;
+}
+
+.menuActions button{
+  flex:1;
+}
+
+/* ORDERS */
+
+.orderCard{
+  background:white;
+  border:1px solid #e3e9e5;
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:13px;
+}
+
+.orderHead{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:13px;
+}
+
+.orderNumber{
+  font-weight:900;
+}
+
+.status{
+  padding:6px 10px;
+  border-radius:20px;
+  background:#eef3ef;
+  font-size:11px;
+  font-weight:800;
+}
+
+.orderInfo{
+  color:#69736e;
+  line-height:1.7;
+  font-size:14px;
+}
+
+.orderTotal{
+  margin-top:10px;
+  font-size:18px;
+  font-weight:900;
+}
+
+.orderActions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:15px;
+}
+
+.actionBtn{
+  padding:10px 13px;
+  border-radius:9px;
+  background:#eafff2;
+  color:#078b49;
+  font-weight:800;
+}
+
+.rejectBtn{
+  padding:10px 13px;
+  border-radius:9px;
+  background:#fff0f0;
+  color:#b42318;
+  font-weight:800;
+}
+
+/* PROFILE */
+
+.profileGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+/* EMPTY */
+
+.empty{
+  text-align:center;
+  padding:45px 20px;
+  color:#7b8580;
+}
+
+/* MOBILE */
+
+.mobileNav{
+  display:none;
+}
+
+@media(max-width:900px){
+  .sidebar{
     display:none;
-    z-index:999;
-    box-shadow:0 10px 35px #0008;
-}
+  }
 
-.toast.show{
-    display:block;
-}
+  .main{
+    padding:17px;
+    padding-bottom:85px;
+  }
 
-.small{
-    color:#7f8992;
-    font-size:14px;
-    line-height:1.6;
+  .stats{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .menuGrid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .grid2,
+  .profileGrid{
+    grid-template-columns:1fr;
+  }
+
+  .mobileNav{
+    display:flex;
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:67px;
+    background:white;
+    border-top:1px solid #ddd;
+    z-index:50;
+  }
+
+  .mobileNav button{
+    flex:1;
+    background:white;
+    color:#69736e;
+    font-size:11px;
+    font-weight:700;
+  }
+
+  .mobileNav button.active{
+    color:#12a05a;
+  }
 }
 
 @media(max-width:600px){
+  .authBox{
+    padding:22px;
+  }
 
-    .header{
-        padding:0 25px;
-        height:110px;
-    }
+  .topbar{
+    padding:0 14px;
+  }
 
-    .logo{
-        font-size:32px;
-    }
+  .vendorName{
+    display:none;
+  }
 
-    .header-title{
-        font-size:18px;
-    }
+  .pageTitle{
+    font-size:23px;
+  }
 
-    .container{
-        padding:20px 15px;
-    }
+  .stats{
+    gap:9px;
+  }
 
-    .card-header{
-        padding:22px;
-    }
+  .stat{
+    padding:14px;
+  }
 
-    .order-top{
-        padding:22px;
-    }
+  .statValue{
+    font-size:20px;
+  }
 
-    .order-body{
-        padding:22px;
-    }
-
-    .order-number{
-        font-size:22px;
-    }
-
-    .badge{
-        font-size:12px;
-        padding:9px 12px;
-    }
+  .menuGrid{
+    grid-template-columns:1fr;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<header class="header">
+<!-- ================= AUTH ================= -->
 
-    <div class="logo">
-        QuickEats
+<section id="authPage">
+
+  <div class="authBox">
+
+    <div class="logo">QuickEats</div>
+    <div class="subtitle">Vendor Portal</div>
+
+    <div class="tabs">
+      <button id="loginTab" class="active" onclick="showAuth('login')">
+        Login
+      </button>
+
+      <button id="registerTab" onclick="showAuth('register')">
+        Create Account
+      </button>
     </div>
 
-    <div class="header-title">
-        Vendor Dashboard
+    <!-- LOGIN -->
+
+    <div id="loginForm">
+
+      <div class="field">
+        <label>Email</label>
+        <input id="loginEmail" type="email" placeholder="vendor@email.com">
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input id="loginPassword" type="password" placeholder="Password">
+      </div>
+
+      <button class="primaryBtn" onclick="loginVendor()">
+        LOGIN
+      </button>
+
     </div>
 
-</header>
+    <!-- REGISTER -->
+
+    <div id="registerForm" class="hidden">
+
+      <div class="field">
+        <label>Restaurant / Business Name</label>
+        <input id="regStore" placeholder="e.g. David's Kitchen">
+      </div>
+
+      <div class="field">
+        <label>Phone Number</label>
+        <input id="regPhone" placeholder="08012345678">
+      </div>
+
+      <div class="field">
+        <label>Restaurant Address</label>
+        <textarea id="regAddress" rows="3"
+          placeholder="Full restaurant address"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Email</label>
+        <input id="regEmail" type="email"
+          placeholder="vendor@email.com">
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input id="regPassword" type="password"
+          placeholder="At least 6 characters">
+      </div>
+
+      <button class="primaryBtn" onclick="registerVendor()">
+        CREATE VENDOR ACCOUNT
+      </button>
+
+    </div>
+
+    <div id="authMessage" class="message"></div>
+
+  </div>
+
+</section>
 
 
-<main class="container">
+<!-- ================= APP ================= -->
+
+<section id="app" class="hidden">
+
+  <header class="topbar">
+
+    <div class="brand">
+      QuickEats
+    </div>
+
+    <div class="vendorName" id="topVendorName">
+      Vendor
+    </div>
+
+    <button class="logout" onclick="logoutVendor()">
+      Logout
+    </button>
+
+  </header>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+      <button class="navBtn active" onclick="showPage('dashboard',this)">
+        📊 Dashboard
+      </button>
+
+      <button class="navBtn" onclick="showPage('orders',this)">
+        🛍 Orders
+      </button>
+
+      <button class="navBtn" onclick="showPage('menu',this)">
+        🍔 Menu
+      </button>
+
+      <button class="navBtn" onclick="showPage('restaurant',this)">
+        🏪 Restaurant
+      </button>
+
+      <button class="navBtn" onclick="showPage('earnings',this)">
+        💰 Earnings
+      </button>
+
+    </aside>
 
 
-    <!-- SUPABASE -->
+    <main class="main">
 
-    <section class="card">
+      <!-- ================= DASHBOARD ================= -->
 
-        <div class="card-header">
+      <section id="dashboardPage" class="page active">
 
-            <h2>
-                Supabase Connection
-            </h2>
+        <div class="pageTitle">
+          Dashboard
+        </div>
 
-            <div class="status">
+        <div class="pageSub">
+          Welcome back. Here's what's happening today.
+        </div>
 
-                <span
-                    id="connectionDot"
-                    class="dot"
-                ></span>
+        <div class="stats">
 
-                <span id="connectionText">
-                    Checking connection...
-                </span>
+          <div class="stat">
+            <div class="statLabel">Today's Orders</div>
+            <div class="statValue" id="statOrders">0</div>
+          </div>
 
-            </div>
+          <div class="stat">
+            <div class="statLabel">Today's Sales</div>
+            <div class="statValue" id="statSales">₦0</div>
+          </div>
+
+          <div class="stat">
+            <div class="statLabel">Pending Orders</div>
+            <div class="statValue" id="statPending">0</div>
+          </div>
+
+          <div class="stat">
+            <div class="statLabel">Menu Items</div>
+            <div class="statValue" id="statMenu">0</div>
+          </div>
 
         </div>
 
 
-        <button
-            class="test-button"
-            onclick="testConnection()"
-        >
-            TEST SUPABASE CONNECTION
-        </button>
+        <div class="grid2">
 
-    </section>
+          <div class="card">
 
-
-
-    <!-- ORDER -->
-
-    <section class="card">
-
-        <div class="order-top">
-
-            <div
-                id="orderNumber"
-                class="order-number"
-            >
-                Order #QE1001
+            <div class="cardTitle">
+              Restaurant Status
             </div>
 
-            <div
-                id="statusBadge"
-                class="badge"
-            >
-                NEW ORDER
+            <div id="restaurantStatus"
+                 style="font-size:22px;font-weight:900;margin-bottom:15px;">
+              Loading...
             </div>
+
+            <button class="primaryBtn"
+                    onclick="toggleRestaurant()"
+                    id="restaurantToggleBtn">
+              ...
+            </button>
+
+          </div>
+
+
+          <div class="card">
+
+            <div class="cardTitle">
+              Quick Actions
+            </div>
+
+            <button class="secondaryBtn"
+                    style="width:100%;margin-bottom:9px;"
+                    onclick="showPage('menu')">
+              + Add Menu Item
+            </button>
+
+            <button class="secondaryBtn"
+                    style="width:100%;"
+                    onclick="showPage('orders')">
+              View Orders
+            </button>
+
+          </div>
 
         </div>
 
 
-        <div class="order-body">
+        <div class="card">
 
+          <div class="cardTitle">
+            Recent Orders
+          </div>
 
-            <div class="label">
-                CUSTOMER
-            </div>
-
-            <div
-                id="customerName"
-                class="value"
-            >
-                John Customer
-            </div>
-
-
-
-            <div class="label">
-                PHONE
-            </div>
-
-            <div
-                id="customerPhone"
-                class="value"
-            >
-                WhatsApp Customer
-            </div>
-
-
-
-            <div class="label">
-                PICKUP ADDRESS
-            </div>
-
-            <div
-                id="pickupAddress"
-                class="value"
-            >
-                Allen Avenue, Ikeja, Lagos
-            </div>
-
-
-
-            <div class="label">
-                DELIVERY ADDRESS
-            </div>
-
-            <div
-                id="deliveryAddress"
-                class="value"
-            >
-                Ikeja GRA, Lagos
-            </div>
-
-
-
-            <div class="items">
-
-                <div class="item">
-
-                    <span>
-                        1 × Jollof Rice
-                    </span>
-
-                    <strong>
-                        ₦2,500
-                    </strong>
-
-                </div>
-
-
-                <div class="item">
-
-                    <span>
-                        1 × Chicken
-                    </span>
-
-                    <strong>
-                        ₦2,000
-                    </strong>
-
-                </div>
-
-
-                <div class="item">
-
-                    <span>
-                        1 × Coke
-                    </span>
-
-                    <strong>
-                        ₦500
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="total">
-
-                <span>
-                    Total
-                </span>
-
-                <span
-                    id="totalAmount"
-                    class="total-price"
-                >
-                    ₦5,000
-                </span>
-
-            </div>
-
-
-
-            <div class="buttons">
-
-
-                <button
-                    id="acceptButton"
-                    class="action accept"
-                    onclick="acceptOrder()"
-                >
-                    ACCEPT ORDER
-                </button>
-
-
-                <button
-                    id="readyButton"
-                    class="action ready disabled"
-                    onclick="foodReady()"
-                >
-                    FOOD READY — REQUEST RIDER
-                </button>
-
-
-            </div>
-
-
-            <p class="small">
-
-                When you press
-                <strong>FOOD READY</strong>,
-                this order will be sent to the
-                QuickEats Rider App.
-
-            </p>
+          <div id="recentOrders">
+            <div class="empty">Loading orders...</div>
+          </div>
 
         </div>
 
-    </section>
-
-</main>
+      </section>
 
 
-<div
-    id="toast"
-    class="toast"
-></div>
+      <!-- ================= ORDERS ================= -->
 
+      <section id="ordersPage" class="page">
+
+        <div class="pageTitle">
+          Orders
+        </div>
+
+        <div class="pageSub">
+          Manage orders from your customers.
+        </div>
+
+        <div id="ordersList">
+          <div class="empty">Loading orders...</div>
+        </div>
+
+      </section>
+
+
+      <!-- ================= MENU ================= -->
+
+      <section id="menuPage" class="page">
+
+        <div style="display:flex;justify-content:space-between;
+                    align-items:center;gap:10px;margin-bottom:22px;">
+
+          <div>
+            <div class="pageTitle">Menu</div>
+            <div class="pageSub" style="margin-bottom:0;">
+              Add and manage your food.
+            </div>
+          </div>
+
+          <button class="primaryBtn"
+                  style="width:auto;"
+                  onclick="openMenuForm()">
+            + Add Food
+          </button>
+
+        </div>
+
+
+        <!-- MENU FORM -->
+
+        <div id="menuFormCard" class="card hidden">
+
+          <div class="cardTitle" id="menuFormTitle">
+            Add Menu Item
+          </div>
+
+          <input type="hidden" id="menuEditId">
+
+          <div class="grid2">
+
+            <div class="field">
+              <label>Food Name</label>
+              <input id="menuName"
+                     placeholder="e.g. Jollof Rice">
+            </div>
+
+            <div class="field">
+              <label>Category</label>
+              <input id="menuCategory"
+                     placeholder="e.g. Rice">
+            </div>
+
+          </div>
+
+          <div class="grid2">
+
+            <div class="field">
+              <label>Price (₦)</label>
+              <input id="menuPrice"
+                     type="number"
+                     min="0"
+                     placeholder="2500">
+            </div>
+
+            <div class="field">
+              <label>Availability</label>
+
+              <select id="menuStock">
+                <option value="true">Available</option>
+                <option value="false">Out of stock</option>
+              </select>
+
+            </div>
+
+          </div>
+
+          <button class="primaryBtn"
+                  onclick="saveMenuItem()">
+            SAVE FOOD
+          </button>
+
+          <button class="secondaryBtn"
+                  style="width:100%;margin-top:8px;"
+                  onclick="closeMenuForm()">
+            Cancel
+          </button>
+
+        </div>
+
+
+        <div id="menuList"
+             class="menuGrid">
+
+          <div class="empty">
+            Loading menu...
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================= RESTAURANT ================= -->
+
+      <section id="restaurantPage" class="page">
+
+        <div class="pageTitle">
+          Restaurant
+        </div>
+
+        <div class="pageSub">
+          Manage your restaurant information.
+        </div>
+
+        <div class="card">
+
+          <div class="profileGrid">
+
+            <div class="field">
+              <label>Restaurant Name</label>
+              <input id="profileStore">
+            </div>
+
+            <div class="field">
+              <label>Phone</label>
+              <input id="profilePhone">
+            </div>
+
+          </div>
+
+          <div class="field">
+            <label>Address</label>
+            <textarea id="profileAddress"
+                      rows="3"></textarea>
+          </div>
+
+          <div class="profileGrid">
+
+            <div class="field">
+              <label>Opening Time</label>
+              <input id="profileOpen" type="time">
+            </div>
+
+            <div class="field">
+              <label>Closing Time</label>
+              <input id="profileClose" type="time">
+            </div>
+
+          </div>
+
+          <button class="primaryBtn"
+                  onclick="saveRestaurant()">
+            SAVE RESTAURANT
+          </button>
+
+          <div id="restaurantMessage"
+               class="message"></div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="cardTitle">
+            Bank Information
+          </div>
+
+          <div class="profileGrid">
+
+            <div class="field">
+              <label>Bank Name</label>
+              <input id="bankName">
+            </div>
+
+            <div class="field">
+              <label>Account Number</label>
+              <input id="accountNumber"
+                     inputmode="numeric"
+                     maxlength="20">
+            </div>
+
+          </div>
+
+          <button class="primaryBtn"
+                  onclick="saveBank()">
+            SAVE BANK DETAILS
+          </button>
+
+          <div id="bankMessage"
+               class="message"></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================= EARNINGS ================= -->
+
+      <section id="earningsPage" class="page">
+
+        <div class="pageTitle">
+          Earnings
+        </div>
+
+        <div class="pageSub">
+          Track your restaurant sales.
+        </div>
+
+        <div class="stats">
+
+          <div class="stat">
+            <div class="statLabel">Today</div>
+            <div class="statValue" id="earnToday">₦0</div>
+          </div>
+
+          <div class="stat">
+            <div class="statLabel">This Month</div>
+            <div class="statValue" id="earnMonth">₦0</div>
+          </div>
+
+          <div class="stat">
+            <div class="statLabel">Completed Orders</div>
+            <div class="statValue" id="earnOrders">0</div>
+          </div>
+
+          <div class="stat">
+            <div class="statLabel">Commission Rate</div>
+            <div class="statValue" id="earnCommission">0%</div>
+          </div>
+
+        </div>
+
+        <div class="card">
+
+          <div class="cardTitle">
+            Recent Sales
+          </div>
+
+          <div id="salesList">
+            <div class="empty">Loading...</div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- MOBILE NAV -->
+
+  <nav class="mobileNav">
+
+    <button class="active"
+            onclick="mobilePage('dashboard',this)">
+      📊<br>Home
+    </button>
+
+    <button onclick="mobilePage('orders',this)">
+      🛍<br>Orders
+    </button>
+
+    <button onclick="mobilePage('menu',this)">
+      🍔<br>Menu
+    </button>
+
+    <button onclick="mobilePage('restaurant',this)">
+      🏪<br>Store
+    </button>
+
+    <button onclick="mobilePage('earnings',this)">
+      💰<br>Money
+    </button>
+
+  </nav>
+
+</section>
 
 
 <script>
 
-/*
-=========================================================
-QUICKEATS VENDOR DASHBOARD
-=========================================================
-*/
-
+/* =====================================================
+   SUPABASE
+===================================================== */
 
 const SUPABASE_URL =
-"https://glkutdkwbrjpiuqcmgwe.supabase.co";
+  "https://glkutdkwbrjpiuqcmgwe.supabase.co";
 
-
-const SUPABASE_PUBLISHABLE_KEY =
-"sb_publishable_lQkN8HQP2Tm3tPiDYJbrNw_ydO7bqXU";
-
+const SUPABASE_KEY =
+  "sb_publishable_lQkN8HQP2Tm3tPiDYJbrNw_ydO7bqXU";
 
 const supabase =
-window.supabase.createClient(
+  window.supabase.createClient(
     SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-);
+    SUPABASE_KEY
+  );
 
 
+/* =====================================================
+   GLOBAL VARIABLES
+===================================================== */
 
-/*
-=========================================================
-TEST ORDER
-=========================================================
-*/
-
-let currentOrder = {
-
-    id:null,
-
-    order_number:"QE1001",
-
-    customer_name:"John Customer",
-
-    customer_phone:"WhatsApp Customer",
-
-    pickup_address:
-        "Allen Avenue, Ikeja, Lagos",
-
-    delivery_address:
-        "Ikeja GRA, Lagos",
-
-    items:[
-        {
-            name:"Jollof Rice",
-            quantity:1,
-            price:2500
-        },
-        {
-            name:"Chicken",
-            quantity:1,
-            price:2000
-        },
-        {
-            name:"Coke",
-            quantity:1,
-            price:500
-        }
-    ],
-
-    total_amount:5000,
-
-    delivery_fee:700,
-
-    status:"new"
-
-};
+let currentUser = null;
+let vendor = null;
+let orders = [];
+let menuItems = [];
+let realtimeChannel = null;
 
 
+/* =====================================================
+   HELPERS
+===================================================== */
 
-let currentStatus =
-"new";
+function money(value){
+  return "₦" + Number(value || 0).toLocaleString("en-NG");
+}
 
+function escapeHtml(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
 
+function showMessage(id,text,type="success"){
+  const el=document.getElementById(id);
 
-/*
-=========================================================
-TOAST
-=========================================================
-*/
+  if(!el) return;
 
-function showToast(text){
+  el.textContent=text;
+  el.className="message show " + type;
 
-    const toast =
-        document.getElementById(
-            "toast"
-        );
+  setTimeout(()=>{
+    el.className="message";
+  },5000);
+}
 
-    toast.textContent =
-        text;
-
-    toast.classList.add(
-        "show"
-    );
-
-    setTimeout(
-        function(){
-
-            toast.classList.remove(
-                "show"
-            );
-
-        },
-        3000
-    );
-
+function authMessage(text,type="error"){
+  showMessage("authMessage",text,type);
 }
 
 
+/* =====================================================
+   AUTH TABS
+===================================================== */
 
-/*
-=========================================================
-CONNECTION TEST
-=========================================================
-*/
+function showAuth(type){
 
-async function testConnection(){
+  const login =
+    document.getElementById("loginForm");
 
-    const dot =
-        document.getElementById(
-            "connectionDot"
-        );
+  const register =
+    document.getElementById("registerForm");
 
-    const text =
-        document.getElementById(
-            "connectionText"
-        );
+  const loginTab =
+    document.getElementById("loginTab");
 
+  const registerTab =
+    document.getElementById("registerTab");
 
-    text.textContent =
-        "Checking connection...";
+  if(type==="login"){
 
-    dot.className =
-        "dot";
+    login.classList.remove("hidden");
+    register.classList.add("hidden");
 
+    loginTab.classList.add("active");
+    registerTab.classList.remove("active");
 
-    try{
+  }else{
 
-        const result =
-            await supabase
-                .from("orders")
-                .select("id")
-                .limit(1);
+    login.classList.add("hidden");
+    register.classList.remove("hidden");
 
+    loginTab.classList.remove("active");
+    registerTab.classList.add("active");
 
-        if(result.error){
-
-            /*
-            If the database is protected by RLS,
-            Supabase can still be working even when
-            this particular query is blocked.
-            */
-
-            console.log(
-                "Supabase response:",
-                result.error
-            );
-
-            text.textContent =
-                "Supabase connected.";
-
-            dot.className =
-                "dot green";
-
-            return;
-
-        }
-
-
-        text.textContent =
-            "Supabase connected successfully.";
-
-        dot.className =
-            "dot green";
-
-
-    }catch(error){
-
-        console.error(error);
-
-        text.textContent =
-            "Supabase connection failed.";
-
-        dot.className =
-            "dot red";
-
-    }
-
+  }
 }
 
 
+/* =====================================================
+   REGISTER
+===================================================== */
 
-/*
-=========================================================
-ACCEPT ORDER
-=========================================================
-*/
+async function registerVendor(){
 
-async function acceptOrder(){
+  const store =
+    document.getElementById("regStore").value.trim();
 
-    if(currentStatus !== "new"){
+  const phone =
+    document.getElementById("regPhone").value.trim();
 
-        return;
+  const address =
+    document.getElementById("regAddress").value.trim();
 
+  const email =
+    document.getElementById("regEmail").value.trim();
+
+  const password =
+    document.getElementById("regPassword").value;
+
+  if(!store || !phone || !address || !email || !password){
+
+    authMessage(
+      "Please complete all fields."
+    );
+
+    return;
+  }
+
+  if(password.length < 6){
+
+    authMessage(
+      "Password must be at least 6 characters."
+    );
+
+    return;
+  }
+
+  authMessage(
+    "Creating your vendor account...",
+    "success"
+  );
+
+  const {
+    data,
+    error
+  } =
+    await supabase.auth.signUp({
+
+      email,
+      password,
+
+      options:{
+        data:{
+          role:"vendor",
+          store_name:store,
+          phone:phone
+        }
+      }
+
+    });
+
+  if(error){
+
+    authMessage(error.message);
+
+    return;
+  }
+
+  /*
+    If email confirmation is OFF,
+    Supabase gives us a session immediately.
+  */
+
+  if(data.session){
+
+    currentUser=data.user;
+
+    const created =
+      await createVendorProfile(
+        currentUser.id,
+        store,
+        phone,
+        address
+      );
+
+    if(!created){
+
+      await supabase.auth.signOut();
+
+      return;
     }
 
+    await loadApp();
+
+  }else{
 
     /*
-    IMPORTANT:
-
-    This test dashboard first creates the order
-    in Supabase.
-
+      If email confirmation is ON,
+      the user must confirm the email first.
     */
 
-    const button =
-        document.getElementById(
-            "acceptButton"
-        );
+    authMessage(
+      "Account created. Check your email, confirm your email address, then come back and log in.",
+      "success"
+    );
 
-
-    button.disabled =
-        true;
-
-    button.textContent =
-        "ACCEPTING...";
-
-
-    try{
-
-        /*
-        Create the order.
-
-        We do NOT put vendor_id here yet because
-        your dashboard has not been connected to
-        the vendor login record.
-
-        */
-
-        const result =
-            await supabase
-                .from("orders")
-                .insert({
-
-                    order_number:
-                        currentOrder.order_number,
-
-                    customer_name:
-                        currentOrder.customer_name,
-
-                    customer_phone:
-                        currentOrder.customer_phone,
-
-                    pickup_address:
-                        currentOrder.pickup_address,
-
-                    delivery_address:
-                        currentOrder.delivery_address,
-
-                    items:
-                        currentOrder.items,
-
-                    total_amount:
-                        currentOrder.total_amount,
-
-                    delivery_fee:
-                        currentOrder.delivery_fee,
-
-                    status:
-                        "vendor_accepted"
-
-                })
-                .select()
-                .single();
-
-
-        if(result.error){
-
-            throw result.error;
-
-        }
-
-
-        currentOrder =
-            result.data;
-
-
-        currentStatus =
-            "vendor_accepted";
-
-
-        updateVendorScreen();
-
-
-        showToast(
-            "Order accepted successfully."
-        );
-
-
-    }catch(error){
-
-        console.error(error);
-
-
-        button.disabled =
-            false;
-
-        button.textContent =
-            "ACCEPT ORDER";
-
-
-        showToast(
-            error.message ||
-            "Could not accept order."
-        );
-
-    }
+    showAuth("login");
+  }
 
 }
 
 
+/* =====================================================
+   CREATE VENDOR PROFILE
+===================================================== */
 
-/*
-=========================================================
-FOOD READY
-=========================================================
-*/
+async function createVendorProfile(
+  userId,
+  store,
+  phone,
+  address
+){
 
-async function foodReady(){
+  const {
+    data,
+    error
+  } =
+    await supabase
+      .from("vendors")
+      .insert({
 
-    if(!currentOrder.id){
+        owner_id:userId,
 
-        showToast(
-            "Please accept the order first."
-        );
+        store_name:store,
 
-        return;
+        address:address,
 
-    }
+        phone:phone,
 
+        is_open:true
 
-    if(currentStatus !==
-       "vendor_accepted"){
+      })
+      .select()
+      .single();
 
-        return;
+  if(error){
 
-    }
+    console.error(error);
 
+    authMessage(
+      "Account was created, but the restaurant profile could not be created. Database permission may need to be fixed.",
+      "error"
+    );
 
-    const button =
-        document.getElementById(
-            "readyButton"
-        );
+    return false;
+  }
 
+  vendor=data;
 
-    button.disabled =
-        true;
-
-    button.textContent =
-        "REQUESTING RIDER...";
-
-
-    try{
-
-        const result =
-            await supabase
-                .from("orders")
-                .update({
-
-                    status:
-                        "ready_for_pickup"
-
-                })
-                .eq(
-                    "id",
-                    currentOrder.id
-                )
-                .eq(
-                    "status",
-                    "vendor_accepted"
-                )
-                .select()
-                .single();
+  return true;
+}
 
 
-        if(result.error){
+/* =====================================================
+   LOGIN
+===================================================== */
 
-            throw result.error;
+async function loginVendor(){
 
-        }
+  const email =
+    document.getElementById("loginEmail")
+      .value.trim();
 
+  const password =
+    document.getElementById("loginPassword")
+      .value;
 
-        currentOrder =
-            result.data;
+  if(!email || !password){
 
+    authMessage(
+      "Enter your email and password."
+    );
 
-        currentStatus =
-            "ready_for_pickup";
+    return;
+  }
 
+  authMessage(
+    "Logging in...",
+    "success"
+  );
 
-        updateVendorScreen();
+  const {
+    data,
+    error
+  } =
+    await supabase.auth.signInWithPassword({
 
+      email,
+      password
 
-        showToast(
-            "🚴 Rider requested! Order is now ready for pickup."
-        );
+    });
 
+  if(error){
 
-    }catch(error){
+    authMessage(error.message);
 
-        console.error(error);
+    return;
+  }
 
+  currentUser=data.user;
 
-        button.disabled =
-            false;
-
-        button.textContent =
-            "FOOD READY — REQUEST RIDER";
-
-
-        showToast(
-            error.message ||
-            "Could not request rider."
-        );
-
-    }
+  await loadApp();
 
 }
 
 
+/* =====================================================
+   LOAD APP
+===================================================== */
 
-/*
-=========================================================
-UPDATE SCREEN
-=========================================================
-*/
+async function loadApp(){
 
-function updateVendorScreen(){
+  if(!currentUser){
 
-    const badge =
-        document.getElementById(
-            "statusBadge"
-        );
+    const {
+      data
+    } =
+    await supabase.auth.getUser();
 
+    currentUser=data.user;
+  }
 
-    const acceptButton =
-        document.getElementById(
-            "acceptButton"
-        );
+  if(!currentUser){
 
+    return;
+  }
 
-    const readyButton =
-        document.getElementById(
-            "readyButton"
-        );
+  await loadVendor();
 
+  if(!vendor){
 
-    if(currentStatus === "new"){
+    /*
+      Account exists but vendor row does not.
+      Give the user a simple profile setup.
+    */
 
-        badge.textContent =
-            "NEW ORDER";
+    showAuth("register");
 
-        acceptButton.classList.remove(
-            "disabled"
-        );
+    authMessage(
+      "Your account exists, but your restaurant profile is not set up yet.",
+      "error"
+    );
 
-        acceptButton.disabled =
-            false;
+    return;
+  }
 
-        acceptButton.textContent =
-            "ACCEPT ORDER";
+  document
+    .getElementById("authPage")
+    .classList.add("hidden");
 
-        readyButton.classList.add(
-            "disabled"
-        );
+  document
+    .getElementById("app")
+    .classList.remove("hidden");
 
-    }
+  document
+    .getElementById("topVendorName")
+    .textContent =
+      vendor.store_name || "Vendor";
 
+  fillRestaurantForm();
 
-    if(currentStatus ===
-       "vendor_accepted"){
+  await Promise.all([
+    loadMenu(),
+    loadOrders(),
+    loadDashboard()
+  ]);
 
-        badge.textContent =
-            "ORDER ACCEPTED";
-
-        acceptButton.textContent =
-            "ORDER ACCEPTED";
-
-        acceptButton.classList.add(
-            "disabled"
-        );
-
-        readyButton.classList.remove(
-            "disabled"
-        );
-
-        readyButton.disabled =
-            false;
-
-        readyButton.textContent =
-            "FOOD READY — REQUEST RIDER";
-
-    }
-
-
-    if(currentStatus ===
-       "ready_for_pickup"){
-
-        badge.textContent =
-            "WAITING FOR RIDER";
-
-        acceptButton.textContent =
-            "ORDER ACCEPTED";
-
-        acceptButton.classList.add(
-            "disabled"
-        );
-
-        readyButton.classList.add(
-            "disabled"
-        );
-
-        readyButton.disabled =
-            true;
-
-        readyButton.textContent =
-            "🚴 RIDER REQUESTED";
-
-    }
-
-
-    if(currentStatus ===
-       "rider_accepted"){
-
-        badge.textContent =
-            "RIDER ASSIGNED";
-
-        readyButton.textContent =
-            "🚴 RIDER ACCEPTED ORDER";
-
-    }
-
+  subscribeRealtime();
 }
 
 
+/* =====================================================
+   LOAD VENDOR
+===================================================== */
 
-/*
-=========================================================
-LISTEN FOR RIDER
-=========================================================
-*/
+async function loadVendor(){
 
-function listenForRider(){
+  const {
+    data,
+    error
+  } =
+  await supabase
+    .from("vendors")
+    .select("*")
+    .eq("owner_id",currentUser.id)
+    .maybeSingle();
+
+  if(error){
+
+    console.error(error);
+
+    authMessage(
+      "Could not load your restaurant: " +
+      error.message
+    );
+
+    return;
+  }
+
+  vendor=data;
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+async function logoutVendor(){
+
+  if(realtimeChannel){
+
+    await supabase
+      .removeChannel(realtimeChannel);
+
+    realtimeChannel=null;
+  }
+
+  await supabase.auth.signOut();
+
+  location.reload();
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function showPage(page,button){
+
+  document
+    .querySelectorAll(".page")
+    .forEach(el=>{
+      el.classList.remove("active");
+    });
+
+  const pageEl =
+    document.getElementById(page+"Page");
+
+  if(pageEl){
+
+    pageEl.classList.add("active");
+  }
+
+  document
+    .querySelectorAll(".navBtn")
+    .forEach(el=>{
+      el.classList.remove("active");
+    });
+
+  if(button){
+
+    button.classList.add("active");
+  }
+
+  if(page==="dashboard"){
+    loadDashboard();
+  }
+
+  if(page==="orders"){
+    loadOrders();
+  }
+
+  if(page==="menu"){
+    loadMenu();
+  }
+
+  if(page==="earnings"){
+    loadEarnings();
+  }
+}
+
+
+function mobilePage(page,button){
+
+  showPage(page);
+
+  document
+    .querySelectorAll(".mobileNav button")
+    .forEach(el=>{
+      el.classList.remove("active");
+    });
+
+  button.classList.add("active");
+}
+
+
+/* =====================================================
+   RESTAURANT PROFILE
+===================================================== */
+
+function fillRestaurantForm(){
+
+  if(!vendor) return;
+
+  document
+    .getElementById("profileStore")
+    .value =
+      vendor.store_name || "";
+
+  document
+    .getElementById("profilePhone")
+    .value =
+      vendor.phone || "";
+
+  document
+    .getElementById("profileAddress")
+    .value =
+      vendor.address || "";
+
+  document
+    .getElementById("profileOpen")
+    .value =
+      vendor.open_time || "";
+
+  document
+    .getElementById("profileClose")
+    .value =
+      vendor.close_time || "";
+
+  document
+    .getElementById("bankName")
+    .value =
+      vendor.bank_name || "";
+
+  document
+    .getElementById("accountNumber")
+    .value =
+      vendor.account_number || "";
+
+  updateRestaurantStatus();
+}
+
+
+async function saveRestaurant(){
+
+  if(!vendor) return;
+
+  const updates={
+
+    store_name:
+      document.getElementById("profileStore").value.trim(),
+
+    phone:
+      document.getElementById("profilePhone").value.trim(),
+
+    address:
+      document.getElementById("profileAddress").value.trim(),
+
+    open_time:
+      document.getElementById("profileOpen").value,
+
+    close_time:
+      document.getElementById("profileClose").value
+
+  };
+
+  if(!updates.store_name ||
+     !updates.address){
+
+    showMessage(
+      "restaurantMessage",
+      "Restaurant name and address are required.",
+      "error"
+    );
+
+    return;
+  }
+
+  const {
+    data,
+    error
+  } =
+  await supabase
+    .from("vendors")
+    .update(updates)
+    .eq("id",vendor.id)
+    .eq("owner_id",currentUser.id)
+    .select()
+    .single();
+
+  if(error){
+
+    showMessage(
+      "restaurantMessage",
+      error.message,
+      "error"
+    );
+
+    return;
+  }
+
+  vendor=data;
+
+  document
+    .getElementById("topVendorName")
+    .textContent =
+      vendor.store_name;
+
+  updateRestaurantStatus();
+
+  showMessage(
+    "restaurantMessage",
+    "Restaurant information saved.",
+    "success"
+  );
+}
+
+
+/* =====================================================
+   BANK
+===================================================== */
+
+async function saveBank(){
+
+  const bankName =
+    document.getElementById("bankName")
+      .value.trim();
+
+  const accountNumber =
+    document.getElementById("accountNumber")
+      .value.trim();
+
+  const {
+    data,
+    error
+  } =
+  await supabase
+    .from("vendors")
+    .update({
+
+      bank_name:bankName,
+
+      account_number:accountNumber
+
+    })
+    .eq("id",vendor.id)
+    .eq("owner_id",currentUser.id)
+    .select()
+    .single();
+
+  if(error){
+
+    showMessage(
+      "bankMessage",
+      error.message,
+      "error"
+    );
+
+    return;
+  }
+
+  vendor=data;
+
+  showMessage(
+    "bankMessage",
+    "Bank details saved.",
+    "success"
+  );
+}
+
+
+/* =====================================================
+   RESTAURANT OPEN/CLOSE
+===================================================== */
+
+function updateRestaurantStatus(){
+
+  if(!vendor) return;
+
+  const status =
+    document.getElementById("restaurantStatus");
+
+  const button =
+    document.getElementById("restaurantToggleBtn");
+
+  if(vendor.is_open){
+
+    status.textContent="🟢 OPEN";
+
+    button.textContent=
+      "CLOSE RESTAURANT";
+
+  }else{
+
+    status.textContent="🔴 CLOSED";
+
+    button.textContent=
+      "OPEN RESTAURANT";
+  }
+}
+
+
+async function toggleRestaurant(){
+
+  if(!vendor) return;
+
+  const {
+    data,
+    error
+  } =
+  await supabase
+    .from("vendors")
+    .update({
+      is_open:!vendor.is_open
+    })
+    .eq("id",vendor.id)
+    .eq("owner_id",currentUser.id)
+    .select()
+    .single();
+
+  if(error){
+
+    alert(error.message);
+
+    return;
+  }
+
+  vendor=data;
+
+  updateRestaurantStatus();
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+async function loadMenu(){
+
+  if(!vendor) return;
+
+  const {
+    data,
+    error
+  } =
+  await supabase
+    .from("menu_items")
+    .select("*")
+    .eq("vendor_id",vendor.id)
+    .order("category")
+    .order("name");
+
+  if(error){
+
+    console.error(error);
+
+    document
+      .getElementById("menuList")
+      .innerHTML =
+      `<div class="empty">
+        Could not load menu.<br>
+        ${escapeHtml(error.message)}
+      </div>`;
+
+    return;
+  }
+
+  menuItems=data || [];
+
+  renderMenu();
+
+  document
+    .getElementById("statMenu")
+    .textContent =
+      menuItems.length;
+}
+
+
+function renderMenu(){
+
+  const list =
+    document.getElementById("menuList");
+
+  if(!menuItems.length){
+
+    list.innerHTML=
+      `<div class="empty">
+        No food has been added yet.<br><br>
+        Tap <b>+ Add Food</b> to create your menu.
+      </div>`;
+
+    return;
+  }
+
+  list.innerHTML =
+    menuItems.map(item=>`
+
+      <div class="menuItem">
+
+        <div class="menuTop">
+
+          <div>
+
+            <div class="menuName">
+              ${escapeHtml(item.name)}
+            </div>
+
+            <div class="category">
+              ${escapeHtml(item.category || "Food")}
+            </div>
+
+          </div>
+
+          <span class="stock ${item.in_stock ? "in":"out"}">
+            ${item.in_stock ? "AVAILABLE":"OUT"}
+          </span>
+
+        </div>
+
+        <div class="price">
+          ${money(item.price)}
+        </div>
+
+        <div class="menuActions">
+
+          <button class="secondaryBtn"
+                  onclick="editMenuItem('${item.id}')">
+            Edit
+          </button>
+
+          <button class="dangerBtn"
+                  onclick="deleteMenuItem('${item.id}')">
+            Delete
+          </button>
+
+        </div>
+
+        <button
+          class="actionBtn"
+          style="width:100%;margin-top:8px;"
+          onclick="toggleStock('${item.id}',${item.in_stock})">
+
+          ${item.in_stock
+            ? "Mark Out of Stock"
+            : "Mark Available"}
+
+        </button>
+
+      </div>
+
+    `).join("");
+}
+
+
+/* =====================================================
+   MENU FORM
+===================================================== */
+
+function openMenuForm(){
+
+  document
+    .getElementById("menuFormCard")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("menuFormTitle")
+    .textContent =
+      "Add Menu Item";
+
+  document
+    .getElementById("menuEditId")
+    .value="";
+
+  document
+    .getElementById("menuName")
+    .value="";
+
+  document
+    .getElementById("menuCategory")
+    .value="";
+
+  document
+    .getElementById("menuPrice")
+    .value="";
+
+  document
+    .getElementById("menuStock")
+    .value="true";
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
+
+
+function closeMenuForm(){
+
+  document
+    .getElementById("menuFormCard")
+    .classList.add("hidden");
+}
+
+
+function editMenuItem(id){
+
+  const item =
+    menuItems.find(x=>x.id===id);
+
+  if(!item) return;
+
+  document
+    .getElementById("menuFormCard")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("menuFormTitle")
+    .textContent =
+      "Edit Menu Item";
+
+  document
+    .getElementById("menuEditId")
+    .value=item.id;
+
+  document
+    .getElementById("menuName")
+    .value=item.name || "";
+
+  document
+    .getElementById("menuCategory")
+    .value=item.category || "";
+
+  document
+    .getElementById("menuPrice")
+    .value=item.price || "";
+
+  document
+    .getElementById("menuStock")
+    .value=
+      item.in_stock ? "true":"false";
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
+
+
+/* =====================================================
+   SAVE MENU ITEM
+===================================================== */
+
+async function saveMenuItem(){
+
+  const id =
+    document.getElementById("menuEditId").value;
+
+  const name =
+    document.getElementById("menuName")
+      .value.trim();
+
+  const category =
+    document.getElementById("menuCategory")
+      .value.trim();
+
+  const price =
+    Number(
+      document.getElementById("menuPrice").value
+    );
+
+  const inStock =
+    document.getElementById("menuStock").value
+    === "true";
+
+  if(!name){
+
+    alert("Enter the food name.");
+
+    return;
+  }
+
+  if(!price || price < 0){
+
+    alert("Enter a valid price.");
+
+    return;
+  }
+
+  if(id){
+
+    const {
+      error
+    } =
+    await supabase
+      .from("menu_items")
+      .update({
+
+        name:name,
+
+        category:category || "Food",
+
+        price:price,
+
+        in_stock:inStock
+
+      })
+      .eq("id",id)
+      .eq("vendor_id",vendor.id);
+
+    if(error){
+
+      alert(error.message);
+
+      return;
+    }
+
+  }else{
+
+    const {
+      error
+    } =
+    await supabase
+      .from("menu_items")
+      .insert({
+
+        vendor_id:vendor.id,
+
+        name:name,
+
+        category:category || "Food",
+
+        price:price,
+
+        in_stock:inStock
+
+      });
+
+    if(error){
+
+      alert(error.message);
+
+      return;
+    }
+  }
+
+  closeMenuForm();
+
+  await loadMenu();
+}
+
+
+/* =====================================================
+   DELETE MENU
+===================================================== */
+
+async function deleteMenuItem(id){
+
+  const item =
+    menuItems.find(x=>x.id===id);
+
+  if(!item) return;
+
+  const okay =
+    confirm(
+      `Delete "${item.name}" from your menu?`
+    );
+
+  if(!okay) return;
+
+  const {
+    error
+  } =
+  await supabase
+    .from("menu_items")
+    .delete()
+    .eq("id",id)
+    .eq("vendor_id",vendor.id);
+
+  if(error){
+
+    alert(error.message);
+
+    return;
+  }
+
+  await loadMenu();
+}
+
+
+/* =====================================================
+   STOCK
+===================================================== */
+
+async function toggleStock(id,current){
+
+  const {
+    error
+  } =
+  await supabase
+    .from("menu_items")
+    .update({
+      in_stock:!current
+    })
+    .eq("id",id)
+    .eq("vendor_id",vendor.id);
+
+  if(error){
+
+    alert(error.message);
+
+    return;
+  }
+
+  await loadMenu();
+}
+
+
+/* =====================================================
+   ORDERS
+===================================================== */
+
+async function loadOrders(){
+
+  if(!vendor) return;
+
+  const {
+    data,
+    error
+  } =
+  await supabase
+    .from("orders")
+    .select("*")
+    .eq("vendor_id",vendor.id)
+    .order("created_at",{ascending:false});
+
+  if(error){
+
+    console.error(error);
+
+    document
+      .getElementById("ordersList")
+      .innerHTML=
+      `<div class="empty">
+        Could not load orders.<br>
+        ${escapeHtml(error.message)}
+      </div>`;
+
+    return;
+  }
+
+  orders=data || [];
+
+  renderOrders();
+
+  updateStats();
+}
+
+
+function renderOrders(){
+
+  const list =
+    document.getElementById("ordersList");
+
+  const recent =
+    document.getElementById("recentOrders");
+
+  if(!orders.length){
+
+    list.innerHTML=
+      `<div class="empty">
+        No orders yet.
+      </div>`;
+
+    recent.innerHTML=
+      `<div class="empty">
+        No orders yet.
+      </div>`;
+
+    return;
+  }
+
+  const html =
+    orders.map(renderOrderCard).join("");
+
+  list.innerHTML=html;
+
+  recent.innerHTML =
+    orders.slice(0,5)
+      .map(renderOrderCard)
+      .join("");
+}
+
+
+function renderOrderCard(order){
+
+  const status =
+    order.status || "new";
+
+  let actions="";
+
+  if(status==="new"){
+
+    actions=`
+
+      <button class="actionBtn"
+              onclick="updateOrder('${order.id}','vendor_accepted')">
+        ACCEPT
+      </button>
+
+      <button class="rejectBtn"
+              onclick="updateOrder('${order.id}','cancelled')">
+        REJECT
+      </button>
+
+    `;
+
+  }
+
+  else if(status==="vendor_accepted"){
+
+    actions=`
+
+      <button class="actionBtn"
+              onclick="updateOrder('${order.id}','ready_for_pickup')">
+        FOOD READY
+      </button>
+
+    `;
+
+  }
+
+  else if(status==="ready_for_pickup"){
+
+    actions=`
+      <span style="color:#078b49;font-weight:800;">
+        Waiting for rider
+      </span>
+    `;
+
+  }
+
+  else if(status==="rider_accepted"){
+
+    actions=`
+      <span style="color:#078b49;font-weight:800;">
+        🚴 Rider assigned
+      </span>
+    `;
+
+  }
+
+  else if(status==="arrived_pickup"){
+
+    actions=`
+      <span style="color:#078b49;font-weight:800;">
+        🚴 Rider has arrived
+      </span>
+    `;
+
+  }
+
+  else if(status==="picked_up"){
+
+    actions=`
+      <span style="color:#078b49;font-weight:800;">
+        📦 Food picked up
+      </span>
+    `;
+
+  }
+
+  else if(status==="on_the_way"){
+
+    actions=`
+      <span style="color:#078b49;font-weight:800;">
+        🚴 On the way
+      </span>
+    `;
+
+  }
+
+  else if(status==="delivered"){
+
+    actions=`
+      <span style="color:#078b49;font-weight:800;">
+        ✓ Delivered
+      </span>
+    `;
+
+  }
+
+  return `
+
+    <div class="orderCard">
+
+      <div class="orderHead">
+
+        <div>
+
+          <div class="orderNumber">
+            ${escapeHtml(
+              order.order_number || "Order"
+            )}
+          </div>
+
+          <div style="font-size:12px;color:#89918d;margin-top:4px;">
+            ${order.created_at
+              ? new Date(order.created_at)
+                  .toLocaleString("en-NG")
+              : ""}
+          </div>
+
+        </div>
+
+        <div class="status">
+          ${escapeHtml(
+            formatStatus(status)
+          )}
+        </div>
+
+      </div>
+
+      <div class="orderInfo">
+
+        <b>Customer:</b>
+        ${escapeHtml(order.customer_name || "Customer")}
+        <br>
+
+        <b>Delivery:</b>
+        ${escapeHtml(order.delivery_address || "Address not provided")}
+
+      </div>
+
+      <div class="orderTotal">
+        ${money(order.total_amount)}
+      </div>
+
+      <div class="orderActions">
+        ${actions}
+      </div>
+
+    </div>
+
+  `;
+}
+
+
+function formatStatus(status){
+
+  const names={
+
+    new:"NEW",
+
+    vendor_accepted:"ACCEPTED",
+
+    ready_for_pickup:"FOOD READY",
+
+    rider_accepted:"RIDER ASSIGNED",
+
+    arrived_pickup:"RIDER ARRIVED",
+
+    picked_up:"PICKED UP",
+
+    on_the_way:"ON THE WAY",
+
+    delivered:"DELIVERED",
+
+    cancelled:"CANCELLED"
+
+  };
+
+  return names[status] || status;
+}
+
+
+/* =====================================================
+   UPDATE ORDER
+===================================================== */
+
+async function updateOrder(id,status){
+
+  const {
+    error
+  } =
+  await supabase
+    .from("orders")
+    .update({
+      status:status
+    })
+    .eq("id",id)
+    .eq("vendor_id",vendor.id);
+
+  if(error){
+
+    alert(error.message);
+
+    return;
+  }
+
+  await loadOrders();
+}
+
+
+/* =====================================================
+   DASHBOARD STATS
+===================================================== */
+
+function updateStats(){
+
+  const today =
+    new Date();
+
+  const day =
+    today.toISOString()
+      .slice(0,10);
+
+  const todaysOrders =
+    orders.filter(order=>
+      order.created_at &&
+      order.created_at.slice(0,10)===day
+    );
+
+  const sales =
+    todaysOrders.reduce(
+      (sum,order)=>
+        sum + Number(order.total_amount || 0),
+      0
+    );
+
+  const pending =
+    orders.filter(order=>
+      ![
+        "delivered",
+        "cancelled"
+      ].includes(order.status)
+    ).length;
+
+  document
+    .getElementById("statOrders")
+    .textContent=
+      todaysOrders.length;
+
+  document
+    .getElementById("statSales")
+    .textContent=
+      money(sales);
+
+  document
+    .getElementById("statPending")
+    .textContent=
+      pending;
+
+  document
+    .getElementById("statMenu")
+    .textContent=
+      menuItems.length;
+}
+
+
+async function loadDashboard(){
+
+  await loadOrders();
+
+  updateRestaurantStatus();
+}
+
+
+/* =====================================================
+   EARNINGS
+===================================================== */
+
+async function loadEarnings(){
+
+  if(!vendor) return;
+
+  const completed =
+    orders.filter(order=>
+      order.status==="delivered"
+    );
+
+  const today =
+    new Date()
+      .toISOString()
+      .slice(0,10);
+
+  const month =
+    new Date()
+      .toISOString()
+      .slice(0,7);
+
+  const todaySales =
+    completed
+      .filter(order=>
+        order.created_at &&
+        order.created_at.slice(0,10)===today
+      )
+      .reduce(
+        (sum,o)=>
+          sum + Number(o.total_amount || 0),
+        0
+      );
+
+  const monthSales =
+    completed
+      .filter(order=>
+        order.created_at &&
+        order.created_at.slice(0,7)===month
+      )
+      .reduce(
+        (sum,o)=>
+          sum + Number(o.total_amount || 0),
+        0
+      );
+
+  document
+    .getElementById("earnToday")
+    .textContent=
+      money(todaySales);
+
+  document
+    .getElementById("earnMonth")
+    .textContent=
+      money(monthSales);
+
+  document
+    .getElementById("earnOrders")
+    .textContent=
+      completed.length;
+
+  document
+    .getElementById("earnCommission")
+    .textContent=
+      Number(vendor.commission_rate || 0) + "%";
+
+  const salesList =
+    document.getElementById("salesList");
+
+  if(!completed.length){
+
+    salesList.innerHTML=
+      `<div class="empty">
+        No completed sales yet.
+      </div>`;
+
+    return;
+  }
+
+  salesList.innerHTML =
+    completed
+      .slice(0,20)
+      .map(order=>`
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          padding:13px 0;
+          border-bottom:1px solid #edf0ee;
+        ">
+
+          <div>
+            <b>
+              ${escapeHtml(
+                order.order_number || "Order"
+              )}
+            </b>
+
+            <div style="
+              color:#7c8581;
+              font-size:12px;
+              margin-top:4px;
+            ">
+              ${order.created_at
+                ? new Date(order.created_at)
+                    .toLocaleString("en-NG")
+                : ""}
+            </div>
+
+          </div>
+
+          <b style="color:#12a05a;">
+            ${money(order.total_amount)}
+          </b>
+
+        </div>
+
+      `)
+      .join("");
+}
+
+
+/* =====================================================
+   REALTIME
+===================================================== */
+
+function subscribeRealtime(){
+
+  if(realtimeChannel){
 
     supabase
-        .channel(
-            "vendor-order-updates"
-        )
-        .on(
-            "postgres_changes",
-            {
-                event:"UPDATE",
-                schema:"public",
-                table:"orders"
-            },
-            function(payload){
+      .removeChannel(realtimeChannel);
+  }
 
-                if(
-                    currentOrder.id &&
-                    payload.new.id ===
-                    currentOrder.id
-                ){
+  realtimeChannel =
+    supabase
+      .channel("vendor-orders-"+vendor.id)
 
-                    currentOrder =
-                        payload.new;
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"orders",
+          filter:"vendor_id=eq."+vendor.id
+        },
+        async(payload)=>{
 
-                    currentStatus =
-                        payload.new.status;
+          console.log(
+            "Order update:",
+            payload
+          );
 
+          await loadOrders();
 
-                    updateVendorScreen();
+          /*
+            Refresh earnings as well.
+          */
 
+          await loadEarnings();
 
-                    if(
-                        payload.new.status ===
-                        "rider_accepted"
-                    ){
+        }
+      )
 
-                        showToast(
-                            "🚴 A rider has accepted this delivery!"
-                        );
-
-                    }
-
-
-                    if(
-                        payload.new.status ===
-                        "picked_up"
-                    ){
-
-                        showToast(
-                            "📦 Rider has picked up the order."
-                        );
-
-                    }
-
-
-                    if(
-                        payload.new.status ===
-                        "on_the_way"
-                    ){
-
-                        showToast(
-                            "🛵 Rider is on the way to the customer."
-                        );
-
-                    }
-
-
-                    if(
-                        payload.new.status ===
-                        "delivered"
-                    ){
-
-                        showToast(
-                            "✅ Order delivered!"
-                        );
-
-                    }
-
-                }
-
-            }
-        )
-        .subscribe();
-
+      .subscribe();
 }
 
 
+/* =====================================================
+   AUTH STATE
+===================================================== */
 
-/*
-=========================================================
-START
-=========================================================
-*/
+supabase.auth.onAuthStateChange(
+  async(event,session)=>{
 
-window.addEventListener(
-    "load",
-    function(){
+    if(session){
 
-        testConnection();
+      currentUser=session.user;
 
-        listenForRider();
+      /*
+        Avoid running loadApp repeatedly
+        while the page is already open.
+      */
+
+      if(
+        document
+          .getElementById("app")
+          .classList
+          .contains("hidden")
+      ){
+
+        await loadApp();
+      }
 
     }
+
+  }
 );
+
+
+/* =====================================================
+   INITIAL STARTUP
+===================================================== */
+
+async function start(){
+
+  const {
+    data
+  } =
+  await supabase.auth.getSession();
+
+  if(data.session){
+
+    currentUser=data.session.user;
+
+    await loadApp();
+
+  }else{
+
+    document
+      .getElementById("authPage")
+      .classList
+      .remove("hidden");
+
+    document
+      .getElementById("app")
+      .classList
+      .add("hidden");
+
+  }
+
+}
+
+start();
 
 </script>
 
