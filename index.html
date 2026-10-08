@@ -177,6 +177,12 @@ button{
   transform:scale(.98);
 }
 
+.btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+  transform:none;
+}
+
 .btn-primary{
   color:white;
   background:linear-gradient(135deg,var(--primary),var(--primary-dark));
@@ -620,6 +626,191 @@ button{
   padding:9px 12px;
   font-size:12px;
   border-radius:10px;
+}
+
+/* =========================
+   ORDER DETAILS MODAL
+========================= */
+
+.order-details-modal{
+  max-width:680px;
+  max-height:90vh;
+  overflow:auto;
+}
+
+.order-detail-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.order-detail-box{
+  background:#f8fafc;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+}
+
+.order-detail-box.full{
+  grid-column:1/-1;
+}
+
+.order-detail-label{
+  font-size:11px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.4px;
+}
+
+.order-detail-value{
+  font-size:13px;
+  font-weight:700;
+  margin-top:5px;
+  word-break:break-word;
+  line-height:1.5;
+}
+
+.order-items-section{
+  margin-top:20px;
+  padding-top:20px;
+  border-top:1px solid var(--border);
+}
+
+.order-items-title{
+  font-size:15px;
+  font-weight:800;
+}
+
+.order-items-list{
+  margin-top:10px;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+
+.order-item-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:11px 0;
+  border-bottom:1px solid var(--border);
+  font-size:12px;
+}
+
+.order-item-row:last-child{
+  border-bottom:0;
+}
+
+.order-item-name{
+  font-weight:700;
+}
+
+.order-item-meta{
+  color:var(--muted);
+  margin-top:3px;
+}
+
+.order-item-price{
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.order-items-empty{
+  margin-top:10px;
+  padding:13px;
+  border-radius:12px;
+  background:#f8fafc;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.order-timeline{
+  margin-top:20px;
+  padding-top:20px;
+  border-top:1px solid var(--border);
+}
+
+.order-timeline-title{
+  font-size:15px;
+  font-weight:800;
+  margin-bottom:17px;
+}
+
+.timeline-item{
+  display:flex;
+  gap:12px;
+  position:relative;
+  padding-bottom:18px;
+}
+
+.timeline-item:last-child{
+  padding-bottom:0;
+}
+
+.timeline-line{
+  position:absolute;
+  left:8px;
+  top:18px;
+  bottom:0;
+  width:2px;
+  background:#e2e8f0;
+}
+
+.timeline-dot{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:#e2e8f0;
+  border:4px solid white;
+  box-shadow:0 0 0 1px #e2e8f0;
+  flex:0 0 18px;
+  z-index:1;
+}
+
+.timeline-item.done .timeline-dot{
+  background:var(--primary);
+  box-shadow:0 0 0 1px var(--primary);
+}
+
+.timeline-item.current .timeline-dot{
+  box-shadow:0 0 0 5px rgba(16,185,129,.12);
+}
+
+.timeline-item.cancelled .timeline-dot{
+  background:var(--danger);
+  box-shadow:0 0 0 1px var(--danger);
+}
+
+.timeline-title{
+  font-size:13px;
+  font-weight:800;
+}
+
+.timeline-time{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:3px;
+}
+
+.timeline-item.pending .timeline-title{
+  color:#94a3b8;
+}
+
+.order-cancelled-note{
+  margin-top:14px;
+  padding:12px 13px;
+  border-radius:12px;
+  background:var(--danger-soft);
+  color:#b91c1c;
+  font-size:12px;
+  font-weight:600;
+}
+
+.order-detail-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:20px;
 }
 
 /* =========================
@@ -1077,6 +1268,19 @@ button{
   .auth-card{
     padding:27px 21px;
   }
+
+  .order-detail-grid{
+    grid-template-columns:1fr;
+  }
+
+  .order-detail-box.full{
+    grid-column:auto;
+  }
+
+  .order-details-modal{
+    max-height:88vh;
+    padding:20px;
+  }
 }
 
 /* =========================
@@ -1175,7 +1379,6 @@ button{
 
     </div>
 
-
     <div id="registerForm" class="hidden">
 
       <h1 class="auth-title">Create your store</h1>
@@ -1234,8 +1437,6 @@ button{
 ========================= -->
 
 <div id="app" class="app hidden">
-
-  <!-- DESKTOP SIDEBAR -->
 
   <aside class="sidebar">
 
@@ -1300,11 +1501,7 @@ button{
   </aside>
 
 
-  <!-- MAIN -->
-
   <main class="main">
-
-    <!-- MOBILE HEADER -->
 
     <header class="mobile-header">
 
@@ -1322,8 +1519,6 @@ button{
 
     </header>
 
-
-    <!-- DESKTOP TOPBAR -->
 
     <header class="topbar">
 
@@ -1354,8 +1549,6 @@ button{
 
     </header>
 
-
-    <!-- CONTENT -->
 
     <div class="content">
 
@@ -1767,6 +1960,41 @@ button{
 </div>
 
 
+<!-- =========================
+     ORDER DETAILS MODAL
+========================= -->
+
+<div id="orderDetailsModal"
+     class="modal-backdrop hidden">
+
+  <div class="modal order-details-modal">
+
+    <div class="modal-header">
+
+      <div>
+        <div class="modal-title">
+          Order details
+        </div>
+
+        <div id="orderDetailsSubtitle"
+             style="font-size:12px;color:#64748b;margin-top:4px">
+        </div>
+      </div>
+
+      <button class="close"
+              onclick="closeOrderDetails()">
+        ×
+      </button>
+
+    </div>
+
+    <div id="orderDetailsContent"></div>
+
+  </div>
+
+</div>
+
+
 <!-- TOAST -->
 
 <div id="toastContainer" class="toast-container"></div>
@@ -1809,6 +2037,17 @@ function money(value){
   return "₦" + Number(value || 0).toLocaleString("en-NG");
 }
 
+
+function getOrderTotal(order){
+  return Number(
+    order?.total ??
+    order?.amount ??
+    order?.grand_total ??
+    0
+  );
+}
+
+
 function escapeHtml(value){
   return String(value ?? "")
     .replace(/&/g,"&amp;")
@@ -1818,7 +2057,9 @@ function escapeHtml(value){
     .replace(/'/g,"&#039;");
 }
 
+
 function toast(message,type=""){
+
   const container =
     document.getElementById("toastContainer");
 
@@ -1835,7 +2076,9 @@ function toast(message,type=""){
   },3000);
 }
 
+
 function formatDate(date){
+
   if(!date) return "";
 
   return new Date(date).toLocaleString(
@@ -1848,6 +2091,7 @@ function formatDate(date){
     }
   );
 }
+
 
 function statusLabel(status){
 
@@ -1865,6 +2109,7 @@ function statusLabel(status){
 
   return labels[status] || status || "Unknown";
 }
+
 
 function statusClass(status){
 
@@ -1891,6 +2136,295 @@ function statusClass(status){
 }
 
 
+function firstValue(obj,keys){
+
+  for(const key of keys){
+
+    if(
+      obj &&
+      obj[key] !== undefined &&
+      obj[key] !== null &&
+      String(obj[key]).trim() !== ""
+    ){
+      return obj[key];
+    }
+
+  }
+
+  return null;
+}
+
+
+function getCustomerPhone(order){
+
+  return firstValue(
+    order,
+    [
+      "customer_phone",
+      "phone",
+      "customerPhone",
+      "phone_number",
+      "customer_number"
+    ]
+  );
+}
+
+
+function getDeliveryAddress(order){
+
+  return firstValue(
+    order,
+    [
+      "delivery_address",
+      "customer_address",
+      "address",
+      "deliveryAddress",
+      "dropoff_address"
+    ]
+  );
+}
+
+
+function getCustomerEmail(order){
+
+  return firstValue(
+    order,
+    [
+      "customer_email",
+      "email"
+    ]
+  );
+}
+
+
+function getPaymentMethod(order){
+
+  return firstValue(
+    order,
+    [
+      "payment_method",
+      "payment_type",
+      "paymentMethod"
+    ]
+  );
+}
+
+
+function getOrderNotes(order){
+
+  return firstValue(
+    order,
+    [
+      "delivery_note",
+      "delivery_notes",
+      "note",
+      "notes",
+      "special_instructions"
+    ]
+  );
+}
+
+
+/* =====================================================
+   ORDER ITEMS
+===================================================== */
+
+function parseOrderItems(order){
+
+  const raw =
+    firstValue(
+      order,
+      [
+        "items",
+        "order_items",
+        "cart_items",
+        "products",
+        "line_items"
+      ]
+    );
+
+  if(!raw){
+    return [];
+  }
+
+
+  if(Array.isArray(raw)){
+    return raw;
+  }
+
+
+  if(typeof raw === "string"){
+
+    try{
+
+      const parsed =
+        JSON.parse(raw);
+
+      if(Array.isArray(parsed)){
+        return parsed;
+      }
+
+      if(
+        parsed &&
+        Array.isArray(parsed.items)
+      ){
+        return parsed.items;
+      }
+
+      if(
+        parsed &&
+        Array.isArray(parsed.data)
+      ){
+        return parsed.data;
+      }
+
+      if(
+        parsed &&
+        typeof parsed === "object"
+      ){
+
+        return Object.entries(parsed)
+          .map(([name,value]) => {
+
+            if(
+              value &&
+              typeof value === "object"
+            ){
+
+              return {
+                name,
+                quantity:
+                  value.quantity ??
+                  value.qty ??
+                  1,
+                price:
+                  value.price ??
+                  value.unit_price ??
+                  value.amount ??
+                  0
+              };
+
+            }
+
+            return {
+              name,
+              quantity:
+                typeof value === "number"
+                  ? value
+                  : 1
+            };
+
+          });
+
+      }
+
+    }catch(error){
+
+      return [];
+
+    }
+
+  }
+
+
+  if(
+    raw &&
+    typeof raw === "object"
+  ){
+
+    if(Array.isArray(raw.items)){
+      return raw.items;
+    }
+
+    if(Array.isArray(raw.data)){
+      return raw.data;
+    }
+
+    return Object.entries(raw)
+      .map(([name,value]) => {
+
+        if(
+          value &&
+          typeof value === "object"
+        ){
+
+          return {
+            name,
+            quantity:
+              value.quantity ??
+              value.qty ??
+              1,
+            price:
+              value.price ??
+              value.unit_price ??
+              value.amount ??
+              0
+          };
+
+        }
+
+        return {
+          name,
+          quantity:
+            typeof value === "number"
+              ? value
+              : 1
+        };
+
+      });
+
+  }
+
+
+  return [];
+}
+
+
+function itemName(item){
+
+  return firstValue(
+    item,
+    [
+      "name",
+      "item_name",
+      "food_name",
+      "title",
+      "product_name"
+    ]
+  ) || "Item";
+}
+
+
+function itemQty(item){
+
+  return Number(
+    firstValue(
+      item,
+      [
+        "quantity",
+        "qty",
+        "count"
+      ]
+    ) || 1
+  );
+}
+
+
+function itemPrice(item){
+
+  return Number(
+    firstValue(
+      item,
+      [
+        "price",
+        "unit_price",
+        "amount"
+      ]
+    ) || 0
+  );
+}
+
+
 /* =====================================================
    AUTH UI
 ===================================================== */
@@ -1905,6 +2439,7 @@ function showLogin(){
     .getElementById("registerForm")
     .classList.add("hidden");
 }
+
 
 function showRegister(){
 
@@ -1925,30 +2460,56 @@ function showRegister(){
 async function register(){
 
   const storeName =
-    document.getElementById("registerStoreName").value.trim();
+    document
+      .getElementById("registerStoreName")
+      .value
+      .trim();
 
   const address =
-    document.getElementById("registerAddress").value.trim();
+    document
+      .getElementById("registerAddress")
+      .value
+      .trim();
 
   const phone =
-    document.getElementById("registerPhone").value.trim();
+    document
+      .getElementById("registerPhone")
+      .value
+      .trim();
 
   const email =
-    document.getElementById("registerEmail").value.trim();
+    document
+      .getElementById("registerEmail")
+      .value
+      .trim();
 
   const password =
-    document.getElementById("registerPassword").value;
+    document
+      .getElementById("registerPassword")
+      .value;
 
-  if(!storeName || !address || !email || !password){
-    toast("Please complete all required fields","error");
+  if(
+    !storeName ||
+    !address ||
+    !email ||
+    !password
+  ){
+
+    toast(
+      "Please complete all required fields",
+      "error"
+    );
+
     return;
   }
+
 
   const btn =
     document.getElementById("registerBtn");
 
   btn.disabled = true;
   btn.textContent = "Creating account...";
+
 
   try{
 
@@ -1960,6 +2521,7 @@ async function register(){
         phone:phone
       })
     );
+
 
     const {data,error} =
       await supabaseClient.auth.signUp({
@@ -1978,7 +2540,9 @@ async function register(){
 
       });
 
+
     if(error) throw error;
+
 
     if(!data.session){
 
@@ -1997,19 +2561,23 @@ async function register(){
 
     }
 
+
   }catch(error){
 
     console.error(error);
 
     toast(
-      error.message || "Registration failed",
+      error.message ||
+      "Registration failed",
       "error"
     );
+
 
   }finally{
 
     btn.disabled = false;
-    btn.textContent = "Create vendor account";
+    btn.textContent =
+      "Create vendor account";
 
   }
 }
@@ -2022,10 +2590,16 @@ async function register(){
 async function login(){
 
   const email =
-    document.getElementById("loginEmail").value.trim();
+    document
+      .getElementById("loginEmail")
+      .value
+      .trim();
 
   const password =
-    document.getElementById("loginPassword").value;
+    document
+      .getElementById("loginPassword")
+      .value;
+
 
   if(!email || !password){
 
@@ -2037,11 +2611,13 @@ async function login(){
     return;
   }
 
+
   const btn =
     document.getElementById("loginBtn");
 
   btn.disabled = true;
   btn.textContent = "Signing in...";
+
 
   try{
 
@@ -2051,20 +2627,25 @@ async function login(){
         password
       });
 
+
     if(error) throw error;
+
 
     currentUser = data.user;
 
     await loadApp();
+
 
   }catch(error){
 
     console.error(error);
 
     toast(
-      error.message || "Login failed",
+      error.message ||
+      "Login failed",
       "error"
     );
+
 
   }finally{
 
@@ -2085,28 +2666,36 @@ async function loadApp(){
     return;
   }
 
+
   document
     .getElementById("authScreen")
     .classList.add("hidden");
+
 
   document
     .getElementById("app")
     .classList.remove("hidden");
 
+
   await loadVendor();
 
+
   if(!vendor){
+
     toast(
       "Your vendor profile could not be loaded.",
       "error"
     );
+
     return;
   }
+
 
   await Promise.all([
     loadMenu(),
     loadOrders()
   ]);
+
 
   renderRestaurant();
 
@@ -2130,6 +2719,7 @@ async function loadVendor(){
       .eq("owner_id",currentUser.id)
       .maybeSingle();
 
+
   if(error){
 
     console.error(error);
@@ -2143,20 +2733,18 @@ async function loadVendor(){
 
   }
 
+
   if(data){
 
     vendor = data;
+
     return;
 
   }
 
 
-  /*
-    If the vendor profile doesn't exist yet,
-    use the profile saved during registration.
-  */
-
   let saved = null;
+
 
   try{
 
@@ -2172,6 +2760,7 @@ async function loadVendor(){
 
   const metadata =
     currentUser.user_metadata || {};
+
 
   const profile = {
 
@@ -2200,6 +2789,7 @@ async function loadVendor(){
       .from("vendors")
       .insert(profile);
 
+
   if(insertError){
 
     console.error(insertError);
@@ -2221,6 +2811,7 @@ async function loadVendor(){
       .eq("owner_id",currentUser.id)
       .maybeSingle();
 
+
   vendor = newVendor;
 }
 
@@ -2233,6 +2824,7 @@ async function loadMenu(){
 
   if(!vendor) return;
 
+
   const {data,error} =
     await supabaseClient
       .from("menu_items")
@@ -2240,6 +2832,7 @@ async function loadMenu(){
       .eq("vendor_id",vendor.id)
       .order("category")
       .order("name");
+
 
   if(error){
 
@@ -2253,13 +2846,16 @@ async function loadMenu(){
     return;
   }
 
+
   menuItems = data || [];
 
   renderMenu();
 
+
   document
     .getElementById("menuCount")
-    .textContent = menuItems.length;
+    .textContent =
+      menuItems.length;
 }
 
 
@@ -2268,6 +2864,7 @@ function renderMenu(){
   const container =
     document.getElementById("menuGrid");
 
+
   if(!menuItems.length){
 
     container.innerHTML = `
@@ -2275,12 +2872,15 @@ function renderMenu(){
            style="grid-column:1/-1">
         <div class="empty">
           <div class="empty-icon">🍽️</div>
+
           <div class="empty-title">
             Your menu is empty
           </div>
+
           <div class="empty-text">
             Add your first food item to start receiving orders.
           </div>
+
           <button class="btn btn-primary"
                   style="margin-top:16px"
                   onclick="openMenuModal()">
@@ -2324,11 +2924,13 @@ function renderMenu(){
                 ? "stock-on"
                 : "stock-off"
             }">
+
               ${
                 item.in_stock
                   ? "● In stock"
                   : "● Out of stock"
               }
+
             </span>
 
             <div style="display:flex;gap:6px">
@@ -2336,13 +2938,21 @@ function renderMenu(){
               <button
                 class="btn btn-secondary btn-small"
                 onclick="toggleStock('${item.id}',${!item.in_stock})">
-                ${item.in_stock ? "Out of stock" : "Stock"}
+
+                ${
+                  item.in_stock
+                    ? "Out of stock"
+                    : "Stock"
+                }
+
               </button>
 
               <button
                 class="btn btn-danger btn-small"
                 onclick="deleteMenuItem('${item.id}')">
+
                 Delete
+
               </button>
 
             </div>
@@ -2363,6 +2973,7 @@ function openMenuModal(){
     .getElementById("menuModal")
     .classList.remove("hidden");
 
+
   document
     .getElementById("menuName")
     .focus();
@@ -2375,6 +2986,7 @@ function closeMenuModal(){
     .getElementById("menuModal")
     .classList.add("hidden");
 
+
   document.getElementById("menuName").value="";
   document.getElementById("menuCategory").value="";
   document.getElementById("menuPrice").value="";
@@ -2384,15 +2996,26 @@ function closeMenuModal(){
 async function addMenuItem(){
 
   const name =
-    document.getElementById("menuName").value.trim();
+    document
+      .getElementById("menuName")
+      .value
+      .trim();
+
 
   const category =
-    document.getElementById("menuCategory").value.trim();
+    document
+      .getElementById("menuCategory")
+      .value
+      .trim();
+
 
   const price =
     Number(
-      document.getElementById("menuPrice").value
+      document
+        .getElementById("menuPrice")
+        .value
     );
+
 
   if(!name || !price){
 
@@ -2424,7 +3047,8 @@ async function addMenuItem(){
     console.error(error);
 
     toast(
-      error.message || "Could not add item.",
+      error.message ||
+      "Could not add item.",
       "error"
     );
 
@@ -2434,10 +3058,12 @@ async function addMenuItem(){
 
   closeMenuModal();
 
+
   toast(
     "Menu item added successfully.",
     "success"
   );
+
 
   await loadMenu();
 
@@ -2467,12 +3093,14 @@ async function toggleStock(id,value){
     return;
   }
 
+
   toast(
     value
       ? "Item is now in stock."
       : "Item marked out of stock.",
     "success"
   );
+
 
   await loadMenu();
 }
@@ -2483,6 +3111,7 @@ async function deleteMenuItem(id){
   if(!confirm("Delete this menu item?")){
     return;
   }
+
 
   const {error} =
     await supabaseClient
@@ -2502,10 +3131,12 @@ async function deleteMenuItem(id){
     return;
   }
 
+
   toast(
     "Menu item deleted.",
     "success"
   );
+
 
   await loadMenu();
 
@@ -2521,12 +3152,14 @@ async function loadOrders(){
 
   if(!vendor) return;
 
+
   const {data,error} =
     await supabaseClient
       .from("orders")
       .select("*")
       .eq("vendor_id",vendor.id)
       .order("created_at",{ascending:false});
+
 
   if(error){
 
@@ -2540,7 +3173,9 @@ async function loadOrders(){
     return;
   }
 
+
   orders = data || [];
+
 
   renderOrders();
 
@@ -2555,17 +3190,24 @@ function renderOrders(){
   const container =
     document.getElementById("ordersList");
 
+
   if(!orders.length){
 
     container.innerHTML = `
       <div class="empty">
-        <div class="empty-icon">🧾</div>
+
+        <div class="empty-icon">
+          🧾
+        </div>
+
         <div class="empty-title">
           No orders yet
         </div>
+
         <div class="empty-text">
           New customer orders will appear here.
         </div>
+
       </div>
     `;
 
@@ -2576,16 +3218,20 @@ function renderOrders(){
 
 
   container.innerHTML =
-    orders.map(order =>
-      orderCard(order)
-    ).join("");
+    orders
+      .map(order => orderCard(order))
+      .join("");
 
 
   renderRecentOrders();
 }
 
 
-function orderCard(order){
+/* =====================================================
+   ORDER ACTIONS
+===================================================== */
+
+function orderActionHtml(order){
 
   const status =
     order.status || "new";
@@ -2600,14 +3246,18 @@ function orderCard(order){
 
       <button
         class="btn btn-primary btn-small"
-        onclick="updateOrder('${order.id}','vendor_accepted')">
+        onclick="updateOrder('${escapeHtml(order.id)}','vendor_accepted')">
+
         Accept order
+
       </button>
 
       <button
         class="btn btn-danger btn-small"
-        onclick="updateOrder('${order.id}','cancelled')">
+        onclick="updateOrder('${escapeHtml(order.id)}','cancelled')">
+
         Reject
+
       </button>
 
     `;
@@ -2618,8 +3268,18 @@ function orderCard(order){
 
       <button
         class="btn btn-primary btn-small"
-        onclick="updateOrder('${order.id}','ready_for_pickup')">
+        onclick="updateOrder('${escapeHtml(order.id)}','ready_for_pickup')">
+
         Food ready
+
+      </button>
+
+      <button
+        class="btn btn-danger btn-small"
+        onclick="updateOrder('${escapeHtml(order.id)}','cancelled')">
+
+        Cancel order
+
       </button>
 
     `;
@@ -2627,16 +3287,38 @@ function orderCard(order){
   }else if(status === "ready_for_pickup"){
 
     actions = `
+
       <span style="
         font-size:12px;
         color:#64748b;
         padding:9px 3px;
       ">
+
         Waiting for rider...
+
       </span>
+
     `;
 
   }
+
+
+  return actions;
+}
+
+
+/* =====================================================
+   ORDER CARD
+===================================================== */
+
+function orderCard(order){
+
+  const status =
+    order.status || "new";
+
+
+  const actions =
+    orderActionHtml(order);
 
 
   return `
@@ -2649,7 +3331,8 @@ function orderCard(order){
 
           <div class="order-number">
             Order #${escapeHtml(
-              order.order_number || order.id?.slice(0,8)
+              order.order_number ||
+              order.id?.slice(0,8)
             )}
           </div>
 
@@ -2669,32 +3352,40 @@ function orderCard(order){
       <div class="order-details">
 
         <div>
+
           <div class="detail-label">
             Customer
           </div>
+
           <div class="detail-value">
-            ${escapeHtml(order.customer_name || "Customer")}
+            ${escapeHtml(
+              order.customer_name ||
+              "Customer"
+            )}
           </div>
+
         </div>
 
+
         <div>
+
           <div class="detail-label">
             Total
           </div>
+
           <div class="detail-value">
-            ${money(
-              order.total ||
-              order.amount ||
-              order.grand_total ||
-              0
-            )}
+            ${money(getOrderTotal(order))}
           </div>
+
         </div>
 
+
         <div>
+
           <div class="detail-label">
             Rider
           </div>
+
           <div class="detail-value">
             ${
               order.rider_id
@@ -2702,16 +3393,25 @@ function orderCard(order){
                 : "Waiting"
             }
           </div>
+
         </div>
 
       </div>
 
 
-      ${
-        actions
-          ? `<div class="order-actions">${actions}</div>`
-          : ""
-      }
+      <div class="order-actions">
+
+        <button
+          class="btn btn-secondary btn-small"
+          onclick="openOrderDetails('${escapeHtml(order.id)}')">
+
+          View details
+
+        </button>
+
+        ${actions}
+
+      </div>
 
     </div>
 
@@ -2724,6 +3424,7 @@ function renderRecentOrders(){
   const container =
     document.getElementById("recentOrders");
 
+
   const recent =
     orders.slice(0,5);
 
@@ -2732,8 +3433,15 @@ function renderRecentOrders(){
 
     container.innerHTML = `
       <div class="empty">
-        <div class="empty-icon">🧾</div>
-        <div class="empty-title">No recent orders</div>
+
+        <div class="empty-icon">
+          🧾
+        </div>
+
+        <div class="empty-title">
+          No recent orders
+        </div>
+
       </div>
     `;
 
@@ -2742,9 +3450,581 @@ function renderRecentOrders(){
 
 
   container.innerHTML =
-    recent.map(order =>
-      orderCard(order)
-    ).join("");
+    recent
+      .map(order => orderCard(order))
+      .join("");
+}
+
+
+/* =====================================================
+   ORDER DETAILS
+===================================================== */
+
+const ORDER_TIMELINE = [
+
+  {
+    status:"new",
+    label:"Order placed",
+    icon:"🧾",
+    timestampKeys:[
+      "created_at"
+    ]
+  },
+
+  {
+    status:"vendor_accepted",
+    label:"Restaurant accepted",
+    icon:"✓",
+    timestampKeys:[
+      "vendor_accepted_at"
+    ]
+  },
+
+  {
+    status:"ready_for_pickup",
+    label:"Food ready for pickup",
+    icon:"🍽️",
+    timestampKeys:[
+      "ready_for_pickup_at",
+      "ready_at"
+    ]
+  },
+
+  {
+    status:"rider_accepted",
+    label:"Rider accepted",
+    icon:"🚴",
+    timestampKeys:[
+      "rider_accepted_at"
+    ]
+  },
+
+  {
+    status:"arrived_pickup",
+    label:"Rider arrived at restaurant",
+    icon:"📍",
+    timestampKeys:[
+      "arrived_pickup_at"
+    ]
+  },
+
+  {
+    status:"picked_up",
+    label:"Order picked up",
+    icon:"📦",
+    timestampKeys:[
+      "picked_up_at"
+    ]
+  },
+
+  {
+    status:"on_the_way",
+    label:"Order on the way",
+    icon:"🛵",
+    timestampKeys:[
+      "on_the_way_at"
+    ]
+  },
+
+  {
+    status:"delivered",
+    label:"Delivered",
+    icon:"✓",
+    timestampKeys:[
+      "delivered_at"
+    ]
+  }
+
+];
+
+
+function getTimelineTimestamp(order,step){
+
+  for(const key of step.timestampKeys){
+
+    if(order[key]){
+      return order[key];
+    }
+
+  }
+
+  return null;
+}
+
+
+function renderOrderTimeline(order){
+
+  const status =
+    order.status || "new";
+
+
+  const currentIndex =
+    ORDER_TIMELINE.findIndex(
+      item => item.status === status
+    );
+
+
+  let html = `
+    <div class="order-timeline">
+
+      <div class="order-timeline-title">
+        Order timeline
+      </div>
+  `;
+
+
+  ORDER_TIMELINE.forEach((step,index) => {
+
+    let state = "pending";
+
+
+    if(status === "cancelled"){
+
+      if(index === 0){
+        state = "done";
+      }
+
+    }else if(currentIndex >= 0){
+
+      if(index < currentIndex){
+        state = "done";
+      }else if(index === currentIndex){
+        state = "done current";
+      }
+
+    }
+
+
+    const timestamp =
+      getTimelineTimestamp(
+        order,
+        step
+      );
+
+
+    html += `
+
+      <div class="timeline-item ${state}">
+
+        ${
+          index < ORDER_TIMELINE.length - 1
+            ? `<div class="timeline-line"></div>`
+            : ""
+        }
+
+        <div class="timeline-dot"></div>
+
+        <div>
+
+          <div class="timeline-title">
+            ${step.label}
+          </div>
+
+          ${
+            timestamp
+              ? `
+                <div class="timeline-time">
+                  ${formatDate(timestamp)}
+                </div>
+              `
+              : ""
+          }
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+
+  if(status === "cancelled"){
+
+    html += `
+
+      <div class="timeline-item cancelled">
+
+        <div class="timeline-dot"></div>
+
+        <div>
+
+          <div class="timeline-title">
+            Order cancelled
+          </div>
+
+          <div class="timeline-time">
+            ${
+              formatDate(
+                firstValue(
+                  order,
+                  [
+                    "cancelled_at",
+                    "updated_at"
+                  ]
+                )
+              ) || "Cancellation recorded"
+            }
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="order-cancelled-note">
+        This order was cancelled before completion.
+      </div>
+
+    `;
+
+  }
+
+
+  html += `
+    </div>
+  `;
+
+
+  return html;
+}
+
+
+function renderOrderItems(order){
+
+  const items =
+    parseOrderItems(order);
+
+
+  let html = `
+
+    <div class="order-items-section">
+
+      <div class="order-items-title">
+        Ordered items
+      </div>
+
+  `;
+
+
+  if(!items.length){
+
+    html += `
+
+      <div class="order-items-empty">
+        Item breakdown is not available for this order yet.
+      </div>
+
+    `;
+
+    html += `</div>`;
+
+    return html;
+  }
+
+
+  html += `<div class="order-items-list">`;
+
+
+  items.forEach(item => {
+
+    const name =
+      itemName(item);
+
+    const quantity =
+      itemQty(item);
+
+    const price =
+      itemPrice(item);
+
+
+    html += `
+
+      <div class="order-item-row">
+
+        <div>
+
+          <div class="order-item-name">
+            ${escapeHtml(name)}
+          </div>
+
+          <div class="order-item-meta">
+            Quantity: ${quantity}
+          </div>
+
+        </div>
+
+        ${
+          price > 0
+            ? `
+              <div class="order-item-price">
+                ${money(price * quantity)}
+              </div>
+            `
+            : ""
+        }
+
+      </div>
+
+    `;
+
+  });
+
+
+  html += `
+    </div>
+  `;
+
+  html += `
+    </div>
+  `;
+
+
+  return html;
+}
+
+
+function openOrderDetails(orderId){
+
+  const order =
+    orders.find(
+      item => item.id === orderId
+    );
+
+
+  if(!order){
+
+    toast(
+      "Order could not be found.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  const modal =
+    document.getElementById(
+      "orderDetailsModal"
+    );
+
+
+  const subtitle =
+    document.getElementById(
+      "orderDetailsSubtitle"
+    );
+
+
+  const content =
+    document.getElementById(
+      "orderDetailsContent"
+    );
+
+
+  const orderNumber =
+    order.order_number ||
+    order.id?.slice(0,8);
+
+
+  subtitle.textContent =
+    `Order #${orderNumber} • ${statusLabel(order.status || "new")}`;
+
+
+  const phone =
+    getCustomerPhone(order);
+
+  const address =
+    getDeliveryAddress(order);
+
+  const email =
+    getCustomerEmail(order);
+
+  const payment =
+    getPaymentMethod(order);
+
+  const notes =
+    getOrderNotes(order);
+
+
+  const riderText =
+    order.rider_id
+      ? "Rider assigned"
+      : "Waiting for rider";
+
+
+  content.innerHTML = `
+
+    <div class="order-detail-grid">
+
+      <div class="order-detail-box">
+
+        <div class="order-detail-label">
+          Customer
+        </div>
+
+        <div class="order-detail-value">
+          ${escapeHtml(
+            order.customer_name ||
+            "Customer"
+          )}
+        </div>
+
+      </div>
+
+
+      <div class="order-detail-box">
+
+        <div class="order-detail-label">
+          Order total
+        </div>
+
+        <div class="order-detail-value">
+          ${money(getOrderTotal(order))}
+        </div>
+
+      </div>
+
+
+      <div class="order-detail-box">
+
+        <div class="order-detail-label">
+          Phone
+        </div>
+
+        <div class="order-detail-value">
+          ${
+            phone
+              ? escapeHtml(phone)
+              : "Not provided"
+          }
+        </div>
+
+      </div>
+
+
+      <div class="order-detail-box">
+
+        <div class="order-detail-label">
+          Rider
+        </div>
+
+        <div class="order-detail-value">
+          ${riderText}
+        </div>
+
+      </div>
+
+
+      <div class="order-detail-box">
+
+        <div class="order-detail-label">
+          Payment
+        </div>
+
+        <div class="order-detail-value">
+          ${
+            payment
+              ? escapeHtml(payment)
+              : "Not provided"
+          }
+        </div>
+
+      </div>
+
+
+      <div class="order-detail-box">
+
+        <div class="order-detail-label">
+          Order status
+        </div>
+
+        <div class="order-detail-value">
+          ${statusLabel(order.status || "new")}
+        </div>
+
+      </div>
+
+
+      ${
+        email
+          ? `
+            <div class="order-detail-box">
+
+              <div class="order-detail-label">
+                Customer email
+              </div>
+
+              <div class="order-detail-value">
+                ${escapeHtml(email)}
+              </div>
+
+            </div>
+          `
+          : ""
+      }
+
+
+      <div class="order-detail-box full">
+
+        <div class="order-detail-label">
+          Delivery address
+        </div>
+
+        <div class="order-detail-value">
+          ${
+            address
+              ? escapeHtml(address)
+              : "Delivery address not provided"
+          }
+        </div>
+
+      </div>
+
+
+      ${
+        notes
+          ? `
+            <div class="order-detail-box full">
+
+              <div class="order-detail-label">
+                Customer notes
+              </div>
+
+              <div class="order-detail-value">
+                ${escapeHtml(notes)}
+              </div>
+
+            </div>
+          `
+          : ""
+      }
+
+    </div>
+
+
+    ${renderOrderItems(order)}
+
+    ${renderOrderTimeline(order)}
+
+
+    <div class="order-detail-actions">
+
+      ${orderActionHtml(order)}
+
+    </div>
+
+  `;
+
+
+  modal.classList.remove("hidden");
+}
+
+
+function closeOrderDetails(){
+
+  document
+    .getElementById("orderDetailsModal")
+    .classList.add("hidden");
+
 }
 
 
@@ -2769,6 +4049,9 @@ async function updateOrder(orderId,status){
     if(error) throw error;
 
 
+    closeOrderDetails();
+
+
     toast(
       `Order ${statusLabel(status).toLowerCase()}.`,
       "success"
@@ -2776,6 +4059,7 @@ async function updateOrder(orderId,status){
 
 
     await loadOrders();
+
 
   }catch(error){
 
@@ -2806,6 +4090,7 @@ function updateDashboard(){
 
       if(!order.created_at) return false;
 
+
       return new Date(
         order.created_at
       ).toDateString() === today;
@@ -2817,12 +4102,7 @@ function updateDashboard(){
     todayOrders.reduce(
       (sum,order) =>
         sum +
-        Number(
-          order.total ||
-          order.amount ||
-          order.grand_total ||
-          0
-        ),
+        getOrderTotal(order),
       0
     );
 
@@ -2870,26 +4150,47 @@ function renderRestaurant(){
 
   if(!vendor) return;
 
-  document.getElementById("storeName").value =
-    vendor.store_name || "";
 
-  document.getElementById("storeAddress").value =
-    vendor.address || "";
+  document
+    .getElementById("storeName")
+    .value =
+      vendor.store_name || "";
 
-  document.getElementById("storePhone").value =
-    vendor.phone || "";
 
-  document.getElementById("openTime").value =
-    vendor.open_time || "";
+  document
+    .getElementById("storeAddress")
+    .value =
+      vendor.address || "";
 
-  document.getElementById("closeTime").value =
-    vendor.close_time || "";
 
-  document.getElementById("bankName").value =
-    vendor.bank_name || "";
+  document
+    .getElementById("storePhone")
+    .value =
+      vendor.phone || "";
 
-  document.getElementById("accountNumber").value =
-    vendor.account_number || "";
+
+  document
+    .getElementById("openTime")
+    .value =
+      vendor.open_time || "";
+
+
+  document
+    .getElementById("closeTime")
+    .value =
+      vendor.close_time || "";
+
+
+  document
+    .getElementById("bankName")
+    .value =
+      vendor.bank_name || "";
+
+
+  document
+    .getElementById("accountNumber")
+    .value =
+      vendor.account_number || "";
 
 
   updateRestaurantToggle(
@@ -2900,9 +4201,11 @@ function renderRestaurant(){
   const name =
     vendor.store_name || "Vendor";
 
+
   document
     .getElementById("profileName")
-    .textContent = name;
+    .textContent =
+      name;
 
 
   document
@@ -2914,7 +4217,9 @@ function renderRestaurant(){
   document
     .getElementById("avatar")
     .textContent =
-      name.charAt(0).toUpperCase();
+      name
+        .charAt(0)
+        .toUpperCase();
 }
 
 
@@ -2922,6 +4227,7 @@ function updateRestaurantToggle(isOpen){
 
   const toggle =
     document.getElementById("openToggle");
+
 
   if(isOpen){
     toggle.classList.add("on");
@@ -2942,6 +4248,7 @@ function updateRestaurantToggle(isOpen){
 async function toggleRestaurant(){
 
   if(!vendor) return;
+
 
   const newValue =
     !vendor.is_open;
@@ -2972,7 +4279,11 @@ async function toggleRestaurant(){
 
   vendor.is_open = newValue;
 
-  updateRestaurantToggle(newValue);
+
+  updateRestaurantToggle(
+    newValue
+  );
+
 
   toast(
     newValue
@@ -2988,24 +4299,42 @@ async function saveRestaurant(){
   const update = {
 
     store_name:
-      document.getElementById("storeName").value.trim(),
+      document
+        .getElementById("storeName")
+        .value
+        .trim(),
 
     address:
-      document.getElementById("storeAddress").value.trim(),
+      document
+        .getElementById("storeAddress")
+        .value
+        .trim(),
 
     phone:
-      document.getElementById("storePhone").value.trim(),
+      document
+        .getElementById("storePhone")
+        .value
+        .trim(),
 
     open_time:
-      document.getElementById("openTime").value || null,
+      document
+        .getElementById("openTime")
+        .value ||
+      null,
 
     close_time:
-      document.getElementById("closeTime").value || null
+      document
+        .getElementById("closeTime")
+        .value ||
+      null
 
   };
 
 
-  if(!update.store_name || !update.address){
+  if(
+    !update.store_name ||
+    !update.address
+  ){
 
     toast(
       "Store name and address are required.",
@@ -3037,9 +4366,14 @@ async function saveRestaurant(){
   }
 
 
-  Object.assign(vendor,update);
+  Object.assign(
+    vendor,
+    update
+  );
+
 
   renderRestaurant();
+
 
   toast(
     "Restaurant details saved.",
@@ -3051,10 +4385,17 @@ async function saveRestaurant(){
 async function saveBankDetails(){
 
   const bankName =
-    document.getElementById("bankName").value.trim();
+    document
+      .getElementById("bankName")
+      .value
+      .trim();
+
 
   const accountNumber =
-    document.getElementById("accountNumber").value.trim();
+    document
+      .getElementById("accountNumber")
+      .value
+      .trim();
 
 
   const {error} =
@@ -3081,8 +4422,11 @@ async function saveBankDetails(){
   }
 
 
-  vendor.bank_name = bankName;
-  vendor.account_number = accountNumber;
+  vendor.bank_name =
+    bankName;
+
+  vendor.account_number =
+    accountNumber;
 
 
   toast(
@@ -3109,12 +4453,7 @@ function renderEarnings(){
     delivered.reduce(
       (sum,order) =>
         sum +
-        Number(
-          order.total ||
-          order.amount ||
-          order.grand_total ||
-          0
-        ),
+        getOrderTotal(order),
       0
     );
 
@@ -3133,13 +4472,19 @@ function renderEarnings(){
 
     container.innerHTML = `
       <div class="empty">
-        <div class="empty-icon">₦</div>
+
+        <div class="empty-icon">
+          ₦
+        </div>
+
         <div class="empty-title">
           No completed sales yet
         </div>
+
         <div class="empty-text">
           Delivered orders will appear in your earnings history.
         </div>
+
       </div>
     `;
 
@@ -3161,10 +4506,12 @@ function renderEarnings(){
         <div>
 
           <div style="font-weight:800;font-size:13px">
+
             Order #${escapeHtml(
               order.order_number ||
               order.id?.slice(0,8)
             )}
+
           </div>
 
           <div style="
@@ -3172,7 +4519,12 @@ function renderEarnings(){
             color:#64748b;
             margin-top:4px;
           ">
-            ${formatDate(order.delivered_at || order.created_at)}
+
+            ${formatDate(
+              order.delivered_at ||
+              order.created_at
+            )}
+
           </div>
 
         </div>
@@ -3181,12 +4533,11 @@ function renderEarnings(){
           font-weight:800;
           color:#047857;
         ">
+
           ${money(
-            order.total ||
-            order.amount ||
-            order.grand_total ||
-            0
+            getOrderTotal(order)
           )}
+
         </div>
 
       </div>
@@ -3217,6 +4568,7 @@ function navigate(page){
         "page-" + name
       );
 
+
     if(element){
 
       element.classList.toggle(
@@ -3230,7 +4582,9 @@ function navigate(page){
 
 
   document
-    .querySelectorAll(".nav-item[data-page]")
+    .querySelectorAll(
+      ".nav-item[data-page]"
+    )
     .forEach(item => {
 
       item.classList.toggle(
@@ -3242,7 +4596,9 @@ function navigate(page){
 
 
   document
-    .querySelectorAll(".mobile-nav button[data-mobile-page]")
+    .querySelectorAll(
+      ".mobile-nav button[data-mobile-page]"
+    )
     .forEach(item => {
 
       item.classList.toggle(
@@ -3254,18 +4610,21 @@ function navigate(page){
 
 
   const titles = {
+
     dashboard:"Dashboard",
     orders:"Orders",
     menu:"Menu",
     restaurant:"Restaurant",
     earnings:"Earnings"
+
   };
 
 
   document
     .getElementById("topbarTitle")
     .textContent =
-      titles[page] || "Dashboard";
+      titles[page] ||
+      "Dashboard";
 
 
   window.scrollTo({
@@ -3282,15 +4641,20 @@ function navigate(page){
 function setupRealtime(){
 
   if(realtimeChannel){
+
     supabaseClient
-      .removeChannel(realtimeChannel);
+      .removeChannel(
+        realtimeChannel
+      );
+
   }
 
 
   realtimeChannel =
     supabaseClient
       .channel(
-        "vendor-orders-" + vendor.id
+        "vendor-orders-" +
+        vendor.id
       )
 
       .on(
@@ -3299,8 +4663,10 @@ function setupRealtime(){
           event:"*",
           schema:"public",
           table:"orders",
-          filter:`vendor_id=eq.${vendor.id}`
+          filter:
+            `vendor_id=eq.${vendor.id}`
         },
+
         async payload => {
 
           console.log(
@@ -3308,7 +4674,9 @@ function setupRealtime(){
             payload
           );
 
+
           await loadOrders();
+
 
           toast(
             "Your orders have been updated.",
@@ -3328,16 +4696,24 @@ function setupRealtime(){
 
 async function logout(){
 
+  closeOrderDetails();
+
+
   if(realtimeChannel){
 
     await supabaseClient
-      .removeChannel(realtimeChannel);
+      .removeChannel(
+        realtimeChannel
+      );
 
     realtimeChannel = null;
   }
 
 
-  await supabaseClient.auth.signOut();
+  await supabaseClient
+    .auth
+    .signOut();
+
 
   currentUser = null;
   vendor = null;
@@ -3349,9 +4725,11 @@ async function logout(){
     .getElementById("app")
     .classList.add("hidden");
 
+
   document
     .getElementById("authScreen")
     .classList.remove("hidden");
+
 
   showLogin();
 }
@@ -3368,17 +4746,19 @@ async function checkSession(){
       session
     }
   } =
-    await supabaseClient.auth.getSession();
+    await supabaseClient
+      .auth
+      .getSession();
 
 
   if(session){
 
-    currentUser = session.user;
+    currentUser =
+      session.user;
 
     await loadApp();
 
   }
-
 }
 
 
@@ -3430,7 +4810,7 @@ document
   );
 
 
-/* Close modal when clicking outside */
+/* Close menu modal outside click */
 
 document
   .getElementById("menuModal")
@@ -3439,13 +4819,54 @@ document
     event => {
 
       if(
-        event.target.id === "menuModal"
+        event.target.id ===
+        "menuModal"
       ){
+
         closeMenuModal();
+
       }
 
     }
   );
+
+
+/* Close order details outside click */
+
+document
+  .getElementById("orderDetailsModal")
+  .addEventListener(
+    "click",
+    event => {
+
+      if(
+        event.target.id ===
+        "orderDetailsModal"
+      ){
+
+        closeOrderDetails();
+
+      }
+
+    }
+  );
+
+
+/* Escape key closes modals */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(event.key === "Escape"){
+
+      closeMenuModal();
+      closeOrderDetails();
+
+    }
+
+  }
+);
 
 
 /* Start */
