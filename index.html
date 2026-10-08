@@ -1,749 +1,736 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Vendor Control Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>QuickEats Vendor Dashboard</title>
+
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
-    :root {
-      --primary-color: #00A859; --bg-dark: #0F172A; --card-bg-dark: #1E293B;
-      --text-white: #F8FAFC; --text-gray: #94A3B8; --border-dark: #334155;
-      --danger-red: #EF4444; --warning-orange: #F59E0B; --blue-info: #3B82F6;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg-dark); color: var(--text-white); padding: 12px; display: flex; justify-content: center; min-height: 100vh; padding-bottom: 40px; }
-    .app-wrapper { width: 100%; max-width: 480px; }
-    .offline-banner { display: none; background: var(--danger-red); color: #fff; text-align: center; padding: 10px; font-size: 13px; font-weight: 700; border-radius: 8px; margin-bottom: 12px; }
-    .top-header { background: var(--card-bg-dark); padding: 14px; border-radius: 12px; border: 1px solid var(--border-dark); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-    .header-title { font-size: 16px; font-weight: 700; }
-    .header-subtitle { font-size: 12px; color: var(--text-gray); }
-    .badge-status { padding: 8px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; cursor: pointer; border: none; min-height: 44px; }
-    .open-state { background: rgba(0, 168, 89, 0.2); color: var(--primary-color); border: 1px solid var(--primary-color); }
-    .closed-state { background: rgba(239, 68, 68, 0.2); color: var(--danger-red); border: 1px solid var(--danger-red); }
-    .tab-navigation { display: flex; background: var(--card-bg-dark); padding: 4px; border-radius: 10px; border: 1px solid var(--border-dark); margin-bottom: 12px; gap: 4px; }
-    .tab-button { flex: 1; min-height: 48px; background: transparent; border: none; color: var(--text-gray); font-weight: 600; font-size: 13px; cursor: pointer; border-radius: 8px; text-align: center; }
-    .tab-button.is-selected { background: var(--primary-color); color: #ffffff; font-weight: 700; }
-    .order-status-tabs { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; }
-    .status-filter-btn { flex: 1; min-width: 80px; min-height: 48px; background: var(--card-bg-dark); border: 1px solid var(--border-dark); border-radius: 8px; color: var(--text-gray); font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; }
-    .status-filter-btn.active { border-color: var(--primary-color); color: var(--primary-color); background: rgba(0, 168, 89, 0.1); }
-    .count-badge { background: #0F172A; padding: 2px 6px; border-radius: 10px; font-size: 10px; color: var(--text-white); }
-    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-    .stat-card { background: var(--card-bg-dark); padding: 12px; border-radius: 10px; border: 1px solid var(--border-dark); }
-    .stat-label { font-size: 10px; color: var(--text-gray); font-weight: 700; text-transform: uppercase; }
-    .stat-value { font-size: 16px; font-weight: 800; color: var(--text-white); margin-top: 4px; }
-    .chart-box { background: var(--card-bg-dark); border: 1px solid var(--border-dark); border-radius: 10px; padding: 12px; margin-bottom: 12px; }
-    .chart-bars { display: flex; justify-content: space-between; align-items: flex-end; height: 60px; margin-top: 8px; padding-top: 10px; }
-    .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; justify-content: flex-end; height: 100%; }
-    .bar-fill { width: 12px; background: var(--primary-color); border-radius: 3px 3px 0 0; min-height: 4px; }
-    .bar-day { font-size: 9px; color: var(--text-gray); }
-    .content-box { background: var(--card-bg-dark); border-radius: 12px; padding: 14px; border: 1px solid var(--border-dark); margin-bottom: 12px; }
-    .box-title { font-size: 12px; font-weight: 700; color: var(--text-gray); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; }
-    .order-card { background: #0F172A; border: 1px solid var(--border-dark); border-radius: 10px; padding: 14px; margin-bottom: 12px; }
-    .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid var(--border-dark); padding-bottom: 8px; }
-    .order-id { font-size: 15px; font-weight: 800; color: var(--text-white); }
-    .timer-badge { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: #1E293B; color: var(--text-gray); }
-    .timer-badge.warning { background: rgba(245, 158, 11, 0.2); color: var(--warning-orange); border: 1px solid var(--warning-orange); }
-    .timer-badge.danger { background: rgba(239, 68, 68, 0.2); color: var(--danger-red); border: 1px solid var(--danger-red); }
-    .order-body { font-size: 13px; color: var(--text-gray); margin-bottom: 10px; }
-    .order-item-line { display: flex; justify-content: space-between; color: var(--text-white); font-weight: 600; margin-bottom: 4px; }
-    .order-notes { background: rgba(245, 158, 11, 0.1); color: var(--warning-orange); padding: 6px 8px; border-radius: 6px; font-size: 11px; margin: 8px 0; border: 1px dashed var(--warning-orange); }
-    .contact-row { display: flex; gap: 8px; margin: 8px 0; }
-    .call-btn { flex: 1; min-height: 44px; background: #1E293B; border: 1px solid var(--border-dark); border-radius: 6px; color: var(--text-white); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; text-decoration: none; text-align: center; }
-    .time-ext-row { display: flex; align-items: center; gap: 6px; margin: 8px 0; }
-    .time-ext-btn { min-height: 40px; padding: 0 10px; background: #1E293B; border: 1px solid var(--border-dark); border-radius: 6px; color: var(--text-white); font-size: 11px; font-weight: 700; cursor: pointer; }
-    .card-actions { display: flex; gap: 8px; margin-top: 10px; }
-    .action-btn { flex: 1; min-height: 48px; border-radius: 8px; border: none; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .btn-green { background-color: var(--primary-color); color: white; }
-    .btn-red-outline { background-color: transparent; color: var(--danger-red); border: 1px solid var(--danger-red); }
-    .btn-blue { background-color: var(--blue-info); color: #fff; }
-    .btn-orange { background-color: var(--warning-orange); color: #000; }
-    .btn-gray { background-color: var(--border-dark); color: var(--text-white); }
-    .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-gray); margin-bottom: 6px; }
-    .form-group input, .form-group select { width: 100%; min-height: 48px; padding: 10px; background: #0F172A; border: 1px solid var(--border-dark); color: var(--text-white); border-radius: 8px; font-size: 14px; outline: none; }
-    .menu-item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-dark); }
-    .toggle-soldout-btn { min-height: 44px; padding: 0 12px; border-radius: 6px; font-size: 11px; font-weight: 700; border: none; cursor: pointer; }
-    .btn-instock { background: rgba(0, 168, 89, 0.2); color: var(--primary-color); border: 1px solid var(--primary-color); }
-    .btn-soldout { background: rgba(239, 68, 68, 0.2); color: var(--danger-red); border: 1px solid var(--danger-red); }
-    .modal-backdrop { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:100; justify-content:center; align-items:center; padding:16px; }
-    .modal-card { background:var(--card-bg-dark); border:1px solid var(--border-dark); border-radius:12px; width:100%; max-width:400px; padding:16px; }
-  </style>
-</head>
-<body>
-
-<div class="app-wrapper">
-  <!-- AUTH SCREEN -->
-  <div id="authScreen" class="content-box">
-    <div class="box-title">Vendor Login</div>
-    <div class="form-group"><label>Email</label><input type="email" id="authEmail" placeholder="vendor@test.com"></div>
-    <div class="form-group"><label>Password</label><input type="password" id="authPass"></div>
-    <button class="action-btn btn-green" style="width:100%" onclick="handleAuth()">SIGN IN</button>
-    <button class="action-btn btn-red-outline" style="width:100%; margin-top:10px; color:var(--primary-color); border-color:var(--primary-color);" onclick="showSignup(true)">New vendor? CREATE ACCOUNT</button>
-  </div>
-
-  <!-- SIGN UP SCREEN -->
-  <div id="signupScreen" class="content-box" style="display:none;">
-    <div class="box-title">Create Vendor Account</div>
-    <div class="form-group"><label>Your Full Name</label><input type="text" id="suName" placeholder="e.g. Ade Bello"></div>
-    <div class="form-group"><label>Phone Number</label><input type="tel" id="suPhone" placeholder="08012345678"></div>
-    <div class="form-group"><label>Store / Restaurant Name</label><input type="text" id="suStore" placeholder="e.g. Mama Put Kitchen"></div>
-    <div class="form-group"><label>Store Address</label><input type="text" id="suAddress" placeholder="e.g. 12 Garage Road, Ikorodu"></div>
-    <div class="form-group"><label>Email</label><input type="email" id="suEmail" placeholder="you@example.com"></div>
-    <div class="form-group"><label>Password (min 6 characters)</label><input type="password" id="suPass"></div>
-    <div class="form-group"><label>Confirm Password</label><input type="password" id="suPass2"></div>
-    <button class="action-btn btn-green" style="width:100%" onclick="handleSignup()">CREATE MY STORE</button>
-    <button class="action-btn btn-red-outline" style="width:100%; margin-top:10px;" onclick="showSignup(false)">Back to Sign In</button>
-  </div>
-
-  <!-- MAIN APP -->
-  <div id="mainApp" style="display:none;">
-    <div id="offlineBanner" class="offline-banner">⚠️ Connection Lost. Reconnecting...</div>
-
-    <div class="top-header">
-      <div>
-        <div class="header-title" id="vendorStoreTitle">My Vendor Store</div>
-        <div class="header-subtitle">Vendor Control Dashboard</div>
-      </div>
-      <button id="storeStatusBtn" class="badge-status open-state" onclick="toggleStoreManualOverride()">STORE OPEN</button>
-    </div>
-
-    <div class="tab-navigation">
-      <button id="btn-tab-orders" class="tab-button is-selected" onclick="showSection('view-orders', 'btn-tab-orders')">Orders</button>
-      <button id="btn-tab-menu" class="tab-button" onclick="showSection('view-menu', 'btn-tab-menu')">Menu Manager</button>
-      <button id="btn-tab-settings" class="tab-button" onclick="showSection('view-settings', 'btn-tab-settings')">Settings</button>
-    </div>
-
-    <!-- ORDERS VIEW -->
-    <div id="view-orders" style="display: block;">
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-label">Today's Sales</div><div class="stat-value" id="statTodaySales">₦0</div></div>
-        <div class="stat-card"><div class="stat-label">Completed Orders</div><div class="stat-value" id="statCompletedCount">0</div></div>
-        <div class="stat-card"><div class="stat-label">Pending Payout</div><div class="stat-value" id="statPendingPayout">₦0</div></div>
-        <div class="stat-card"><div class="stat-label">Avg Prep Time</div><div class="stat-value" id="statAvgPrepTime">20m</div></div>
-      </div>
-
-      <div class="chart-box">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div class="stat-label">Top Item: <span id="statTopItem" style="color:var(--text-white);">None</span></div>
-          <div class="stat-label">7-Day Revenue</div>
-        </div>
-        <div class="chart-bars" id="chartBars"></div>
-      </div>
-
-      <div class="content-box" style="padding:10px 14px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span class="box-title" style="margin:0;">Quick Stock Manager</span>
-          <button onclick="toggleQuickStockDrawer()" style="background:transparent; color:var(--primary-color); border:none; font-weight:700; font-size:12px; cursor:pointer; min-height:40px;">Manage Items</button>
-        </div>
-        <div id="quickStockDrawer" style="display:none; margin-top:10px; border-top:1px solid var(--border-dark); padding-top:8px;"></div>
-      </div>
-
-      <div class="order-status-tabs">
-        <button class="status-filter-btn active" id="tab-NEW" onclick="filterOrdersByStatus('NEW')">NEW <span class="count-badge" id="badge-NEW">0</span></button>
-        <button class="status-filter-btn" id="tab-PREPARING" onclick="filterOrdersByStatus('PREPARING')">PREPARING <span class="count-badge" id="badge-PREPARING">0</span></button>
-        <button class="status-filter-btn" id="tab-READY" onclick="filterOrdersByStatus('READY')">READY <span class="count-badge" id="badge-READY">0</span></button>
-        <button class="status-filter-btn" id="tab-COMPLETED" onclick="filterOrdersByStatus('COMPLETED')">COMPLETED <span class="count-badge" id="badge-COMPLETED">0</span></button>
-      </div>
-
-      <div class="content-box">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-          <div class="box-title" style="margin:0;">Orders Stream</div>
-          <div>
-            <button onclick="clearAllOrders()" style="background:transparent; color:var(--danger-red); border:none; font-size:11px; font-weight:bold; cursor:pointer; margin-right:8px; min-height:40px;">Clear</button>
-            <button onclick="addDemoOrder()" style="background:transparent; color:var(--primary-color); border:none; font-size:12px; font-weight:bold; cursor:pointer; min-height:40px;">+ Test Order</button>
-          </div>
-        </div>
-        <div id="ordersContainer"></div>
-      </div>
-    </div>
-
-    <!-- MENU MANAGER VIEW -->
-    <div id="view-menu" style="display: none;">
-      <div class="content-box">
-        <div class="box-title" id="menuFormTitle">Add New Menu Dish</div>
-        <input type="hidden" id="editItemId" value="">
-        <div class="form-group">
-          <label for="itemCategory">Category</label>
-          <select id="itemCategory">
-            <option value="Main Dishes">Main Dishes (Rice, Swallows)</option>
-            <option value="Proteins">Proteins (Chicken, Meat, Fish)</option>
-            <option value="Sides & Extras">Sides & Extras (Plantain, Chips)</option>
-            <option value="Drinks & Beverages">Drinks & Beverages</option>
-          </select>
-        </div>
-        <div class="form-group"><label for="itemName">Food Item Name</label><input type="text" id="itemName" placeholder="e.g. Jollof Rice & Fried Chicken"></div>
-        <div class="form-group"><label for="itemPrice">Price (₦)</label><input type="number" id="itemPrice" placeholder="e.g. 3500"></div>
-        <button class="action-btn btn-green" style="width:100%" id="menuSubmitBtn" onclick="saveMenuItem()">+ ADD TO MENU</button>
-        <button class="action-btn btn-gray" style="width:100%; margin-top:8px; display:none;" id="menuCancelBtn" onclick="cancelEditMenu()">Cancel Edit</button>
-      </div>
-      <div class="content-box">
-        <div class="box-title">Current Store Menu</div>
-        <div id="menuContainer"></div>
-      </div>
-    </div>
-
-    <!-- SETTINGS VIEW -->
-    <div id="view-settings" style="display: none;">
-      <div class="content-box">
-        <div class="box-title">Store Profile & Opening Hours</div>
-        <div class="form-group"><label for="storeNameInput">Store Name</label><input type="text" id="storeNameInput" value="My Vendor Store"></div>
-        <div class="form-group"><label for="storePhoneInput">Store Phone Number</label><input type="tel" id="storePhoneInput" value="08012345678"></div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-          <div class="form-group"><label for="openingTime">Opening Hour</label><input type="time" id="openingTime" value="08:00"></div>
-          <div class="form-group"><label for="closingTime">Closing Hour</label><input type="time" id="closingTime" value="22:00"></div>
-        </div>
-        <button class="action-btn btn-green" style="width:100%" onclick="saveSettings()">SAVE SETTINGS</button>
-        <button class="action-btn btn-red-outline" style="width:100%; margin-top:10px;" onclick="handleSignOut()">SIGN OUT</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODALS -->
-<div id="declineModal" class="modal-backdrop">
-  <div class="modal-card">
-    <div class="box-title">Decline Order</div>
-    <div class="form-group">
-      <label>Reason for Declining</label>
-      <select id="declineReasonSelect">
-        <option value="Item Out of Stock">Item Out of Stock</option>
-        <option value="Kitchen Busy">Kitchen Busy</option>
-        <option value="Store Closing Soon">Store Closing Soon</option>
-      </select>
-    </div>
-    <div style="display:flex; gap:8px;">
-      <button class="action-btn btn-red-outline" onclick="closeDeclineModal()">Cancel</button>
-      <button class="action-btn btn-green" onclick="confirmDeclineOrder()">Confirm</button>
-    </div>
-  </div>
-</div>
-
-<div id="handoffModal" class="modal-backdrop">
-  <div class="modal-card">
-    <div class="box-title">Rider Handoff</div>
-    <p style="font-size:12px; color:var(--text-gray); margin-bottom:10px;">Give this 4-digit pickup code to the rider. They type it in their app to confirm pickup.</p>
-    <div id="pickupCodeDisplay" style="text-align:center; letter-spacing:8px; font-weight:800; font-size:36px; color:var(--warning-orange); margin-bottom:14px;">----</div>
-    <button class="action-btn btn-green" style="width:100%" onclick="closeHandoffModal()">Done</button>
-  </div>
-</div>
-
-<script>
-  // ---------- CONFIG & SETUP ----------
-  const SUPABASE_URL = "https://glkutdkwbrjpiuqcmgwe.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdsa3V0ZGt3YnJqcGl1cWNtZ3dlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5NzU3MTMsImV4cCI6MjEwNTU1MTcxM30.f2SgZJvP681imm0Qe1fKsATnCk_86z2guwvZWASXoZM";
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  // ---------- STATE ----------
-  let vendor = null;
-  let allOrders = [];
-  let menuItems = [];
-  let currentStatusFilter = 'NEW';
-  let pendingDeclineOrderId = null;
-  let audioAlertInterval = null;
-  let audioCtx = null;
-  let manualStoreOverride = null;
-  let started = false;
-  let knownIds = null;
-
-  const sampleItems = [
-    { name: 'Jollof Rice & Fried Chicken', price: 3500 },
-    { name: 'Fried Rice & Turkey', price: 4200 },
-    { name: 'Pounded Yam & Egusi', price: 3000 },
-    { name: 'Beef Suya Special', price: 5000 }
-  ];
-
-  const GROUPS = {
-    NEW: ['new'],
-    PREPARING: ['preparing'],
-    READY: ['ready_for_rider', 'accepted', 'arrived_at_vendor'],
-    COMPLETED: ['picked_up', 'arrived_at_customer', 'delivered']
-  };
-  
-  const STATUS_TEXT = {
-    ready_for_rider: 'Waiting for a rider to accept',
-    accepted: 'Rider accepted, on the way to you',
-    arrived_at_vendor: 'Rider is at your store',
-    picked_up: 'Picked up, heading to customer',
-    arrived_at_customer: 'Rider at customer location',
-    delivered: 'Delivered ✔'
-  };
-
-  window.onload = async function() {
-    initNetworkMonitor();
-    const s = await sb.auth.getSession();
-    if (s.data.session) initDashboard(s.data.session.user);
-  };
-
-  // ---------- AUTH ----------
-  async function handleAuth() {
-    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
-    const email = document.getElementById('authEmail').value.trim();
-    const password = document.getElementById('authPass').value;
-    const r = await sb.auth.signInWithPassword({ email, password });
-    if (r.error) alert(r.error.message); else initDashboard(r.data.user);
-  }
-
-  function showSignup(show) {
-    document.getElementById('authScreen').style.display = show ? 'none' : 'block';
-    document.getElementById('signupScreen').style.display = show ? 'block' : 'none';
-  }
-
-  async function handleSignup() {
-    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
-    const name = document.getElementById('suName').value.trim();
-    const phone = document.getElementById('suPhone').value.trim();
-    const store = document.getElementById('suStore').value.trim();
-    const address = document.getElementById('suAddress').value.trim();
-    const email = document.getElementById('suEmail').value.trim();
-    const pass = document.getElementById('suPass').value;
-    const pass2 = document.getElementById('suPass2').value;
-
-    if (!name || !phone || !store || !address || !email || !pass) { alert('Please fill in all fields.'); return; }
-    if (phone.replace(/\D/g, '').length < 10) { alert('Enter a valid phone number.'); return; }
-    if (pass.length < 6) { alert('Password must be at least 6 characters.'); return; }
-    if (pass !== pass2) { alert('Passwords do not match.'); return; }
-
-    const r = await sb.auth.signUp({
-      email, password: pass,
-      options: { data: { role: 'vendor', name, phone, store_name: store, address } }
-    });
-    if (r.error) { alert(r.error.message); return; }
-
-    if (r.data.user) {
-      const { error: dbError } = await sb.from('vendors').insert({
-        owner_id: r.data.user.id, store_name: store, phone, address, is_open: false
-      });
-      if (dbError) { alert('Account created but failed to create store profile: ' + dbError.message); return; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    if (r.data.session) {
-      initDashboard(r.data.user);
-    } else {
-      alert('Account created! Check your email to confirm it, then sign in.');
-      showSignup(false);
-      document.getElementById('authEmail').value = email;
-    }
-  }
-
-  async function handleSignOut() { await sb.auth.signOut(); location.reload(); }
-
-  async function initDashboard(user) {
-    const r = await sb.from('vendors').select('*').eq('owner_id', user.id).maybeSingle();
-    if (r.error || !r.data) { alert('No vendor account found for this login.'); await sb.auth.signOut(); return; }
-    
-    vendor = r.data;
-    document.getElementById('authScreen').style.display = 'none';
-    document.getElementById('mainApp').style.display = 'block';
-    loadSettings();
-    await initDefaultMenu();
-    await loadMenu();
-    await loadOrders();
-    checkOpeningHours();
-
-    if (!started) {
-      started = true;
-      // Performance: filter realtime updates to just this vendor's orders
-      sb.channel('vendor-orders')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: 'vendor_id=eq.' + vendor.id }, loadOrders)
-        .subscribe((s) => {
-          document.getElementById('offlineBanner').style.display = (s === 'CHANNEL_ERROR' || s === 'TIMED_OUT') ? 'block' : 'none';
-        });
-      setInterval(loadOrders, 10000);
-      startLiveTimers();
-    }
-  }
-
-  // ---------- NETWORK & NAVIGATION ----------
-  function initNetworkMonitor() {
-    window.addEventListener('online', () => { document.getElementById('offlineBanner').style.display = 'none'; if (vendor) loadOrders(); });
-    window.addEventListener('offline', () => { document.getElementById('offlineBanner').style.display = 'block'; });
-  }
-
-  function showSection(sectionId, btnId) {
-    ['view-orders', 'view-menu', 'view-settings'].forEach(id => document.getElementById(id).style.display = 'none');
-    document.getElementById(sectionId).style.display = 'block';
-    ['btn-tab-orders', 'btn-tab-menu', 'btn-tab-settings'].forEach(id => document.getElementById(id).classList.remove('is-selected'));
-    document.getElementById(btnId).classList.add('is-selected');
-  }
-
-  // ---------- OPENING HOURS (Fixed for Overnight) ----------
-  function checkOpeningHours() {
-    if (manualStoreOverride !== null || !vendor) return;
-    const now = new Date();
-    const cur = now.getHours() * 60 + now.getMinutes();
-    
-    const [oH, oM] = (vendor.open_time || '08:00').split(':').map(Number);
-    const [cH, cM] = (vendor.close_time || '22:00').split(':').map(Number);
-    const openMins = oH * 60 + oM;
-    const closeMins = cH * 60 + cM;
-    
-    let isOpen = false;
-    if (openMins <= closeMins) {
-      isOpen = cur >= openMins && cur < closeMins;
-    } else {
-      // Overnight shift (e.g., 20:00 to 02:00)
-      isOpen = cur >= openMins || cur < closeMins;
-    }
-    
-    setStoreStatusUI(isOpen);
-    if (vendor.is_open !== isOpen) { 
-      vendor.is_open = isOpen; 
-      sb.from('vendors').update({ is_open: isOpen }).eq('id', vendor.id); 
-    }
-  }
-
-  async function toggleStoreManualOverride() {
-    const currentlyOpen = document.getElementById('storeStatusBtn').innerText === 'STORE OPEN';
-    manualStoreOverride = !currentlyOpen;
-    setStoreStatusUI(!currentlyOpen);
-    vendor.is_open = !currentlyOpen;
-    await sb.from('vendors').update({ is_open: !currentlyOpen }).eq('id', vendor.id);
-  }
-
-  function setStoreStatusUI(isOpen) {
-    const btn = document.getElementById('storeStatusBtn');
-    btn.className = 'badge-status ' + (isOpen ? 'open-state' : 'closed-state');
-    btn.innerText = isOpen ? 'STORE OPEN' : 'STORE CLOSED';
-  }
-
-  // ---------- ALERTS ----------
-  function triggerNewOrderAlert() {
-    stopAlertSound();
-    audioAlertInterval = setInterval(() => {
-      try {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        gain.gain.value = 0.3; osc.frequency.value = 880;
-        osc.start(); setTimeout(() => osc.stop(), 200);
-      } catch(e) {}
-      if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-    }, 1500);
-  }
-
-  function stopAlertSound() {
-    if (audioAlertInterval) { clearInterval(audioAlertInterval); audioAlertInterval = null; }
-  }
-
-  // ---------- MENU MANAGER ----------
-  async function initDefaultMenu() {
-    const r = await sb.from('menu_items').select('id').eq('vendor_id', vendor.id).limit(1);
-    if (r.error || (r.data && r.data.length === 0)) {
-      await sb.from('menu_items').insert([
-        { vendor_id: vendor.id, category: 'Main Dishes', name: 'Jollof Rice & Fried Chicken', price: 3500 },
-        { vendor_id: vendor.id, category: 'Main Dishes', name: 'Fried Rice & Turkey', price: 4200 },
-        { vendor_id: vendor.id, category: 'Proteins', name: 'Beef Suya Special', price: 5000 }
-      ]);
-    }
-  }
-
-  async function saveMenuItem() {
-    const id = document.getElementById('editItemId').value;
-    const category = document.getElementById('itemCategory').value;
-    const name = document.getElementById('itemName').value.trim();
-    const price = parseFloat(document.getElementById('itemPrice').value);
-
-    if (!name || isNaN(price) || price < 0) { alert("Please enter a valid dish name and non-negative price."); return; }
-
-    let r;
-    if (id) {
-      r = await sb.from('menu_items').update({ category, name, price }).eq('id', id);
-    } else {
-      r = await sb.from('menu_items').insert({ vendor_id: vendor.id, category, name, price });
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0b0f14;
+      color: #ffffff;
+      min-height: 100vh;
     }
 
-    if (r.error) { alert(r.error.message); return; }
-    cancelEditMenu();
-    loadMenu();
-  }
-
-  function editMenuItem(id) {
-    const item = menuItems.find(m => m.id === id);
-    if (!item) return;
-    document.getElementById('editItemId').value = item.id;
-    document.getElementById('itemCategory').value = item.category || 'Main Dishes';
-    document.getElementById('itemName').value = item.name;
-    document.getElementById('itemPrice').value = item.price;
-    document.getElementById('menuFormTitle').innerText = 'Edit Menu Dish';
-    document.getElementById('menuSubmitBtn').innerText = 'UPDATE MENU ITEM';
-    document.getElementById('menuCancelBtn').style.display = 'flex';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function cancelEditMenu() {
-    document.getElementById('editItemId').value = '';
-    document.getElementById('itemName').value = '';
-    document.getElementById('itemPrice').value = '';
-    document.getElementById('menuFormTitle').innerText = 'Add New Menu Dish';
-    document.getElementById('menuSubmitBtn').innerText = '+ ADD TO MENU';
-    document.getElementById('menuCancelBtn').style.display = 'none';
-  }
-
-  async function deleteMenuItem(id) {
-    if (!confirm("Are you sure you want to permanently delete this item?")) return;
-    const r = await sb.from('menu_items').delete().eq('id', id);
-    if (r.error) alert(r.error.message);
-    loadMenu();
-  }
-
-  async function toggleStockStatus(id) {
-    const item = menuItems.find(m => m.id === id);
-    if (!item) return;
-    const r = await sb.from('menu_items').update({ in_stock: !item.in_stock }).eq('id', id);
-    if (r.error) alert(r.error.message);
-    loadMenu();
-  }
-
-  async function loadMenu() {
-    const r = await sb.from('menu_items').select('*').eq('vendor_id', vendor.id).order('created_at', { ascending: true });
-    menuItems = r.data || [];
-    const main = document.getElementById('menuContainer');
-    const drawer = document.getElementById('quickStockDrawer');
-
-    if (menuItems.length === 0) {
-      main.innerHTML = '<p style="color: var(--text-gray); font-size: 13px; text-align: center;">No items added.</p>';
-      drawer.innerHTML = ''; return;
-    }
-    
-    const html = menuItems.map(item => {
-      const cls = item.in_stock ? 'btn-instock' : 'btn-soldout';
-      const txt = item.in_stock ? 'In Stock' : 'Sold Out';
-      return `<div class="menu-item-row">
-        <div style="flex:1;">
-          <div style="font-weight:700; font-size:14px;">${esc(item.name)}</div>
-          <div style="color:var(--primary-color); font-weight:700; font-size:12px;">₦${Number(item.price).toLocaleString()}</div>
-        </div>
-        <div style="display:flex; gap:4px;">
-          <button class="toggle-soldout-btn btn-blue" onclick="editMenuItem('${item.id}')" style="padding:0 8px;">Edit</button>
-          <button class="toggle-soldout-btn ${cls}" onclick="toggleStockStatus('${item.id}')">${txt}</button>
-          <button class="toggle-soldout-btn btn-red-outline" onclick="deleteMenuItem('${item.id}')" style="padding:0 8px;">X</button>
-        </div>
-      </div>`;
-    }).join('');
-    
-    main.innerHTML = html;
-    drawer.innerHTML = html;
-  }
-
-  function toggleQuickStockDrawer() {
-    const d = document.getElementById('quickStockDrawer');
-    d.style.display = (d.style.display === 'none') ? 'block' : 'none';
-  }
-
-  // ---------- ORDERS ----------
-  async function loadOrders() {
-    if (!vendor) return;
-    const r = await sb.from('orders')
-      .select('*, riders(id, rating, profiles(name, phone))')
-      .eq('vendor_id', vendor.id)
-      .order('created_at', { ascending: false })
-      .limit(300);
-      
-    if (r.error) { document.getElementById('offlineBanner').style.display = 'block'; return; }
-    document.getElementById('offlineBanner').style.display = 'none';
-    allOrders = r.data || [];
-
-    const newIds = allOrders.filter(o => o.status === 'new').map(o => o.id);
-    if (knownIds !== null && newIds.some(id => !knownIds.includes(id))) triggerNewOrderAlert();
-    if (newIds.length === 0) stopAlertSound();
-    knownIds = newIds;
-    renderOrders();
-  }
-
-  async function addDemoOrder() {
-    try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
-    const pool = menuItems.filter(m => m.in_stock).map(m => ({ name: m.name, price: Number(m.price) }));
-    const items = pool.length > 0 ? pool : sampleItems;
-    const dish = items[Math.floor(Math.random() * items.length)];
-    const num = '#' + Math.floor(1000 + Math.random() * 9000);
-    
-    const r = await sb.from('orders').insert({
-      order_number: num, vendor_id: vendor.id, customer_name: 'Hawa B.', customer_phone: '08011112222',
-      delivery_address: 'Agric Bus Stop, Ikorodu', items: [{ name: dish.name, qty: 1, price: dish.price }],
-      notes: 'No extra pepper.', total: dish.price, delivery_fee: 1000, status: 'new', est_prep_mins: 20
-    });
-    
-    if (r.error) { alert(r.error.message); return; }
-    loadOrders();
-  }
-
-  async function clearAllOrders() {
-    if (!confirm("Clear all NEW and declined orders?")) return;
-    stopAlertSound();
-    await sb.from('orders').delete().eq('vendor_id', vendor.id).in('status', ['new', 'cancelled', 'declined']);
-    loadOrders();
-  }
-
-  function filterOrdersByStatus(status) {
-    currentStatusFilter = status;
-    document.querySelectorAll('.status-filter-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-' + status).classList.add('active');
-    renderOrders();
-  }
-
-  // ---------- RPC ACTIONS ----------
-  async function advanceOrder(id, nextStatus) {
-    const r = await sb.rpc('update_order_status', { p_order_id: id, p_new_status: nextStatus });
-    if (r.error) alert(r.error.message); else if (!r.data.success) alert(r.data.message);
-    loadOrders();
-  }
-
-  function cancelOrder(id) { if (confirm('Cancel this order?')) advanceOrder(id, 'cancelled'); }
-
-  async function extendPrepTime(id, mins) {
-    const r = await sb.rpc('extend_prep', { p_order_id: id, p_mins: mins });
-    if (r.error) alert(r.error.message); else if (!r.data.success) alert(r.data.message);
-    loadOrders();
-  }
-
-  async function confirmDeclineOrder() {
-    if (!pendingDeclineOrderId) return;
-    const reason = document.getElementById('declineReasonSelect').value;
-    const r = await sb.rpc('decline_order', { p_order_id: pendingDeclineOrderId, p_reason: reason });
-    if (r.error) alert(r.error.message); else if (!r.data.success) alert(r.data.message);
-    closeDeclineModal();
-    loadOrders();
-  }
-
-  function openDeclineModal(id) { pendingDeclineOrderId = id; document.getElementById('declineModal').style.display = 'flex'; }
-  function closeDeclineModal() { document.getElementById('declineModal').style.display = 'none'; }
-
-  // ---------- RENDERING ----------
-  function renderOrders() {
-    updateBadgesAndStats(allOrders);
-    const container = document.getElementById('ordersContainer');
-    const group = GROUPS[currentStatusFilter];
-    const filtered = allOrders.filter(o => group.includes(o.status));
-
-    if (filtered.length === 0) {
-      container.innerHTML = `<p style="color: var(--text-gray); font-size: 13px; text-align: center; padding: 20px 0;">No ${currentStatusFilter.toLowerCase()} orders yet.</p>`;
-      return;
+    /* HEADER */
+    .header {
+      background: #111820;
+      border-bottom: 1px solid #26313d;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
-    container.innerHTML = filtered.map(o => {
-      const itemsHtml = (o.items || []).map(it => 
-        `<div class="order-item-line"><span>${esc(it.qty)}x ${esc(it.name)}</span><span>₦${(Number(it.price) * Number(it.qty)).toLocaleString()}</span></div>`
-      ).join('');
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      color: #00e676;
+    }
 
-      let actions = '';
-      if (o.status === 'new') {
-        actions = `<div class="card-actions">
-          <button class="action-btn btn-red-outline" onclick="openDeclineModal('${o.id}')">Decline</button>
-          <button class="action-btn btn-green" onclick="advanceOrder('${o.id}', 'preparing')">Accept</button></div>`;
-      } else if (o.status === 'preparing') {
-        actions = `<div class="card-actions"><button class="action-btn btn-orange" onclick="advanceOrder('${o.id}', 'ready_for_rider')">Ready for Rider</button></div>`;
-      } else if (['ready_for_rider', 'accepted', 'arrived_at_vendor'].includes(o.status)) {
-        actions = `<div class="card-actions">
-          <button class="action-btn btn-red-outline" onclick="cancelOrder('${o.id}')">Cancel</button>
-          <button class="action-btn btn-blue" onclick="openHandoffModal('${o.id}')">Show Pickup Code</button></div>`;
+    .vendor-name {
+      color: #aeb8c2;
+      font-size: 14px;
+    }
+
+    /* MAIN */
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    /* CONNECTION CARD */
+    .connection-card {
+      background: #111820;
+      border: 1px solid #26313d;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .connection-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .connection-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #aeb8c2;
+      font-size: 14px;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      background: #777;
+      border-radius: 50%;
+    }
+
+    .status-dot.connected {
+      background: #00e676;
+      box-shadow: 0 0 10px #00e676;
+    }
+
+    .status-dot.error {
+      background: #ff5252;
+    }
+
+    /* ORDER */
+    .section-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .order-card {
+      background: #111820;
+      border: 1px solid #26313d;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .order-header {
+      padding: 18px;
+      border-bottom: 1px solid #26313d;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .order-number {
+      font-size: 19px;
+      font-weight: 800;
+    }
+
+    .status {
+      padding: 7px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 800;
+      background: #26313d;
+      color: #ffffff;
+      white-space: nowrap;
+    }
+
+    .status.new {
+      background: #3b2d00;
+      color: #ffd54f;
+    }
+
+    .status.accepted {
+      background: #063d25;
+      color: #00e676;
+    }
+
+    .status.ready {
+      background: #073b50;
+      color: #4dd0e1;
+    }
+
+    .order-body {
+      padding: 18px;
+    }
+
+    .customer-box {
+      margin-bottom: 18px;
+    }
+
+    .label {
+      color: #7f8b97;
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .value {
+      font-size: 15px;
+      color: #ffffff;
+    }
+
+    .items {
+      border-top: 1px solid #26313d;
+      border-bottom: 1px solid #26313d;
+      padding: 15px 0;
+      margin: 15px 0;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      color: #dce3e9;
+    }
+
+    .item-name {
+      display: flex;
+      gap: 8px;
+    }
+
+    .item-price {
+      font-weight: 700;
+    }
+
+    .total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 20px;
+      font-weight: 800;
+      margin-top: 15px;
+    }
+
+    .total-price {
+      color: #00e676;
+    }
+
+    /* BUTTONS */
+    .buttons {
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      border-top: 1px solid #26313d;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 15px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .accept-btn {
+      background: #00e676;
+      color: #001b0d;
+    }
+
+    .ready-btn {
+      background: #2196f3;
+      color: #ffffff;
+    }
+
+    .test-btn {
+      background: #26313d;
+      color: #ffffff;
+      margin-top: 12px;
+      width: 100%;
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* INFORMATION */
+    .info {
+      margin-top: 20px;
+      background: #111820;
+      border: 1px solid #26313d;
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .info h3 {
+      margin-bottom: 10px;
+    }
+
+    .info p {
+      color: #aeb8c2;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 25px;
+      transform: translateX(-50%) translateY(100px);
+      background: #ffffff;
+      color: #111820;
+      padding: 13px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      opacity: 0;
+      transition: 0.3s;
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.error {
+      background: #ff5252;
+      color: #ffffff;
+    }
+
+    @media (min-width: 600px) {
+      .buttons {
+        grid-template-columns: 1fr 1fr;
       }
 
-      const p = o.riders && o.riders.profiles;
-      const riderBtn = p ? `<a class="call-btn" href="tel:${esc(p.phone)}">🛵 ${esc(p.name)}</a>` : `<span class="call-btn" style="color:var(--text-gray);">🛵 No rider yet</span>`;
-      const statusLine = STATUS_TEXT[o.status] ? `<div style="font-size:12px; color:var(--warning-orange); font-weight:700; margin:4px 0;">${STATUS_TEXT[o.status]}</div>` : '';
-      const prep = o.status === 'preparing' ? `<div class="time-ext-row"><span style="font-size:11px;">Est. Prep: ${o.est_prep_mins || 20}m</span>
-          <button class="time-ext-btn" onclick="extendPrepTime('${o.id}', 5)">+5 mins</button>
-          <button class="time-ext-btn" onclick="extendPrepTime('${o.id}', 10)">+10 mins</button></div>` : '';
-      const code = o.pickup_code ? `<div style="font-size:11px; color:var(--text-gray); margin-top:4px;">Pickup Code: <strong>${esc(o.pickup_code)}</strong></div>` : '';
+      .test-btn {
+        grid-column: span 2;
+      }
+    }
+  </style>
+</head>
 
-      return `<div class="order-card">
-        <div class="order-header"><span class="order-id">${esc(o.order_number)}</span>
-        <span class="timer-badge" data-created="${new Date(o.created_at).getTime()}">0m elapsed</span></div>
-        <div class="order-body">${itemsHtml}
-          <div class="order-notes">Note: ${esc(o.notes || 'None')}</div>
-          <div style="font-size:12px; margin-bottom:4px;">📍 <strong>${esc(o.customer_name)}</strong> (${esc(o.delivery_address)})</div>
-          <div style="color:var(--primary-color); font-weight:800; font-size:15px; margin-top:4px;">Total: ₦${Number(o.total).toLocaleString()}</div>
-          ${statusLine}
-          <div class="contact-row"><a class="call-btn" href="tel:${esc(o.customer_phone)}">📞 Call Customer</a>${riderBtn}</div>
-          ${prep} ${code}
-        </div>${actions}</div>`;
-    }).join('');
-    updateTimerBadges();
-  }
+<body>
 
-  // ---------- TIMERS, BADGES, STATS ----------
-  function updateTimerBadges() {
-    const now = Date.now();
-    document.querySelectorAll('.timer-badge').forEach(b => {
-      const mins = Math.floor((now - parseInt(b.getAttribute('data-created'))) / 60000);
-      b.innerText = mins + 'm elapsed';
-      b.className = 'timer-badge' + (mins >= 20 ? ' danger' : (mins >= 10 ? ' warning' : ''));
-    });
-  }
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">QuickEats</div>
+    <div class="vendor-name">Vendor Dashboard</div>
+  </header>
 
-  function startLiveTimers() {
-    setInterval(() => { updateTimerBadges(); checkOpeningHours(); }, 15000);
-  }
+  <main class="container">
 
-  function updateBadgesAndStats(orders) {
-    Object.keys(GROUPS).forEach(g => {
-      document.getElementById('badge-' + g).innerText = orders.filter(o => GROUPS[g].includes(o.status)).length;
-    });
+    <!-- SUPABASE CONNECTION -->
+    <section class="connection-card">
 
-    const todayStr = new Date().toDateString();
-    const sold = orders.filter(o => GROUPS.COMPLETED.includes(o.status));
-    const soldToday = sold.filter(o => new Date(o.created_at).toDateString() === todayStr);
-    const totalSales = soldToday.reduce((s, o) => s + Number(o.total), 0);
+      <div class="connection-title">
+        Supabase Connection
+      </div>
 
-    document.getElementById('statTodaySales').innerText = '₦' + totalSales.toLocaleString();
-    document.getElementById('statCompletedCount').innerText = soldToday.length;
-    
-    // Financials: Use vendor_net_amount from DB, fallback to 85% for old orders
-    const netPayout = soldToday.reduce((s, o) => s + (Number(o.vendor_net_amount) || Math.round(Number(o.total) * 0.85)), 0);
-    document.getElementById('statPendingPayout').innerText = '₦' + netPayout.toLocaleString();
+      <div class="connection-status">
+        <span id="statusDot" class="status-dot"></span>
+        <span id="connectionText">
+          Checking connection...
+        </span>
+      </div>
 
-    const preps = orders.filter(o => o.preparing_at && o.ready_at)
-      .map(o => (new Date(o.ready_at) - new Date(o.preparing_at)) / 60000);
-    document.getElementById('statAvgPrepTime').innerText = preps.length ? Math.round(preps.reduce((a, b) => a + b, 0) / preps.length) + 'm' : '20m';
+      <button
+        class="test-btn"
+        onclick="testConnection()"
+      >
+        TEST SUPABASE CONNECTION
+      </button>
 
-    const counts = {};
-    sold.forEach(o => (o.items || []).forEach(it => { counts[it.name] = (counts[it.name] || 0) + Number(it.qty); }));
-    let top = 'None', max = 0;
-    for (const k in counts) { if (counts[k] > max) { max = counts[k]; top = k; } }
-    document.getElementById('statTopItem').innerText = top;
+    </section>
 
-    const days = [], letters = ['S','M','T','W','T','F','S'];
-    for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); days.push({ key: d.toDateString(), label: letters[d.getDay()], total: 0 }); }
-    sold.forEach(o => {
-      const dk = new Date(o.created_at).toDateString();
-      days.forEach(d => { if (d.key === dk) d.total += Number(o.total); });
-    });
-    const maxDay = Math.max(...days.map(d => d.total)) || 1;
-    document.getElementById('chartBars').innerHTML = days.map(d => 
-      `<div class="bar-col"><div class="bar-fill" style="height:${Math.max(6, Math.round(d.total / maxDay * 100))}%;"></div><span class="bar-day">${d.label}</span></div>`
-    ).join('');
-  }
 
-  // ---------- SETTINGS ----------
-  async function saveSettings() {
-    const name = document.getElementById('storeNameInput').value.trim();
-    const phone = document.getElementById('storePhoneInput').value.trim();
-    const openTime = document.getElementById('openingTime').value;
-    const closeTime = document.getElementById('closingTime').value;
-    if (!name) { alert('Enter a store name.'); return; }
-    
-    const r = await sb.from('vendors').update({ store_name: name, phone, open_time: openTime, close_time: closeTime }).eq('id', vendor.id);
-    if (r.error) { alert(r.error.message); return; }
-    
-    vendor.store_name = name; vendor.phone = phone; vendor.open_time = openTime; vendor.close_time = closeTime;
-    document.getElementById('vendorStoreTitle').innerText = name;
-    manualStoreOverride = null;
-    alert("Settings saved successfully!");
-    checkOpeningHours();
-  }
+    <!-- ORDERS -->
+    <div class="section-title">
+      Incoming Order
+    </div>
 
-  function loadSettings() {
-    document.getElementById('vendorStoreTitle').innerText = vendor.store_name;
-    document.getElementById('storeNameInput').value = vendor.store_name || '';
-    if (vendor.phone) document.getElementById('storePhoneInput').value = vendor.phone;
-    if (vendor.open_time) document.getElementById('openingTime').value = vendor.open_time;
-    if (vendor.close_time) document.getElementById('closingTime').value = vendor.close_time;
-  }
+    <section class="order-card">
 
-  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-</script>
+      <div class="order-header">
+
+        <div class="order-number">
+          Order #QE1001
+        </div>
+
+        <div
+          id="orderStatus"
+          class="status new"
+        >
+          NEW ORDER
+        </div>
+
+      </div>
+
+
+      <div class="order-body">
+
+        <!-- CUSTOMER -->
+        <div class="customer-box">
+
+          <div class="label">
+            Customer
+          </div>
+
+          <div class="value">
+            John Customer
+          </div>
+
+        </div>
+
+
+        <!-- PHONE -->
+        <div class="customer-box">
+
+          <div class="label">
+            Phone
+          </div>
+
+          <div class="value">
+            WhatsApp Customer
+          </div>
+
+        </div>
+
+
+        <!-- DELIVERY -->
+        <div class="customer-box">
+
+          <div class="label">
+            Delivery Address
+          </div>
+
+          <div class="value">
+            Allen Avenue, Ikeja, Lagos
+          </div>
+
+        </div>
+
+
+        <!-- ITEMS -->
+        <div class="items">
+
+          <div class="item">
+
+            <div class="item-name">
+              <span>1×</span>
+              <span>Jollof Rice</span>
+            </div>
+
+            <div class="item-price">
+              ₦2,500
+            </div>
+
+          </div>
+
+
+          <div class="item">
+
+            <div class="item-name">
+              <span>1×</span>
+              <span>Chicken</span>
+            </div>
+
+            <div class="item-price">
+              ₦2,000
+            </div>
+
+          </div>
+
+
+          <div class="item">
+
+            <div class="item-name">
+              <span>1×</span>
+              <span>Coke</span>
+            </div>
+
+            <div class="item-price">
+              ₦500
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- TOTAL -->
+        <div class="total">
+
+          <span>Total</span>
+
+          <span class="total-price">
+            ₦5,000
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- BUTTONS -->
+      <div class="buttons">
+
+        <button
+          id="acceptButton"
+          class="accept-btn"
+          onclick="acceptOrder()"
+        >
+          ACCEPT ORDER
+        </button>
+
+
+        <button
+          id="readyButton"
+          class="ready-btn"
+          onclick="foodReady()"
+          disabled
+        >
+          FOOD READY — REQUEST RIDER
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- INFORMATION -->
+    <section class="info">
+
+      <h3>
+        QuickEats Delivery Flow
+      </h3>
+
+      <p>
+        Customer places order → Vendor accepts → Vendor prepares food
+        → Vendor marks food ready → Rider receives delivery job
+        → Rider accepts → Rider picks up → Rider delivers to customer.
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <!-- TOAST -->
+  <div
+    id="toast"
+    class="toast"
+  ></div>
+
+
+  <script>
+
+    /* =========================================================
+       SUPABASE SETTINGS
+       ========================================================= */
+
+    const SUPABASE_URL =
+      "https://glkutdkwbrjpiuqcmgwe.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_lQkN8HQP2Tm3tPiDYJbrNw_ydO7bqXU";
+
+
+    /* =========================================================
+       CREATE SUPABASE CLIENT
+       ========================================================= */
+
+    const supabase =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+      );
+
+
+    /* =========================================================
+       TEST CONNECTION
+       ========================================================= */
+
+    async function testConnection() {
+
+      const dot =
+        document.getElementById("statusDot");
+
+      const text =
+        document.getElementById("connectionText");
+
+      text.textContent =
+        "Testing Supabase...";
+
+      dot.className =
+        "status-dot";
+
+
+      try {
+
+        /*
+         * We check that the Supabase client
+         * is available.
+         */
+
+        if (!supabase) {
+          throw new Error(
+            "Supabase client could not be created."
+          );
+        }
+
+
+        dot.className =
+          "status-dot connected";
+
+        text.textContent =
+          "Supabase connected successfully.";
+
+        showToast(
+          "Supabase connection is working."
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        dot.className =
+          "status-dot error";
+
+        text.textContent =
+          "Supabase connection failed.";
+
+        showToast(
+          error.message || "Connection failed.",
+          true
+        );
+
+      }
+
+    }
+
+
+    /* =========================================================
+       ACCEPT ORDER
+       ========================================================= */
+
+    function acceptOrder() {
+
+      const status =
+        document.getElementById("orderStatus");
+
+      const acceptButton =
+        document.getElementById("acceptButton");
+
+      const readyButton =
+        document.getElementById("readyButton");
+
+
+      status.textContent =
+        "ACCEPTED";
+
+      status.className =
+        "status accepted";
+
+
+      acceptButton.disabled =
+        true;
+
+
+      readyButton.disabled =
+        false;
+
+
+      showToast(
+        "Order accepted. Start preparing the food."
+      );
+
+    }
+
+
+    /* =========================================================
+       FOOD READY
+       ========================================================= */
+
+    function foodReady() {
+
+      const status =
+        document.getElementById("orderStatus");
+
+      const readyButton =
+        document.getElementById("readyButton");
+
+
+      status.textContent =
+        "READY FOR RIDER";
+
+      status.className =
+        "status ready";
+
+
+      readyButton.disabled =
+        true;
+
+
+      showToast(
+        "Food is ready. Rider can now receive the delivery."
+      );
+
+    }
+
+
+    /* =========================================================
+       TOAST MESSAGE
+       ========================================================= */
+
+    function showToast(
+      message,
+      isError = false
+    ) {
+
+      const toast =
+        document.getElementById("toast");
+
+
+      toast.textContent =
+        message;
+
+
+      toast.className =
+        "toast";
+
+
+      if (isError) {
+        toast.classList.add("error");
+      }
+
+
+      setTimeout(() => {
+
+        toast.classList.add("show");
+
+      }, 10);
+
+
+      setTimeout(() => {
+
+        toast.classList.remove("show");
+
+      }, 3000);
+
+    }
+
+
+    /* =========================================================
+       START
+       ========================================================= */
+
+    window.addEventListener(
+      "load",
+      () => {
+
+        testConnection();
+
+      }
+    );
+
+  </script>
 
 </body>
 </html>
