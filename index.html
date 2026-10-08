@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QuickEats Vendor</title>
 
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{
@@ -33,7 +33,7 @@ button{
   display:none!important;
 }
 
-/* AUTH */
+/* ================= AUTH ================= */
 
 #authPage{
   min-height:100vh;
@@ -58,13 +58,12 @@ button{
   font-size:30px;
   font-weight:800;
   color:#12a05a;
-  margin-bottom:5px;
 }
 
 .subtitle{
   text-align:center;
   color:#77817c;
-  margin-bottom:25px;
+  margin:5px 0 25px;
 }
 
 .tabs{
@@ -165,7 +164,7 @@ button{
   color:#b42318;
 }
 
-/* APP */
+/* ================= APP ================= */
 
 #app{
   min-height:100vh;
@@ -256,7 +255,7 @@ button{
   margin-bottom:22px;
 }
 
-/* DASHBOARD */
+/* ================= DASHBOARD ================= */
 
 .stats{
   display:grid;
@@ -303,7 +302,7 @@ button{
   gap:18px;
 }
 
-/* MENU */
+/* ================= MENU ================= */
 
 .menuGrid{
   display:grid;
@@ -370,7 +369,7 @@ button{
   flex:1;
 }
 
-/* ORDERS */
+/* ================= ORDERS ================= */
 
 .orderCard{
   background:white;
@@ -434,7 +433,7 @@ button{
   font-weight:800;
 }
 
-/* PROFILE */
+/* ================= PROFILE ================= */
 
 .profileGrid{
   display:grid;
@@ -442,7 +441,7 @@ button{
   gap:18px;
 }
 
-/* EMPTY */
+/* ================= EMPTY ================= */
 
 .empty{
   text-align:center;
@@ -450,13 +449,14 @@ button{
   color:#7b8580;
 }
 
-/* MOBILE */
+/* ================= MOBILE ================= */
 
 .mobileNav{
   display:none;
 }
 
 @media(max-width:900px){
+
   .sidebar{
     display:none;
   }
@@ -505,6 +505,7 @@ button{
 }
 
 @media(max-width:600px){
+
   .authBox{
     padding:22px;
   }
@@ -519,10 +520,6 @@ button{
 
   .pageTitle{
     font-size:23px;
-  }
-
-  .stats{
-    gap:9px;
   }
 
   .stat{
@@ -542,24 +539,39 @@ button{
 
 <body>
 
-<!-- ================= AUTH ================= -->
+<!-- =====================================================
+     AUTH PAGE
+===================================================== -->
 
 <section id="authPage">
 
   <div class="authBox">
 
-    <div class="logo">QuickEats</div>
-    <div class="subtitle">Vendor Portal</div>
+    <div class="logo">
+      QuickEats
+    </div>
+
+    <div class="subtitle">
+      Vendor Portal
+    </div>
 
     <div class="tabs">
-      <button id="loginTab" class="active" onclick="showAuth('login')">
+
+      <button
+        id="loginTab"
+        class="active"
+        type="button">
         Login
       </button>
 
-      <button id="registerTab" onclick="showAuth('register')">
+      <button
+        id="registerTab"
+        type="button">
         Create Account
       </button>
+
     </div>
+
 
     <!-- LOGIN -->
 
@@ -567,68 +579,109 @@ button{
 
       <div class="field">
         <label>Email</label>
-        <input id="loginEmail" type="email" placeholder="vendor@email.com">
-      </div>
-
-      <div class="field">
-        <label>Password</label>
-        <input id="loginPassword" type="password" placeholder="Password">
-      </div>
-
-      <button class="primaryBtn" onclick="loginVendor()">
-        LOGIN
-      </button>
-
-    </div>
-
-    <!-- REGISTER -->
-
-    <div id="registerForm" class="hidden">
-
-      <div class="field">
-        <label>Restaurant / Business Name</label>
-        <input id="regStore" placeholder="e.g. David's Kitchen">
-      </div>
-
-      <div class="field">
-        <label>Phone Number</label>
-        <input id="regPhone" placeholder="08012345678">
-      </div>
-
-      <div class="field">
-        <label>Restaurant Address</label>
-        <textarea id="regAddress" rows="3"
-          placeholder="Full restaurant address"></textarea>
-      </div>
-
-      <div class="field">
-        <label>Email</label>
-        <input id="regEmail" type="email"
+        <input
+          id="loginEmail"
+          type="email"
+          autocomplete="email"
           placeholder="vendor@email.com">
       </div>
 
       <div class="field">
         <label>Password</label>
-        <input id="regPassword" type="password"
+        <input
+          id="loginPassword"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Password">
+      </div>
+
+      <button
+        id="loginBtn"
+        class="primaryBtn"
+        type="button">
+        LOGIN
+      </button>
+
+    </div>
+
+
+    <!-- REGISTER -->
+
+    <div
+      id="registerForm"
+      class="hidden">
+
+      <div class="field">
+        <label>Restaurant / Business Name</label>
+
+        <input
+          id="regStore"
+          placeholder="e.g. David's Kitchen">
+      </div>
+
+      <div class="field">
+        <label>Phone Number</label>
+
+        <input
+          id="regPhone"
+          placeholder="08012345678">
+      </div>
+
+      <div class="field">
+        <label>Restaurant Address</label>
+
+        <textarea
+          id="regAddress"
+          rows="3"
+          placeholder="Full restaurant address"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Email</label>
+
+        <input
+          id="regEmail"
+          type="email"
+          autocomplete="email"
+          placeholder="vendor@email.com">
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+
+        <input
+          id="regPassword"
+          type="password"
+          autocomplete="new-password"
           placeholder="At least 6 characters">
       </div>
 
-      <button class="primaryBtn" onclick="registerVendor()">
+      <button
+        id="registerBtn"
+        class="primaryBtn"
+        type="button">
         CREATE VENDOR ACCOUNT
       </button>
 
     </div>
 
-    <div id="authMessage" class="message"></div>
+    <div
+      id="authMessage"
+      class="message">
+    </div>
 
   </div>
 
 </section>
 
 
-<!-- ================= APP ================= -->
+<!-- =====================================================
+     MAIN APP
+===================================================== -->
 
-<section id="app" class="hidden">
+<section
+  id="app"
+  class="hidden">
 
   <header class="topbar">
 
@@ -636,39 +689,61 @@ button{
       QuickEats
     </div>
 
-    <div class="vendorName" id="topVendorName">
+    <div
+      class="vendorName"
+      id="topVendorName">
       Vendor
     </div>
 
-    <button class="logout" onclick="logoutVendor()">
+    <button
+      id="logoutBtn"
+      class="logout"
+      type="button">
       Logout
     </button>
 
   </header>
 
+
   <div class="layout">
+
 
     <!-- SIDEBAR -->
 
     <aside class="sidebar">
 
-      <button class="navBtn active" onclick="showPage('dashboard',this)">
+      <button
+        class="navBtn active"
+        data-page="dashboard"
+        type="button">
         📊 Dashboard
       </button>
 
-      <button class="navBtn" onclick="showPage('orders',this)">
+      <button
+        class="navBtn"
+        data-page="orders"
+        type="button">
         🛍 Orders
       </button>
 
-      <button class="navBtn" onclick="showPage('menu',this)">
+      <button
+        class="navBtn"
+        data-page="menu"
+        type="button">
         🍔 Menu
       </button>
 
-      <button class="navBtn" onclick="showPage('restaurant',this)">
+      <button
+        class="navBtn"
+        data-page="restaurant"
+        type="button">
         🏪 Restaurant
       </button>
 
-      <button class="navBtn" onclick="showPage('earnings',this)">
+      <button
+        class="navBtn"
+        data-page="earnings"
+        type="button">
         💰 Earnings
       </button>
 
@@ -677,9 +752,14 @@ button{
 
     <main class="main">
 
-      <!-- ================= DASHBOARD ================= -->
 
-      <section id="dashboardPage" class="page active">
+      <!-- =================================================
+           DASHBOARD
+      ================================================== -->
+
+      <section
+        id="dashboardPage"
+        class="page active">
 
         <div class="pageTitle">
           Dashboard
@@ -689,26 +769,58 @@ button{
           Welcome back. Here's what's happening today.
         </div>
 
+
         <div class="stats">
 
           <div class="stat">
-            <div class="statLabel">Today's Orders</div>
-            <div class="statValue" id="statOrders">0</div>
+            <div class="statLabel">
+              Today's Orders
+            </div>
+
+            <div
+              class="statValue"
+              id="statOrders">
+              0
+            </div>
           </div>
 
-          <div class="stat">
-            <div class="statLabel">Today's Sales</div>
-            <div class="statValue" id="statSales">₦0</div>
-          </div>
 
           <div class="stat">
-            <div class="statLabel">Pending Orders</div>
-            <div class="statValue" id="statPending">0</div>
+            <div class="statLabel">
+              Today's Sales
+            </div>
+
+            <div
+              class="statValue"
+              id="statSales">
+              ₦0
+            </div>
           </div>
 
+
           <div class="stat">
-            <div class="statLabel">Menu Items</div>
-            <div class="statValue" id="statMenu">0</div>
+            <div class="statLabel">
+              Pending Orders
+            </div>
+
+            <div
+              class="statValue"
+              id="statPending">
+              0
+            </div>
+          </div>
+
+
+          <div class="stat">
+            <div class="statLabel">
+              Menu Items
+            </div>
+
+            <div
+              class="statValue"
+              id="statMenu">
+              0
+            </div>
           </div>
 
         </div>
@@ -716,20 +828,23 @@ button{
 
         <div class="grid2">
 
+
           <div class="card">
 
             <div class="cardTitle">
               Restaurant Status
             </div>
 
-            <div id="restaurantStatus"
-                 style="font-size:22px;font-weight:900;margin-bottom:15px;">
+            <div
+              id="restaurantStatus"
+              style="font-size:22px;font-weight:900;margin-bottom:15px">
               Loading...
             </div>
 
-            <button class="primaryBtn"
-                    onclick="toggleRestaurant()"
-                    id="restaurantToggleBtn">
+            <button
+              id="restaurantToggleBtn"
+              class="primaryBtn"
+              type="button">
               ...
             </button>
 
@@ -742,15 +857,19 @@ button{
               Quick Actions
             </div>
 
-            <button class="secondaryBtn"
-                    style="width:100%;margin-bottom:9px;"
-                    onclick="showPage('menu')">
+            <button
+              id="quickMenuBtn"
+              class="secondaryBtn"
+              style="width:100%;margin-bottom:9px"
+              type="button">
               + Add Menu Item
             </button>
 
-            <button class="secondaryBtn"
-                    style="width:100%;"
-                    onclick="showPage('orders')">
+            <button
+              id="quickOrdersBtn"
+              class="secondaryBtn"
+              style="width:100%"
+              type="button">
               View Orders
             </button>
 
@@ -766,7 +885,9 @@ button{
           </div>
 
           <div id="recentOrders">
-            <div class="empty">Loading orders...</div>
+            <div class="empty">
+              Loading orders...
+            </div>
           </div>
 
         </div>
@@ -774,9 +895,13 @@ button{
       </section>
 
 
-      <!-- ================= ORDERS ================= -->
+      <!-- =================================================
+           ORDERS
+      ================================================== -->
 
-      <section id="ordersPage" class="page">
+      <section
+        id="ordersPage"
+        class="page">
 
         <div class="pageTitle">
           Orders
@@ -787,29 +912,50 @@ button{
         </div>
 
         <div id="ordersList">
-          <div class="empty">Loading orders...</div>
+          <div class="empty">
+            Loading orders...
+          </div>
         </div>
 
       </section>
 
 
-      <!-- ================= MENU ================= -->
+      <!-- =================================================
+           MENU
+      ================================================== -->
 
-      <section id="menuPage" class="page">
+      <section
+        id="menuPage"
+        class="page">
 
-        <div style="display:flex;justify-content:space-between;
-                    align-items:center;gap:10px;margin-bottom:22px;">
+        <div
+          style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:10px;
+            margin-bottom:22px;
+          ">
 
           <div>
-            <div class="pageTitle">Menu</div>
-            <div class="pageSub" style="margin-bottom:0;">
+
+            <div class="pageTitle">
+              Menu
+            </div>
+
+            <div
+              class="pageSub"
+              style="margin-bottom:0">
               Add and manage your food.
             </div>
+
           </div>
 
-          <button class="primaryBtn"
-                  style="width:auto;"
-                  onclick="openMenuForm()">
+          <button
+            id="addFoodBtn"
+            class="primaryBtn"
+            style="width:auto"
+            type="button">
             + Add Food
           </button>
 
@@ -818,68 +964,107 @@ button{
 
         <!-- MENU FORM -->
 
-        <div id="menuFormCard" class="card hidden">
+        <div
+          id="menuFormCard"
+          class="card hidden">
 
-          <div class="cardTitle" id="menuFormTitle">
+          <div
+            class="cardTitle"
+            id="menuFormTitle">
             Add Menu Item
           </div>
 
-          <input type="hidden" id="menuEditId">
+          <input
+            type="hidden"
+            id="menuEditId">
+
 
           <div class="grid2">
 
             <div class="field">
-              <label>Food Name</label>
-              <input id="menuName"
-                     placeholder="e.g. Jollof Rice">
+              <label>
+                Food Name
+              </label>
+
+              <input
+                id="menuName"
+                placeholder="e.g. Jollof Rice">
             </div>
 
+
             <div class="field">
-              <label>Category</label>
-              <input id="menuCategory"
-                     placeholder="e.g. Rice">
+              <label>
+                Category
+              </label>
+
+              <input
+                id="menuCategory"
+                placeholder="e.g. Rice">
             </div>
 
           </div>
 
+
           <div class="grid2">
 
             <div class="field">
-              <label>Price (₦)</label>
-              <input id="menuPrice"
-                     type="number"
-                     min="0"
-                     placeholder="2500">
+              <label>
+                Price (₦)
+              </label>
+
+              <input
+                id="menuPrice"
+                type="number"
+                min="0"
+                placeholder="2500">
             </div>
 
+
             <div class="field">
-              <label>Availability</label>
+
+              <label>
+                Availability
+              </label>
 
               <select id="menuStock">
-                <option value="true">Available</option>
-                <option value="false">Out of stock</option>
+
+                <option value="true">
+                  Available
+                </option>
+
+                <option value="false">
+                  Out of stock
+                </option>
+
               </select>
 
             </div>
 
           </div>
 
-          <button class="primaryBtn"
-                  onclick="saveMenuItem()">
+
+          <button
+            id="saveMenuBtn"
+            class="primaryBtn"
+            type="button">
             SAVE FOOD
           </button>
 
-          <button class="secondaryBtn"
-                  style="width:100%;margin-top:8px;"
-                  onclick="closeMenuForm()">
+
+          <button
+            id="cancelMenuBtn"
+            class="secondaryBtn"
+            style="width:100%;margin-top:8px"
+            type="button">
             Cancel
           </button>
 
         </div>
 
 
-        <div id="menuList"
-             class="menuGrid">
+        <div
+          id="menuList"
+          class="menuGrid">
 
           <div class="empty">
             Loading menu...
@@ -890,9 +1075,13 @@ button{
       </section>
 
 
-      <!-- ================= RESTAURANT ================= -->
+      <!-- =================================================
+           RESTAURANT
+      ================================================== -->
 
-      <section id="restaurantPage" class="page">
+      <section
+        id="restaurantPage"
+        class="page">
 
         <div class="pageTitle">
           Restaurant
@@ -902,49 +1091,86 @@ button{
           Manage your restaurant information.
         </div>
 
+
         <div class="card">
 
           <div class="profileGrid">
 
             <div class="field">
-              <label>Restaurant Name</label>
+              <label>
+                Restaurant Name
+              </label>
+
               <input id="profileStore">
             </div>
 
+
             <div class="field">
-              <label>Phone</label>
+              <label>
+                Phone
+              </label>
+
               <input id="profilePhone">
             </div>
 
           </div>
 
+
           <div class="field">
-            <label>Address</label>
-            <textarea id="profileAddress"
-                      rows="3"></textarea>
+
+            <label>
+              Address
+            </label>
+
+            <textarea
+              id="profileAddress"
+              rows="3"></textarea>
+
           </div>
+
 
           <div class="profileGrid">
 
             <div class="field">
-              <label>Opening Time</label>
-              <input id="profileOpen" type="time">
+
+              <label>
+                Opening Time
+              </label>
+
+              <input
+                id="profileOpen"
+                type="time">
+
             </div>
 
+
             <div class="field">
-              <label>Closing Time</label>
-              <input id="profileClose" type="time">
+
+              <label>
+                Closing Time
+              </label>
+
+              <input
+                id="profileClose"
+                type="time">
+
             </div>
 
           </div>
 
-          <button class="primaryBtn"
-                  onclick="saveRestaurant()">
+
+          <button
+            id="saveRestaurantBtn"
+            class="primaryBtn"
+            type="button">
             SAVE RESTAURANT
           </button>
 
-          <div id="restaurantMessage"
-               class="message"></div>
+
+          <div
+            id="restaurantMessage"
+            class="message">
+          </div>
 
         </div>
 
@@ -955,38 +1181,61 @@ button{
             Bank Information
           </div>
 
+
           <div class="profileGrid">
 
             <div class="field">
-              <label>Bank Name</label>
+
+              <label>
+                Bank Name
+              </label>
+
               <input id="bankName">
+
             </div>
 
+
             <div class="field">
-              <label>Account Number</label>
-              <input id="accountNumber"
-                     inputmode="numeric"
-                     maxlength="20">
+
+              <label>
+                Account Number
+              </label>
+
+              <input
+                id="accountNumber"
+                inputmode="numeric"
+                maxlength="20">
+
             </div>
 
           </div>
 
-          <button class="primaryBtn"
-                  onclick="saveBank()">
+
+          <button
+            id="saveBankBtn"
+            class="primaryBtn"
+            type="button">
             SAVE BANK DETAILS
           </button>
 
-          <div id="bankMessage"
-               class="message"></div>
+
+          <div
+            id="bankMessage"
+            class="message">
+          </div>
 
         </div>
 
       </section>
 
 
-      <!-- ================= EARNINGS ================= -->
+      <!-- =================================================
+           EARNINGS
+      ================================================== -->
 
-      <section id="earningsPage" class="page">
+      <section
+        id="earningsPage"
+        class="page">
 
         <div class="pageTitle">
           Earnings
@@ -996,29 +1245,62 @@ button{
           Track your restaurant sales.
         </div>
 
+
         <div class="stats">
 
           <div class="stat">
-            <div class="statLabel">Today</div>
-            <div class="statValue" id="earnToday">₦0</div>
+            <div class="statLabel">
+              Today
+            </div>
+
+            <div
+              class="statValue"
+              id="earnToday">
+              ₦0
+            </div>
           </div>
 
-          <div class="stat">
-            <div class="statLabel">This Month</div>
-            <div class="statValue" id="earnMonth">₦0</div>
-          </div>
 
           <div class="stat">
-            <div class="statLabel">Completed Orders</div>
-            <div class="statValue" id="earnOrders">0</div>
+            <div class="statLabel">
+              This Month
+            </div>
+
+            <div
+              class="statValue"
+              id="earnMonth">
+              ₦0
+            </div>
           </div>
 
+
           <div class="stat">
-            <div class="statLabel">Commission Rate</div>
-            <div class="statValue" id="earnCommission">0%</div>
+            <div class="statLabel">
+              Completed Orders
+            </div>
+
+            <div
+              class="statValue"
+              id="earnOrders">
+              0
+            </div>
+          </div>
+
+
+          <div class="stat">
+            <div class="statLabel">
+              Commission Rate
+            </div>
+
+            <div
+              class="statValue"
+              id="earnCommission">
+              0%
+            </div>
           </div>
 
         </div>
+
 
         <div class="card">
 
@@ -1027,7 +1309,9 @@ button{
           </div>
 
           <div id="salesList">
-            <div class="empty">Loading...</div>
+            <div class="empty">
+              Loading...
+            </div>
           </div>
 
         </div>
@@ -1043,24 +1327,34 @@ button{
 
   <nav class="mobileNav">
 
-    <button class="active"
-            onclick="mobilePage('dashboard',this)">
+    <button
+      class="active"
+      data-page="dashboard"
+      type="button">
       📊<br>Home
     </button>
 
-    <button onclick="mobilePage('orders',this)">
+    <button
+      data-page="orders"
+      type="button">
       🛍<br>Orders
     </button>
 
-    <button onclick="mobilePage('menu',this)">
+    <button
+      data-page="menu"
+      type="button">
       🍔<br>Menu
     </button>
 
-    <button onclick="mobilePage('restaurant',this)">
+    <button
+      data-page="restaurant"
+      type="button">
       🏪<br>Store
     </button>
 
-    <button onclick="mobilePage('earnings',this)">
+    <button
+      data-page="earnings"
+      type="button">
       💰<br>Money
     </button>
 
@@ -1072,6 +1366,13 @@ button{
 <script>
 
 /* =====================================================
+   QUICK EATS VENDOR APP
+===================================================== */
+
+"use strict";
+
+
+/* =====================================================
    SUPABASE
 ===================================================== */
 
@@ -1081,21 +1382,16 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_lQkN8HQP2Tm3tPiDYJbrNw_ydO7bqXU";
 
-const supabase =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-
-/* =====================================================
-   GLOBAL VARIABLES
-===================================================== */
+let supabaseClient = null;
 
 let currentUser = null;
+
 let vendor = null;
+
 let orders = [];
+
 let menuItems = [];
+
 let realtimeChannel = null;
 
 
@@ -1103,34 +1399,63 @@ let realtimeChannel = null;
    HELPERS
 ===================================================== */
 
-function money(value){
-  return "₦" + Number(value || 0).toLocaleString("en-NG");
+function $(id){
+  return document.getElementById(id);
 }
+
+
+function money(value){
+
+  return "₦" +
+    Number(value || 0)
+      .toLocaleString("en-NG");
+
+}
+
 
 function escapeHtml(value){
+
   return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
 }
 
-function showMessage(id,text,type="success"){
-  const el=document.getElementById(id);
 
-  if(!el) return;
+function showMessage(
+  id,
+  text,
+  type="success"
+){
 
-  el.textContent=text;
-  el.className="message show " + type;
+  const element=$(id);
 
-  setTimeout(()=>{
-    el.className="message";
-  },5000);
+  if(!element){
+    return;
+  }
+
+  element.textContent=text;
+
+  element.className=
+    "message show " + type;
+
 }
 
-function authMessage(text,type="error"){
-  showMessage("authMessage",text,type);
+
+function showAuthMessage(
+  text,
+  type="error"
+){
+
+  showMessage(
+    "authMessage",
+    text,
+    type
+  );
+
 }
 
 
@@ -1138,37 +1463,45 @@ function authMessage(text,type="error"){
    AUTH TABS
 ===================================================== */
 
-function showAuth(type){
+function showLogin(){
 
-  const login =
-    document.getElementById("loginForm");
+  $("loginForm")
+    .classList
+    .remove("hidden");
 
-  const register =
-    document.getElementById("registerForm");
+  $("registerForm")
+    .classList
+    .add("hidden");
 
-  const loginTab =
-    document.getElementById("loginTab");
+  $("loginTab")
+    .classList
+    .add("active");
 
-  const registerTab =
-    document.getElementById("registerTab");
+  $("registerTab")
+    .classList
+    .remove("active");
 
-  if(type==="login"){
+}
 
-    login.classList.remove("hidden");
-    register.classList.add("hidden");
 
-    loginTab.classList.add("active");
-    registerTab.classList.remove("active");
+function showRegister(){
 
-  }else{
+  $("loginForm")
+    .classList
+    .add("hidden");
 
-    login.classList.add("hidden");
-    register.classList.remove("hidden");
+  $("registerForm")
+    .classList
+    .remove("hidden");
 
-    loginTab.classList.remove("active");
-    registerTab.classList.add("active");
+  $("loginTab")
+    .classList
+    .remove("active");
 
-  }
+  $("registerTab")
+    .classList
+    .add("active");
+
 }
 
 
@@ -1178,109 +1511,150 @@ function showAuth(type){
 
 async function registerVendor(){
 
-  const store =
-    document.getElementById("regStore").value.trim();
+  const store=
+    $("regStore")
+      .value
+      .trim();
 
-  const phone =
-    document.getElementById("regPhone").value.trim();
+  const phone=
+    $("regPhone")
+      .value
+      .trim();
 
-  const address =
-    document.getElementById("regAddress").value.trim();
+  const address=
+    $("regAddress")
+      .value
+      .trim();
 
-  const email =
-    document.getElementById("regEmail").value.trim();
+  const email=
+    $("regEmail")
+      .value
+      .trim();
 
-  const password =
-    document.getElementById("regPassword").value;
+  const password=
+    $("regPassword")
+      .value;
 
-  if(!store || !phone || !address || !email || !password){
 
-    authMessage(
+  if(
+    !store ||
+    !phone ||
+    !address ||
+    !email ||
+    !password
+  ){
+
+    showAuthMessage(
       "Please complete all fields."
     );
 
     return;
   }
 
+
   if(password.length < 6){
 
-    authMessage(
+    showAuthMessage(
       "Password must be at least 6 characters."
     );
 
     return;
   }
 
-  authMessage(
+
+  showAuthMessage(
     "Creating your vendor account...",
     "success"
   );
 
-  const {
-    data,
-    error
-  } =
-    await supabase.auth.signUp({
 
-      email,
-      password,
+  try{
 
-      options:{
-        data:{
-          role:"vendor",
-          store_name:store,
-          phone:phone
-        }
-      }
+    const result=
+      await supabaseClient
+        .auth
+        .signUp({
 
-    });
+          email:email,
 
-  if(error){
+          password:password,
 
-    authMessage(error.message);
+          options:{
+            data:{
+              role:"vendor",
+              store_name:store,
+              phone:phone
+            }
+          }
 
-    return;
-  }
+        });
 
-  /*
-    If email confirmation is OFF,
-    Supabase gives us a session immediately.
-  */
 
-  if(data.session){
+    if(result.error){
 
-    currentUser=data.user;
+      throw result.error;
 
-    const created =
-      await createVendorProfile(
-        currentUser.id,
-        store,
-        phone,
-        address
-      );
-
-    if(!created){
-
-      await supabase.auth.signOut();
-
-      return;
     }
 
-    await loadApp();
-
-  }else{
 
     /*
-      If email confirmation is ON,
-      the user must confirm the email first.
+      Email confirmation OFF
     */
 
-    authMessage(
-      "Account created. Check your email, confirm your email address, then come back and log in.",
+    if(result.data.session){
+
+      currentUser=
+        result.data.user;
+
+
+      const profileCreated=
+        await createVendorProfile(
+          currentUser.id,
+          store,
+          phone,
+          address
+        );
+
+
+      if(!profileCreated){
+
+        return;
+
+      }
+
+
+      await loadApp();
+
+      return;
+
+    }
+
+
+    /*
+      Email confirmation ON
+    */
+
+    showLogin();
+
+    $("loginEmail").value=email;
+
+    showAuthMessage(
+      "Account created successfully. Check your email, confirm your email address, then log in.",
       "success"
     );
 
-    showAuth("login");
+  }catch(error){
+
+    console.error(
+      "Registration error:",
+      error
+    );
+
+    showAuthMessage(
+      error.message ||
+      "Could not create your account."
+    );
+
   }
 
 }
@@ -1297,43 +1671,57 @@ async function createVendorProfile(
   address
 ){
 
-  const {
-    data,
-    error
-  } =
-    await supabase
-      .from("vendors")
-      .insert({
+  try{
 
-        owner_id:userId,
+    const result=
+      await supabaseClient
+        .from("vendors")
+        .insert({
 
-        store_name:store,
+          owner_id:userId,
 
-        address:address,
+          store_name:store,
 
-        phone:phone,
+          address:address,
 
-        is_open:true
+          phone:phone,
 
-      })
-      .select()
-      .single();
+          is_open:true
 
-  if(error){
+        })
+        .select()
+        .single();
 
-    console.error(error);
 
-    authMessage(
-      "Account was created, but the restaurant profile could not be created. Database permission may need to be fixed.",
-      "error"
+    if(result.error){
+
+      throw result.error;
+
+    }
+
+
+    vendor=result.data;
+
+    return true;
+
+  }catch(error){
+
+    console.error(
+      "Vendor profile error:",
+      error
     );
 
+
+    showAuthMessage(
+      "Your account was created, but the restaurant profile could not be created: " +
+      error.message
+    );
+
+
     return false;
+
   }
 
-  vendor=data;
-
-  return true;
 }
 
 
@@ -1343,49 +1731,75 @@ async function createVendorProfile(
 
 async function loginVendor(){
 
-  const email =
-    document.getElementById("loginEmail")
-      .value.trim();
+  const email=
+    $("loginEmail")
+      .value
+      .trim();
 
-  const password =
-    document.getElementById("loginPassword")
+  const password=
+    $("loginPassword")
       .value;
+
 
   if(!email || !password){
 
-    authMessage(
+    showAuthMessage(
       "Enter your email and password."
     );
 
     return;
+
   }
 
-  authMessage(
+
+  showAuthMessage(
     "Logging in...",
     "success"
   );
 
-  const {
-    data,
-    error
-  } =
-    await supabase.auth.signInWithPassword({
 
-      email,
-      password
+  try{
 
-    });
+    const result=
+      await supabaseClient
+        .auth
+        .signInWithPassword({
 
-  if(error){
+          email:email,
 
-    authMessage(error.message);
+          password:password
 
-    return;
+        });
+
+
+    if(result.error){
+
+      throw result.error;
+
+    }
+
+
+    currentUser=
+      result.data.user;
+
+
+    await loadApp();
+
+
+  }catch(error){
+
+    console.error(
+      "Login error:",
+      error
+    );
+
+
+    showAuthMessage(
+      error.message ||
+      "Login failed."
+    );
+
   }
-
-  currentUser=data.user;
-
-  await loadApp();
 
 }
 
@@ -1396,62 +1810,85 @@ async function loginVendor(){
 
 async function loadApp(){
 
-  if(!currentUser){
+  try{
 
-    const {
-      data
-    } =
-    await supabase.auth.getUser();
+    if(!currentUser){
 
-    currentUser=data.user;
-  }
+      const result=
+        await supabaseClient
+          .auth
+          .getUser();
 
-  if(!currentUser){
+      currentUser=
+        result.data.user;
 
-    return;
-  }
+    }
 
-  await loadVendor();
 
-  if(!vendor){
+    if(!currentUser){
 
-    /*
-      Account exists but vendor row does not.
-      Give the user a simple profile setup.
-    */
+      return;
 
-    showAuth("register");
+    }
 
-    authMessage(
-      "Your account exists, but your restaurant profile is not set up yet.",
-      "error"
+
+    await loadVendor();
+
+
+    if(!vendor){
+
+      showAuthMessage(
+        "Your account exists, but your restaurant profile was not found. Please contact QuickEats support."
+      );
+
+      return;
+
+    }
+
+
+    $("authPage")
+      .classList
+      .add("hidden");
+
+    $("app")
+      .classList
+      .remove("hidden");
+
+
+    $("topVendorName")
+      .textContent=
+        vendor.store_name ||
+        "Vendor";
+
+
+    fillRestaurantForm();
+
+
+    await loadMenu();
+
+    await loadOrders();
+
+    await loadEarnings();
+
+    updateRestaurantStatus();
+
+    subscribeRealtime();
+
+
+  }catch(error){
+
+    console.error(
+      "Load app error:",
+      error
     );
 
-    return;
+    alert(
+      "Could not load your vendor dashboard: " +
+      error.message
+    );
+
   }
 
-  document
-    .getElementById("authPage")
-    .classList.add("hidden");
-
-  document
-    .getElementById("app")
-    .classList.remove("hidden");
-
-  document
-    .getElementById("topVendorName")
-    .textContent =
-      vendor.store_name || "Vendor";
-
-  fillRestaurantForm();
-
-  await Promise.all([
-    loadMenu(),
-    loadOrders(),
-    loadDashboard()
-  ]);
-
-  subscribeRealtime();
 }
 
 
@@ -1461,29 +1898,36 @@ async function loadApp(){
 
 async function loadVendor(){
 
-  const {
-    data,
-    error
-  } =
-  await supabase
-    .from("vendors")
-    .select("*")
-    .eq("owner_id",currentUser.id)
-    .maybeSingle();
+  const result=
+    await supabaseClient
+      .from("vendors")
+      .select("*")
+      .eq(
+        "owner_id",
+        currentUser.id
+      )
+      .maybeSingle();
 
-  if(error){
 
-    console.error(error);
+  if(result.error){
 
-    authMessage(
+    console.error(
+      "Load vendor error:",
+      result.error
+    );
+
+    showAuthMessage(
       "Could not load your restaurant: " +
-      error.message
+      result.error.message
     );
 
     return;
+
   }
 
-  vendor=data;
+
+  vendor=result.data;
+
 }
 
 
@@ -1493,17 +1937,40 @@ async function loadVendor(){
 
 async function logoutVendor(){
 
-  if(realtimeChannel){
+  try{
 
-    await supabase
-      .removeChannel(realtimeChannel);
+    if(realtimeChannel){
 
-    realtimeChannel=null;
+      await supabaseClient
+        .removeChannel(
+          realtimeChannel
+        );
+
+      realtimeChannel=null;
+
+    }
+
+
+    await supabaseClient
+      .auth
+      .signOut();
+
+
+    currentUser=null;
+
+    vendor=null;
+
+    location.reload();
+
+
+  }catch(error){
+
+    alert(
+      error.message
+    );
+
   }
 
-  await supabase.auth.signOut();
-
-  location.reload();
 }
 
 
@@ -1511,137 +1978,163 @@ async function logoutVendor(){
    NAVIGATION
 ===================================================== */
 
-function showPage(page,button){
+function showPage(page){
 
   document
     .querySelectorAll(".page")
-    .forEach(el=>{
-      el.classList.remove("active");
+    .forEach(pageElement=>{
+
+      pageElement
+        .classList
+        .remove("active");
+
     });
 
-  const pageEl =
-    document.getElementById(page+"Page");
 
-  if(pageEl){
+  const selectedPage=
+    $(page+"Page");
 
-    pageEl.classList.add("active");
+
+  if(selectedPage){
+
+    selectedPage
+      .classList
+      .add("active");
+
   }
+
 
   document
-    .querySelectorAll(".navBtn")
-    .forEach(el=>{
-      el.classList.remove("active");
+    .querySelectorAll(
+      ".navBtn,.mobileNav button"
+    )
+    .forEach(button=>{
+
+      button
+        .classList
+        .toggle(
+          "active",
+          button.dataset.page===page
+        );
+
     });
 
-  if(button){
-
-    button.classList.add("active");
-  }
 
   if(page==="dashboard"){
-    loadDashboard();
+
+    loadOrders();
+
   }
+
 
   if(page==="orders"){
+
     loadOrders();
+
   }
+
 
   if(page==="menu"){
+
     loadMenu();
+
   }
+
 
   if(page==="earnings"){
+
     loadEarnings();
+
   }
-}
 
-
-function mobilePage(page,button){
-
-  showPage(page);
-
-  document
-    .querySelectorAll(".mobileNav button")
-    .forEach(el=>{
-      el.classList.remove("active");
-    });
-
-  button.classList.add("active");
 }
 
 
 /* =====================================================
-   RESTAURANT PROFILE
+   RESTAURANT FORM
 ===================================================== */
 
 function fillRestaurantForm(){
 
-  if(!vendor) return;
+  if(!vendor){
 
-  document
-    .getElementById("profileStore")
-    .value =
-      vendor.store_name || "";
+    return;
 
-  document
-    .getElementById("profilePhone")
-    .value =
-      vendor.phone || "";
+  }
 
-  document
-    .getElementById("profileAddress")
-    .value =
-      vendor.address || "";
 
-  document
-    .getElementById("profileOpen")
-    .value =
-      vendor.open_time || "";
+  $("profileStore").value=
+    vendor.store_name || "";
 
-  document
-    .getElementById("profileClose")
-    .value =
-      vendor.close_time || "";
+  $("profilePhone").value=
+    vendor.phone || "";
 
-  document
-    .getElementById("bankName")
-    .value =
-      vendor.bank_name || "";
+  $("profileAddress").value=
+    vendor.address || "";
 
-  document
-    .getElementById("accountNumber")
-    .value =
-      vendor.account_number || "";
+  $("profileOpen").value=
+    vendor.open_time || "";
+
+  $("profileClose").value=
+    vendor.close_time || "";
+
+  $("bankName").value=
+    vendor.bank_name || "";
+
+  $("accountNumber").value=
+    vendor.account_number || "";
+
 
   updateRestaurantStatus();
+
 }
 
 
+/* =====================================================
+   SAVE RESTAURANT
+===================================================== */
+
 async function saveRestaurant(){
 
-  if(!vendor) return;
+  if(!vendor){
+
+    return;
+
+  }
+
 
   const updates={
 
     store_name:
-      document.getElementById("profileStore").value.trim(),
+      $("profileStore")
+        .value
+        .trim(),
 
     phone:
-      document.getElementById("profilePhone").value.trim(),
+      $("profilePhone")
+        .value
+        .trim(),
 
     address:
-      document.getElementById("profileAddress").value.trim(),
+      $("profileAddress")
+        .value
+        .trim(),
 
     open_time:
-      document.getElementById("profileOpen").value,
+      $("profileOpen")
+        .value,
 
     close_time:
-      document.getElementById("profileClose").value
+      $("profileClose")
+        .value
 
   };
 
-  if(!updates.store_name ||
-     !updates.address){
+
+  if(
+    !updates.store_name ||
+    !updates.address
+  ){
 
     showMessage(
       "restaurantMessage",
@@ -1650,45 +2143,53 @@ async function saveRestaurant(){
     );
 
     return;
+
   }
 
-  const {
-    data,
-    error
-  } =
-  await supabase
-    .from("vendors")
-    .update(updates)
-    .eq("id",vendor.id)
-    .eq("owner_id",currentUser.id)
-    .select()
-    .single();
 
-  if(error){
+  const result=
+    await supabaseClient
+      .from("vendors")
+      .update(updates)
+      .eq(
+        "id",
+        vendor.id
+      )
+      .eq(
+        "owner_id",
+        currentUser.id
+      )
+      .select()
+      .single();
+
+
+  if(result.error){
 
     showMessage(
       "restaurantMessage",
-      error.message,
+      result.error.message,
       "error"
     );
 
     return;
+
   }
 
-  vendor=data;
 
-  document
-    .getElementById("topVendorName")
-    .textContent =
+  vendor=result.data;
+
+
+  $("topVendorName")
+    .textContent=
       vendor.store_name;
 
-  updateRestaurantStatus();
 
   showMessage(
     "restaurantMessage",
     "Restaurant information saved.",
     "success"
   );
+
 }
 
 
@@ -1698,112 +2199,147 @@ async function saveRestaurant(){
 
 async function saveBank(){
 
-  const bankName =
-    document.getElementById("bankName")
-      .value.trim();
+  const bankName=
+    $("bankName")
+      .value
+      .trim();
 
-  const accountNumber =
-    document.getElementById("accountNumber")
-      .value.trim();
+  const accountNumber=
+    $("accountNumber")
+      .value
+      .trim();
 
-  const {
-    data,
-    error
-  } =
-  await supabase
-    .from("vendors")
-    .update({
 
-      bank_name:bankName,
+  const result=
+    await supabaseClient
+      .from("vendors")
+      .update({
 
-      account_number:accountNumber
+        bank_name:bankName,
 
-    })
-    .eq("id",vendor.id)
-    .eq("owner_id",currentUser.id)
-    .select()
-    .single();
+        account_number:accountNumber
 
-  if(error){
+      })
+      .eq(
+        "id",
+        vendor.id
+      )
+      .eq(
+        "owner_id",
+        currentUser.id
+      )
+      .select()
+      .single();
+
+
+  if(result.error){
 
     showMessage(
       "bankMessage",
-      error.message,
+      result.error.message,
       "error"
     );
 
     return;
+
   }
 
-  vendor=data;
+
+  vendor=result.data;
+
 
   showMessage(
     "bankMessage",
     "Bank details saved.",
     "success"
   );
+
 }
 
 
 /* =====================================================
-   RESTAURANT OPEN/CLOSE
+   OPEN / CLOSE RESTAURANT
 ===================================================== */
 
 function updateRestaurantStatus(){
 
-  if(!vendor) return;
+  if(!vendor){
 
-  const status =
-    document.getElementById("restaurantStatus");
+    return;
 
-  const button =
-    document.getElementById("restaurantToggleBtn");
+  }
+
 
   if(vendor.is_open){
 
-    status.textContent="🟢 OPEN";
+    $("restaurantStatus")
+      .textContent=
+        "🟢 OPEN";
 
-    button.textContent=
-      "CLOSE RESTAURANT";
+    $("restaurantToggleBtn")
+      .textContent=
+        "CLOSE RESTAURANT";
 
   }else{
 
-    status.textContent="🔴 CLOSED";
+    $("restaurantStatus")
+      .textContent=
+        "🔴 CLOSED";
 
-    button.textContent=
-      "OPEN RESTAURANT";
+    $("restaurantToggleBtn")
+      .textContent=
+        "OPEN RESTAURANT";
+
   }
+
 }
 
 
 async function toggleRestaurant(){
 
-  if(!vendor) return;
-
-  const {
-    data,
-    error
-  } =
-  await supabase
-    .from("vendors")
-    .update({
-      is_open:!vendor.is_open
-    })
-    .eq("id",vendor.id)
-    .eq("owner_id",currentUser.id)
-    .select()
-    .single();
-
-  if(error){
-
-    alert(error.message);
+  if(!vendor){
 
     return;
+
   }
 
-  vendor=data;
+
+  const result=
+    await supabaseClient
+      .from("vendors")
+      .update({
+
+        is_open:
+          !vendor.is_open
+
+      })
+      .eq(
+        "id",
+        vendor.id
+      )
+      .eq(
+        "owner_id",
+        currentUser.id
+      )
+      .select()
+      .single();
+
+
+  if(result.error){
+
+    alert(
+      result.error.message
+    );
+
+    return;
+
+  }
+
+
+  vendor=result.data;
 
   updateRestaurantStatus();
+
 }
 
 
@@ -1813,315 +2349,382 @@ async function toggleRestaurant(){
 
 async function loadMenu(){
 
-  if(!vendor) return;
-
-  const {
-    data,
-    error
-  } =
-  await supabase
-    .from("menu_items")
-    .select("*")
-    .eq("vendor_id",vendor.id)
-    .order("category")
-    .order("name");
-
-  if(error){
-
-    console.error(error);
-
-    document
-      .getElementById("menuList")
-      .innerHTML =
-      `<div class="empty">
-        Could not load menu.<br>
-        ${escapeHtml(error.message)}
-      </div>`;
+  if(!vendor){
 
     return;
+
   }
 
-  menuItems=data || [];
+
+  const result=
+    await supabaseClient
+      .from("menu_items")
+      .select("*")
+      .eq(
+        "vendor_id",
+        vendor.id
+      )
+      .order(
+        "category"
+      )
+      .order(
+        "name"
+      );
+
+
+  if(result.error){
+
+    console.error(
+      "Menu error:",
+      result.error
+    );
+
+
+    $("menuList").innerHTML=
+      `
+      <div class="empty">
+        Could not load menu.<br><br>
+        ${escapeHtml(
+          result.error.message
+        )}
+      </div>
+      `;
+
+    return;
+
+  }
+
+
+  menuItems=
+    result.data || [];
+
 
   renderMenu();
 
-  document
-    .getElementById("statMenu")
-    .textContent =
+
+  $("statMenu")
+    .textContent=
       menuItems.length;
-}
 
-
-function renderMenu(){
-
-  const list =
-    document.getElementById("menuList");
-
-  if(!menuItems.length){
-
-    list.innerHTML=
-      `<div class="empty">
-        No food has been added yet.<br><br>
-        Tap <b>+ Add Food</b> to create your menu.
-      </div>`;
-
-    return;
-  }
-
-  list.innerHTML =
-    menuItems.map(item=>`
-
-      <div class="menuItem">
-
-        <div class="menuTop">
-
-          <div>
-
-            <div class="menuName">
-              ${escapeHtml(item.name)}
-            </div>
-
-            <div class="category">
-              ${escapeHtml(item.category || "Food")}
-            </div>
-
-          </div>
-
-          <span class="stock ${item.in_stock ? "in":"out"}">
-            ${item.in_stock ? "AVAILABLE":"OUT"}
-          </span>
-
-        </div>
-
-        <div class="price">
-          ${money(item.price)}
-        </div>
-
-        <div class="menuActions">
-
-          <button class="secondaryBtn"
-                  onclick="editMenuItem('${item.id}')">
-            Edit
-          </button>
-
-          <button class="dangerBtn"
-                  onclick="deleteMenuItem('${item.id}')">
-            Delete
-          </button>
-
-        </div>
-
-        <button
-          class="actionBtn"
-          style="width:100%;margin-top:8px;"
-          onclick="toggleStock('${item.id}',${item.in_stock})">
-
-          ${item.in_stock
-            ? "Mark Out of Stock"
-            : "Mark Available"}
-
-        </button>
-
-      </div>
-
-    `).join("");
 }
 
 
 /* =====================================================
-   MENU FORM
+   RENDER MENU
 ===================================================== */
 
-function openMenuForm(){
+function renderMenu(){
 
-  document
-    .getElementById("menuFormCard")
-    .classList.remove("hidden");
+  const list=
+    $("menuList");
 
-  document
-    .getElementById("menuFormTitle")
-    .textContent =
-      "Add Menu Item";
 
-  document
-    .getElementById("menuEditId")
-    .value="";
+  if(!menuItems.length){
 
-  document
-    .getElementById("menuName")
-    .value="";
+    list.innerHTML=
+      `
+      <div class="empty">
 
-  document
-    .getElementById("menuCategory")
-    .value="";
+        No food has been added yet.
 
-  document
-    .getElementById("menuPrice")
-    .value="";
+        <br><br>
 
-  document
-    .getElementById("menuStock")
-    .value="true";
+        Tap <b>+ Add Food</b> to create your menu.
+
+      </div>
+      `;
+
+    return;
+
+  }
+
+
+  list.innerHTML=
+    menuItems
+      .map(item=>`
+
+        <div class="menuItem">
+
+          <div class="menuTop">
+
+            <div>
+
+              <div class="menuName">
+                ${escapeHtml(
+                  item.name
+                )}
+              </div>
+
+              <div class="category">
+                ${escapeHtml(
+                  item.category ||
+                  "Food"
+                )}
+              </div>
+
+            </div>
+
+            <span
+              class="stock ${
+                item.in_stock
+                  ? "in"
+                  : "out"
+              }">
+
+              ${
+                item.in_stock
+                  ? "AVAILABLE"
+                  : "OUT"
+              }
+
+            </span>
+
+          </div>
+
+
+          <div class="price">
+            ${money(item.price)}
+          </div>
+
+
+          <div class="menuActions">
+
+            <button
+              class="secondaryBtn editMenuBtn"
+              data-id="${item.id}"
+              type="button">
+
+              Edit
+
+            </button>
+
+
+            <button
+              class="dangerBtn deleteMenuBtn"
+              data-id="${item.id}"
+              type="button">
+
+              Delete
+
+            </button>
+
+          </div>
+
+
+          <button
+            class="actionBtn stockMenuBtn"
+            data-id="${item.id}"
+            data-stock="${item.in_stock}"
+            style="width:100%;margin-top:8px"
+            type="button">
+
+            ${
+              item.in_stock
+                ? "Mark Out of Stock"
+                : "Mark Available"
+            }
+
+          </button>
+
+        </div>
+
+      `)
+      .join("");
+
+}
+
+
+/* =====================================================
+   OPEN MENU FORM
+===================================================== */
+
+function openMenuForm(item=null){
+
+  $("menuFormCard")
+    .classList
+    .remove("hidden");
+
+
+  $("menuFormTitle")
+    .textContent=
+      item
+        ? "Edit Menu Item"
+        : "Add Menu Item";
+
+
+  $("menuEditId")
+    .value=
+      item
+        ? item.id
+        : "";
+
+
+  $("menuName")
+    .value=
+      item?.name || "";
+
+
+  $("menuCategory")
+    .value=
+      item?.category || "";
+
+
+  $("menuPrice")
+    .value=
+      item?.price ?? "";
+
+
+  $("menuStock")
+    .value=
+      item?.in_stock === false
+        ? "false"
+        : "true";
+
 
   window.scrollTo({
     top:0,
     behavior:"smooth"
   });
+
 }
 
 
 function closeMenuForm(){
 
-  document
-    .getElementById("menuFormCard")
-    .classList.add("hidden");
-}
+  $("menuFormCard")
+    .classList
+    .add("hidden");
 
-
-function editMenuItem(id){
-
-  const item =
-    menuItems.find(x=>x.id===id);
-
-  if(!item) return;
-
-  document
-    .getElementById("menuFormCard")
-    .classList.remove("hidden");
-
-  document
-    .getElementById("menuFormTitle")
-    .textContent =
-      "Edit Menu Item";
-
-  document
-    .getElementById("menuEditId")
-    .value=item.id;
-
-  document
-    .getElementById("menuName")
-    .value=item.name || "";
-
-  document
-    .getElementById("menuCategory")
-    .value=item.category || "";
-
-  document
-    .getElementById("menuPrice")
-    .value=item.price || "";
-
-  document
-    .getElementById("menuStock")
-    .value=
-      item.in_stock ? "true":"false";
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
 }
 
 
 /* =====================================================
-   SAVE MENU ITEM
+   SAVE MENU
 ===================================================== */
 
 async function saveMenuItem(){
 
-  const id =
-    document.getElementById("menuEditId").value;
+  const id=
+    $("menuEditId")
+      .value;
 
-  const name =
-    document.getElementById("menuName")
-      .value.trim();
 
-  const category =
-    document.getElementById("menuCategory")
-      .value.trim();
+  const name=
+    $("menuName")
+      .value
+      .trim();
 
-  const price =
+
+  const category=
+    $("menuCategory")
+      .value
+      .trim() ||
+      "Food";
+
+
+  const price=
     Number(
-      document.getElementById("menuPrice").value
+      $("menuPrice")
+        .value
     );
 
-  const inStock =
-    document.getElementById("menuStock").value
-    === "true";
+
+  const inStock=
+    $("menuStock")
+      .value === "true";
+
 
   if(!name){
 
-    alert("Enter the food name.");
+    alert(
+      "Enter the food name."
+    );
 
     return;
+
   }
 
-  if(!price || price < 0){
 
-    alert("Enter a valid price.");
+  if(
+    Number.isNaN(price) ||
+    price < 0
+  ){
+
+    alert(
+      "Enter a valid price."
+    );
 
     return;
+
   }
+
+
+  let result;
+
 
   if(id){
 
-    const {
-      error
-    } =
-    await supabase
-      .from("menu_items")
-      .update({
+    result=
+      await supabaseClient
+        .from("menu_items")
+        .update({
 
-        name:name,
+          name:name,
 
-        category:category || "Food",
+          category:category,
 
-        price:price,
+          price:price,
 
-        in_stock:inStock
+          in_stock:inStock
 
-      })
-      .eq("id",id)
-      .eq("vendor_id",vendor.id);
-
-    if(error){
-
-      alert(error.message);
-
-      return;
-    }
+        })
+        .eq(
+          "id",
+          id
+        )
+        .eq(
+          "vendor_id",
+          vendor.id
+        );
 
   }else{
 
-    const {
-      error
-    } =
-    await supabase
-      .from("menu_items")
-      .insert({
+    result=
+      await supabaseClient
+        .from("menu_items")
+        .insert({
 
-        vendor_id:vendor.id,
+          vendor_id:
+            vendor.id,
 
-        name:name,
+          name:name,
 
-        category:category || "Food",
+          category:category,
 
-        price:price,
+          price:price,
 
-        in_stock:inStock
+          in_stock:inStock
 
-      });
+        });
 
-    if(error){
-
-      alert(error.message);
-
-      return;
-    }
   }
+
+
+  if(result.error){
+
+    alert(
+      result.error.message
+    );
+
+    return;
+
+  }
+
 
   closeMenuForm();
 
   await loadMenu();
+
 }
 
 
@@ -2131,63 +2734,101 @@ async function saveMenuItem(){
 
 async function deleteMenuItem(id){
 
-  const item =
-    menuItems.find(x=>x.id===id);
-
-  if(!item) return;
-
-  const okay =
-    confirm(
-      `Delete "${item.name}" from your menu?`
+  const item=
+    menuItems.find(
+      item=>item.id===id
     );
 
-  if(!okay) return;
 
-  const {
-    error
-  } =
-  await supabase
-    .from("menu_items")
-    .delete()
-    .eq("id",id)
-    .eq("vendor_id",vendor.id);
-
-  if(error){
-
-    alert(error.message);
+  if(!item){
 
     return;
+
   }
 
+
+  if(
+    !confirm(
+      `Delete "${item.name}" from your menu?`
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const result=
+    await supabaseClient
+      .from("menu_items")
+      .delete()
+      .eq(
+        "id",
+        id
+      )
+      .eq(
+        "vendor_id",
+        vendor.id
+      );
+
+
+  if(result.error){
+
+    alert(
+      result.error.message
+    );
+
+    return;
+
+  }
+
+
   await loadMenu();
+
 }
 
 
 /* =====================================================
-   STOCK
+   TOGGLE STOCK
 ===================================================== */
 
-async function toggleStock(id,current){
+async function toggleStock(
+  id,
+  current
+){
 
-  const {
-    error
-  } =
-  await supabase
-    .from("menu_items")
-    .update({
-      in_stock:!current
-    })
-    .eq("id",id)
-    .eq("vendor_id",vendor.id);
+  const result=
+    await supabaseClient
+      .from("menu_items")
+      .update({
 
-  if(error){
+        in_stock:
+          !current
 
-    alert(error.message);
+      })
+      .eq(
+        "id",
+        id
+      )
+      .eq(
+        "vendor_id",
+        vendor.id
+      );
+
+
+  if(result.error){
+
+    alert(
+      result.error.message
+    );
 
     return;
+
   }
 
+
   await loadMenu();
+
 }
 
 
@@ -2197,173 +2838,261 @@ async function toggleStock(id,current){
 
 async function loadOrders(){
 
-  if(!vendor) return;
-
-  const {
-    data,
-    error
-  } =
-  await supabase
-    .from("orders")
-    .select("*")
-    .eq("vendor_id",vendor.id)
-    .order("created_at",{ascending:false});
-
-  if(error){
-
-    console.error(error);
-
-    document
-      .getElementById("ordersList")
-      .innerHTML=
-      `<div class="empty">
-        Could not load orders.<br>
-        ${escapeHtml(error.message)}
-      </div>`;
+  if(!vendor){
 
     return;
+
   }
 
-  orders=data || [];
+
+  const result=
+    await supabaseClient
+      .from("orders")
+      .select("*")
+      .eq(
+        "vendor_id",
+        vendor.id
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
+
+
+  if(result.error){
+
+    $("ordersList").innerHTML=
+      `
+      <div class="empty">
+
+        Could not load orders.
+
+        <br><br>
+
+        ${escapeHtml(
+          result.error.message
+        )}
+
+      </div>
+      `;
+
+    return;
+
+  }
+
+
+  orders=
+    result.data || [];
+
 
   renderOrders();
 
   updateStats();
+
 }
 
 
-function renderOrders(){
+/* =====================================================
+   STATUS NAME
+===================================================== */
 
-  const list =
-    document.getElementById("ordersList");
+function formatStatus(status){
 
-  const recent =
-    document.getElementById("recentOrders");
+  const names={
 
-  if(!orders.length){
+    new:"NEW",
 
-    list.innerHTML=
-      `<div class="empty">
-        No orders yet.
-      </div>`;
+    vendor_accepted:
+      "ACCEPTED",
 
-    recent.innerHTML=
-      `<div class="empty">
-        No orders yet.
-      </div>`;
+    ready_for_pickup:
+      "FOOD READY",
 
-    return;
-  }
+    rider_accepted:
+      "RIDER ASSIGNED",
 
-  const html =
-    orders.map(renderOrderCard).join("");
+    arrived_pickup:
+      "RIDER ARRIVED",
 
-  list.innerHTML=html;
+    picked_up:
+      "PICKED UP",
 
-  recent.innerHTML =
-    orders.slice(0,5)
-      .map(renderOrderCard)
-      .join("");
+    on_the_way:
+      "ON THE WAY",
+
+    delivered:
+      "DELIVERED",
+
+    cancelled:
+      "CANCELLED"
+
+  };
+
+
+  return (
+    names[status] ||
+    status ||
+    "NEW"
+  );
+
 }
 
 
-function renderOrderCard(order){
+/* =====================================================
+   ORDER ACTIONS
+===================================================== */
 
-  const status =
+function getOrderActions(order){
+
+  const status=
     order.status || "new";
 
-  let actions="";
 
   if(status==="new"){
 
-    actions=`
+    return `
 
-      <button class="actionBtn"
-              onclick="updateOrder('${order.id}','vendor_accepted')">
+      <button
+        class="actionBtn orderActionBtn"
+        data-id="${order.id}"
+        data-status="vendor_accepted"
+        type="button">
+
         ACCEPT
+
       </button>
 
-      <button class="rejectBtn"
-              onclick="updateOrder('${order.id}','cancelled')">
+
+      <button
+        class="rejectBtn orderActionBtn"
+        data-id="${order.id}"
+        data-status="cancelled"
+        type="button">
+
         REJECT
+
       </button>
 
     `;
 
   }
 
-  else if(status==="vendor_accepted"){
 
-    actions=`
+  if(status==="vendor_accepted"){
 
-      <button class="actionBtn"
-              onclick="updateOrder('${order.id}','ready_for_pickup')">
+    return `
+
+      <button
+        class="actionBtn orderActionBtn"
+        data-id="${order.id}"
+        data-status="ready_for_pickup"
+        type="button">
+
         FOOD READY
+
       </button>
 
     `;
 
   }
 
-  else if(status==="ready_for_pickup"){
 
-    actions=`
-      <span style="color:#078b49;font-weight:800;">
+  if(status==="ready_for_pickup"){
+
+    return `
+      <span
+        style="color:#078b49;font-weight:800">
+
         Waiting for rider
+
       </span>
     `;
 
   }
 
-  else if(status==="rider_accepted"){
 
-    actions=`
-      <span style="color:#078b49;font-weight:800;">
+  if(status==="rider_accepted"){
+
+    return `
+      <span
+        style="color:#078b49;font-weight:800">
+
         🚴 Rider assigned
+
       </span>
     `;
 
   }
 
-  else if(status==="arrived_pickup"){
 
-    actions=`
-      <span style="color:#078b49;font-weight:800;">
+  if(status==="arrived_pickup"){
+
+    return `
+      <span
+        style="color:#078b49;font-weight:800">
+
         🚴 Rider has arrived
+
       </span>
     `;
 
   }
 
-  else if(status==="picked_up"){
 
-    actions=`
-      <span style="color:#078b49;font-weight:800;">
+  if(status==="picked_up"){
+
+    return `
+      <span
+        style="color:#078b49;font-weight:800">
+
         📦 Food picked up
+
       </span>
     `;
 
   }
 
-  else if(status==="on_the_way"){
 
-    actions=`
-      <span style="color:#078b49;font-weight:800;">
+  if(status==="on_the_way"){
+
+    return `
+      <span
+        style="color:#078b49;font-weight:800">
+
         🚴 On the way
+
       </span>
     `;
 
   }
 
-  else if(status==="delivered"){
 
-    actions=`
-      <span style="color:#078b49;font-weight:800;">
+  if(status==="delivered"){
+
+    return `
+      <span
+        style="color:#078b49;font-weight:800">
+
         ✓ Delivered
+
       </span>
     `;
 
   }
+
+
+  return "";
+
+}
+
+
+/* =====================================================
+   ORDER CARD
+===================================================== */
+
+function renderOrderCard(order){
 
   return `
 
@@ -2374,78 +3103,144 @@ function renderOrderCard(order){
         <div>
 
           <div class="orderNumber">
+
             ${escapeHtml(
-              order.order_number || "Order"
+              order.order_number ||
+              "Order"
             )}
+
           </div>
 
-          <div style="font-size:12px;color:#89918d;margin-top:4px;">
-            ${order.created_at
-              ? new Date(order.created_at)
-                  .toLocaleString("en-NG")
-              : ""}
+
+          <div
+            style="
+              font-size:12px;
+              color:#89918d;
+              margin-top:4px;
+            ">
+
+            ${
+              order.created_at
+                ? new Date(
+                    order.created_at
+                  ).toLocaleString(
+                    "en-NG"
+                  )
+                : ""
+            }
+
           </div>
 
         </div>
 
+
         <div class="status">
+
           ${escapeHtml(
-            formatStatus(status)
+            formatStatus(
+              order.status
+            )
           )}
+
         </div>
 
       </div>
+
 
       <div class="orderInfo">
 
         <b>Customer:</b>
-        ${escapeHtml(order.customer_name || "Customer")}
+
+        ${escapeHtml(
+          order.customer_name ||
+          "Customer"
+        )}
+
         <br>
 
         <b>Delivery:</b>
-        ${escapeHtml(order.delivery_address || "Address not provided")}
+
+        ${escapeHtml(
+          order.delivery_address ||
+          "Address not provided"
+        )}
 
       </div>
+
 
       <div class="orderTotal">
-        ${money(order.total_amount)}
+
+        ${money(
+          order.total_amount
+        )}
+
       </div>
 
+
       <div class="orderActions">
-        ${actions}
+
+        ${getOrderActions(order)}
+
       </div>
 
     </div>
 
   `;
+
 }
 
 
-function formatStatus(status){
+/* =====================================================
+   RENDER ORDERS
+===================================================== */
 
-  const names={
+function renderOrders(){
 
-    new:"NEW",
+  const list=
+    $("ordersList");
 
-    vendor_accepted:"ACCEPTED",
+  const recent=
+    $("recentOrders");
 
-    ready_for_pickup:"FOOD READY",
 
-    rider_accepted:"RIDER ASSIGNED",
+  if(!orders.length){
 
-    arrived_pickup:"RIDER ARRIVED",
+    list.innerHTML=
+      `
+      <div class="empty">
+        No orders yet.
+      </div>
+      `;
 
-    picked_up:"PICKED UP",
 
-    on_the_way:"ON THE WAY",
+    recent.innerHTML=
+      `
+      <div class="empty">
+        No orders yet.
+      </div>
+      `;
 
-    delivered:"DELIVERED",
+    return;
 
-    cancelled:"CANCELLED"
+  }
 
-  };
 
-  return names[status] || status;
+  list.innerHTML=
+    orders
+      .map(
+        renderOrderCard
+      )
+      .join("");
+
+
+  recent.innerHTML=
+    orders
+      .slice(0,5)
+      .map(
+        renderOrderCard
+      )
+      .join("");
+
 }
 
 
@@ -2453,27 +3248,42 @@ function formatStatus(status){
    UPDATE ORDER
 ===================================================== */
 
-async function updateOrder(id,status){
+async function updateOrder(
+  id,
+  status
+){
 
-  const {
-    error
-  } =
-  await supabase
-    .from("orders")
-    .update({
-      status:status
-    })
-    .eq("id",id)
-    .eq("vendor_id",vendor.id);
+  const result=
+    await supabaseClient
+      .from("orders")
+      .update({
 
-  if(error){
+        status:status
 
-    alert(error.message);
+      })
+      .eq(
+        "id",
+        id
+      )
+      .eq(
+        "vendor_id",
+        vendor.id
+      );
+
+
+  if(result.error){
+
+    alert(
+      result.error.message
+    );
 
     return;
+
   }
 
+
   await loadOrders();
+
 }
 
 
@@ -2483,61 +3293,67 @@ async function updateOrder(id,status){
 
 function updateStats(){
 
-  const today =
-    new Date();
-
-  const day =
-    today.toISOString()
+  const today=
+    new Date()
+      .toISOString()
       .slice(0,10);
 
-  const todaysOrders =
-    orders.filter(order=>
-      order.created_at &&
-      order.created_at.slice(0,10)===day
+
+  const todaysOrders=
+    orders.filter(
+      order=>
+        order.created_at &&
+        order.created_at
+          .slice(0,10)===today
     );
 
-  const sales =
+
+  const sales=
     todaysOrders.reduce(
-      (sum,order)=>
-        sum + Number(order.total_amount || 0),
+      (
+        total,
+        order
+      )=>
+        total +
+        Number(
+          order.total_amount ||
+          0
+        ),
       0
     );
 
-  const pending =
-    orders.filter(order=>
-      ![
-        "delivered",
-        "cancelled"
-      ].includes(order.status)
+
+  const pending=
+    orders.filter(
+      order=>
+        ![
+          "delivered",
+          "cancelled"
+        ].includes(
+          order.status
+        )
     ).length;
 
-  document
-    .getElementById("statOrders")
+
+  $("statOrders")
     .textContent=
       todaysOrders.length;
 
-  document
-    .getElementById("statSales")
+
+  $("statSales")
     .textContent=
       money(sales);
 
-  document
-    .getElementById("statPending")
+
+  $("statPending")
     .textContent=
       pending;
 
-  document
-    .getElementById("statMenu")
+
+  $("statMenu")
     .textContent=
       menuItems.length;
-}
 
-
-async function loadDashboard(){
-
-  await loadOrders();
-
-  updateRestaurantStatus();
 }
 
 
@@ -2547,235 +3363,597 @@ async function loadDashboard(){
 
 async function loadEarnings(){
 
-  if(!vendor) return;
+  if(!vendor){
 
-  const completed =
-    orders.filter(order=>
-      order.status==="delivered"
+    return;
+
+  }
+
+
+  const completed=
+    orders.filter(
+      order=>
+        order.status==="delivered"
     );
 
-  const today =
-    new Date()
-      .toISOString()
+
+  const now=
+    new Date();
+
+
+  const today=
+    now.toISOString()
       .slice(0,10);
 
-  const month =
-    new Date()
-      .toISOString()
+
+  const month=
+    now.toISOString()
       .slice(0,7);
 
-  const todaySales =
+
+  const todaySales=
     completed
-      .filter(order=>
-        order.created_at &&
-        order.created_at.slice(0,10)===today
+      .filter(
+        order=>
+          order.created_at &&
+          order.created_at
+            .slice(0,10)===today
       )
       .reduce(
-        (sum,o)=>
-          sum + Number(o.total_amount || 0),
+        (
+          total,
+          order
+        )=>
+          total+
+          Number(
+            order.total_amount ||
+            0
+          ),
         0
       );
 
-  const monthSales =
+
+  const monthSales=
     completed
-      .filter(order=>
-        order.created_at &&
-        order.created_at.slice(0,7)===month
+      .filter(
+        order=>
+          order.created_at &&
+          order.created_at
+            .slice(0,7)===month
       )
       .reduce(
-        (sum,o)=>
-          sum + Number(o.total_amount || 0),
+        (
+          total,
+          order
+        )=>
+          total+
+          Number(
+            order.total_amount ||
+            0
+          ),
         0
       );
 
-  document
-    .getElementById("earnToday")
+
+  $("earnToday")
     .textContent=
       money(todaySales);
 
-  document
-    .getElementById("earnMonth")
+
+  $("earnMonth")
     .textContent=
       money(monthSales);
 
-  document
-    .getElementById("earnOrders")
+
+  $("earnOrders")
     .textContent=
       completed.length;
 
-  document
-    .getElementById("earnCommission")
-    .textContent=
-      Number(vendor.commission_rate || 0) + "%";
 
-  const salesList =
-    document.getElementById("salesList");
+  $("earnCommission")
+    .textContent=
+      Number(
+        vendor.commission_rate ||
+        0
+      )+"%";
+
+
+  const salesList=
+    $("salesList");
+
 
   if(!completed.length){
 
     salesList.innerHTML=
-      `<div class="empty">
+      `
+      <div class="empty">
         No completed sales yet.
-      </div>`;
+      </div>
+      `;
 
     return;
+
   }
 
-  salesList.innerHTML =
+
+  salesList.innerHTML=
     completed
       .slice(0,20)
-      .map(order=>`
+      .map(
+        order=>`
 
-        <div style="
-          display:flex;
-          justify-content:space-between;
-          padding:13px 0;
-          border-bottom:1px solid #edf0ee;
-        ">
-
-          <div>
-            <b>
-              ${escapeHtml(
-                order.order_number || "Order"
-              )}
-            </b>
-
-            <div style="
-              color:#7c8581;
-              font-size:12px;
-              margin-top:4px;
+          <div
+            style="
+              display:flex;
+              justify-content:space-between;
+              padding:13px 0;
+              border-bottom:1px solid #edf0ee;
             ">
-              ${order.created_at
-                ? new Date(order.created_at)
-                    .toLocaleString("en-NG")
-                : ""}
+
+            <div>
+
+              <b>
+                ${escapeHtml(
+                  order.order_number ||
+                  "Order"
+                )}
+              </b>
+
+
+              <div
+                style="
+                  color:#7c8581;
+                  font-size:12px;
+                  margin-top:4px;
+                ">
+
+                ${
+                  order.created_at
+                    ? new Date(
+                        order.created_at
+                      ).toLocaleString(
+                        "en-NG"
+                      )
+                    : ""
+                }
+
+              </div>
+
             </div>
+
+
+            <b
+              style="color:#12a05a">
+
+              ${money(
+                order.total_amount
+              )}
+
+            </b>
 
           </div>
 
-          <b style="color:#12a05a;">
-            ${money(order.total_amount)}
-          </b>
-
-        </div>
-
-      `)
+        `
+      )
       .join("");
+
 }
 
 
 /* =====================================================
-   REALTIME
+   REALTIME ORDERS
 ===================================================== */
 
 function subscribeRealtime(){
 
-  if(realtimeChannel){
+  if(!vendor){
 
-    supabase
-      .removeChannel(realtimeChannel);
+    return;
+
   }
 
-  realtimeChannel =
-    supabase
-      .channel("vendor-orders-"+vendor.id)
 
+  if(realtimeChannel){
+
+    supabaseClient
+      .removeChannel(
+        realtimeChannel
+      );
+
+  }
+
+
+  realtimeChannel=
+    supabaseClient
+      .channel(
+        "vendor-orders-"+vendor.id
+      )
       .on(
-        "postgres_changes",
-        {
-          event:"*",
-          schema:"public",
-          table:"orders",
-          filter:"vendor_id=eq."+vendor.id
-        },
-        async(payload)=>{
 
-          console.log(
-            "Order update:",
-            payload
-          );
+        "postgres_changes",
+
+        {
+
+          event:"*",
+
+          schema:"public",
+
+          table:"orders",
+
+          filter:
+            "vendor_id=eq."+
+            vendor.id
+
+        },
+
+        async()=>{
 
           await loadOrders();
-
-          /*
-            Refresh earnings as well.
-          */
 
           await loadEarnings();
 
         }
-      )
 
+      )
       .subscribe();
+
 }
 
 
 /* =====================================================
-   AUTH STATE
+   EVENT LISTENERS
 ===================================================== */
 
-supabase.auth.onAuthStateChange(
-  async(event,session)=>{
+function setupEvents(){
 
-    if(session){
+  /*
+    Authentication
+  */
 
-      currentUser=session.user;
+  $("loginTab")
+    .addEventListener(
+      "click",
+      showLogin
+    );
 
-      /*
-        Avoid running loadApp repeatedly
-        while the page is already open.
-      */
 
-      if(
-        document
-          .getElementById("app")
-          .classList
-          .contains("hidden")
-      ){
+  $("registerTab")
+    .addEventListener(
+      "click",
+      showRegister
+    );
 
-        await loadApp();
+
+  $("loginBtn")
+    .addEventListener(
+      "click",
+      loginVendor
+    );
+
+
+  $("registerBtn")
+    .addEventListener(
+      "click",
+      registerVendor
+    );
+
+
+  $("logoutBtn")
+    .addEventListener(
+      "click",
+      logoutVendor
+    );
+
+
+  /*
+    Navigation
+  */
+
+  document
+    .querySelectorAll(
+      ".navBtn,.mobileNav button"
+    )
+    .forEach(button=>{
+
+      button.addEventListener(
+        "click",
+        ()=>{
+
+          showPage(
+            button.dataset.page
+          );
+
+        }
+      );
+
+    });
+
+
+  /*
+    Restaurant
+  */
+
+  $("restaurantToggleBtn")
+    .addEventListener(
+      "click",
+      toggleRestaurant
+    );
+
+
+  $("saveRestaurantBtn")
+    .addEventListener(
+      "click",
+      saveRestaurant
+    );
+
+
+  $("saveBankBtn")
+    .addEventListener(
+      "click",
+      saveBank
+    );
+
+
+  /*
+    Quick actions
+  */
+
+  $("quickMenuBtn")
+    .addEventListener(
+      "click",
+      ()=>showPage("menu")
+    );
+
+
+  $("quickOrdersBtn")
+    .addEventListener(
+      "click",
+      ()=>showPage("orders")
+    );
+
+
+  /*
+    Menu
+  */
+
+  $("addFoodBtn")
+    .addEventListener(
+      "click",
+      ()=>openMenuForm()
+    );
+
+
+  $("cancelMenuBtn")
+    .addEventListener(
+      "click",
+      closeMenuForm
+    );
+
+
+  $("saveMenuBtn")
+    .addEventListener(
+      "click",
+      saveMenuItem
+    );
+
+
+  /*
+    Dynamic menu/order buttons
+  */
+
+  document.addEventListener(
+    "click",
+    event=>{
+
+      const editButton=
+        event.target.closest(
+          ".editMenuBtn"
+        );
+
+
+      if(editButton){
+
+        const item=
+          menuItems.find(
+            x=>
+              x.id===
+              editButton.dataset.id
+          );
+
+
+        if(item){
+
+          openMenuForm(item);
+
+        }
+
+        return;
+
+      }
+
+
+      const deleteButton=
+        event.target.closest(
+          ".deleteMenuBtn"
+        );
+
+
+      if(deleteButton){
+
+        deleteMenuItem(
+          deleteButton.dataset.id
+        );
+
+        return;
+
+      }
+
+
+      const stockButton=
+        event.target.closest(
+          ".stockMenuBtn"
+        );
+
+
+      if(stockButton){
+
+        toggleStock(
+
+          stockButton.dataset.id,
+
+          stockButton.dataset.stock===
+            "true"
+
+        );
+
+        return;
+
+      }
+
+
+      const orderButton=
+        event.target.closest(
+          ".orderActionBtn"
+        );
+
+
+      if(orderButton){
+
+        updateOrder(
+
+          orderButton.dataset.id,
+
+          orderButton.dataset.status
+
+        );
+
       }
 
     }
 
-  }
-);
-
-
-/* =====================================================
-   INITIAL STARTUP
-===================================================== */
-
-async function start(){
-
-  const {
-    data
-  } =
-  await supabase.auth.getSession();
-
-  if(data.session){
-
-    currentUser=data.session.user;
-
-    await loadApp();
-
-  }else{
-
-    document
-      .getElementById("authPage")
-      .classList
-      .remove("hidden");
-
-    document
-      .getElementById("app")
-      .classList
-      .add("hidden");
-
-  }
+  );
 
 }
 
-start();
+
+/* =====================================================
+   START APP
+===================================================== */
+
+async function startApp(){
+
+  /*
+    Make sure Supabase library loaded.
+  */
+
+  if(
+    !window.supabase ||
+    !window.supabase.createClient
+  ){
+
+    showAuthMessage(
+      "QuickEats could not load the Supabase connection. Please refresh the page."
+    );
+
+    return;
+
+  }
+
+
+  supabaseClient=
+    window.supabase.createClient(
+
+      SUPABASE_URL,
+
+      SUPABASE_KEY
+
+    );
+
+
+  setupEvents();
+
+
+  try{
+
+    const result=
+      await supabaseClient
+        .auth
+        .getSession();
+
+
+    if(result.data.session){
+
+      currentUser=
+        result.data.session.user;
+
+
+      await loadApp();
+
+    }else{
+
+      $("authPage")
+        .classList
+        .remove("hidden");
+
+
+      $("app")
+        .classList
+        .add("hidden");
+
+    }
+
+
+  }catch(error){
+
+    console.error(
+      "Startup error:",
+      error
+    );
+
+
+    showAuthMessage(
+      error.message ||
+      "QuickEats could not start."
+    );
+
+  }
+
+
+  /*
+    Watch authentication changes.
+  */
+
+  supabaseClient
+    .auth
+    .onAuthStateChange(
+      async(
+        event,
+        session
+      )=>{
+
+        if(
+          session &&
+          !currentUser
+        ){
+
+          currentUser=
+            session.user;
+
+          await loadApp();
+
+        }
+
+      }
+    );
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+startApp();
 
 </script>
 
