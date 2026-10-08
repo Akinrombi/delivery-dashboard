@@ -19,70 +19,64 @@
     body {
       font-family: Arial, Helvetica, sans-serif;
       background: #0b0f14;
-      color: #ffffff;
+      color: white;
       min-height: 100vh;
     }
 
-    /* HEADER */
     .header {
       background: #111820;
       border-bottom: 1px solid #26313d;
       padding: 20px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      align-items: center;
     }
 
     .logo {
       color: #00e676;
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 800;
     }
 
     .vendor-name {
       color: #aeb8c2;
-      font-size: 16px;
+      font-size: 17px;
     }
 
-    /* MAIN */
     .container {
       width: 100%;
       max-width: 900px;
       margin: auto;
-      padding: 20px;
+      padding: 35px 20px;
     }
 
-    /* CONNECTION CARD */
     .connection-card {
       background: #111820;
       border: 1px solid #26313d;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 30px;
+      border-radius: 18px;
+      padding: 25px;
+      margin-bottom: 35px;
     }
 
     .connection-title {
-      font-size: 22px;
+      font-size: 25px;
       font-weight: 800;
-      margin-bottom: 12px;
+      margin-bottom: 15px;
     }
 
     .connection-status {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       color: #aeb8c2;
-      font-size: 16px;
+      font-size: 18px;
     }
 
     .status-dot {
       width: 18px;
       height: 18px;
       border-radius: 50%;
-      background: #777;
+      background: #888;
       flex-shrink: 0;
     }
 
@@ -96,32 +90,29 @@
       box-shadow: 0 0 12px #ff5252;
     }
 
-    /* TEST BUTTON */
     .test-button {
       width: 100%;
-      margin-top: 18px;
-      padding: 16px;
-      border: none;
+      margin-top: 20px;
+      padding: 17px;
+      border: 0;
       border-radius: 12px;
       background: #26313d;
       color: white;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 800;
       cursor: pointer;
     }
 
     .test-button:active {
-      transform: scale(0.98);
+      transform: scale(.98);
     }
 
-    /* SECTION TITLE */
     .section-title {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 800;
-      margin-bottom: 15px;
+      margin-bottom: 18px;
     }
 
-    /* ORDER CARD */
     .order-card {
       background: #111820;
       border: 1px solid #26313d;
@@ -130,7 +121,7 @@
     }
 
     .order-header {
-      padding: 20px;
+      padding: 22px;
       border-bottom: 1px solid #26313d;
       display: flex;
       justify-content: space-between;
@@ -139,12 +130,12 @@
     }
 
     .order-number {
-      font-size: 22px;
+      font-size: 23px;
       font-weight: 800;
     }
 
     .status {
-      padding: 9px 14px;
+      padding: 10px 15px;
       border-radius: 30px;
       font-size: 12px;
       font-weight: 800;
@@ -166,62 +157,57 @@
       color: #4dd0e1;
     }
 
-    /* ORDER BODY */
     .order-body {
-      padding: 20px;
+      padding: 25px;
     }
 
     .customer-box {
-      margin-bottom: 20px;
+      margin-bottom: 23px;
     }
 
     .label {
       color: #7f8b97;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
       text-transform: uppercase;
-      margin-bottom: 6px;
+      margin-bottom: 7px;
     }
 
     .value {
-      color: #ffffff;
-      font-size: 17px;
+      color: white;
+      font-size: 18px;
       line-height: 1.4;
     }
 
-    /* ITEMS */
     .items {
       border-top: 1px solid #26313d;
       border-bottom: 1px solid #26313d;
-      padding: 15px 0;
+      padding: 17px 0;
       margin: 20px 0;
     }
 
     .item {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      padding: 9px 0;
-      gap: 10px;
+      padding: 10px 0;
+      gap: 15px;
     }
 
     .item-name {
-      color: #dce3e9;
       font-size: 17px;
+      color: #dce3e9;
     }
 
     .item-price {
-      color: #dce3e9;
       font-size: 17px;
+      color: #dce3e9;
       font-weight: 700;
     }
 
-    /* TOTAL */
     .total {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      font-size: 24px;
+      font-size: 25px;
       font-weight: 800;
     }
 
@@ -229,7 +215,6 @@
       color: #00e676;
     }
 
-    /* BUTTON AREA */
     .buttons {
       padding: 20px;
       border-top: 1px solid #26313d;
@@ -237,82 +222,65 @@
       gap: 12px;
     }
 
-    button {
-      font-family: Arial, Helvetica, sans-serif;
+    .accept-button,
+    .ready-button {
+      width: 100%;
+      padding: 18px;
+      border: 0;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
     }
 
     .accept-button {
-      width: 100%;
-      padding: 17px;
-      border: none;
-      border-radius: 12px;
       background: #00e676;
       color: #001b0d;
-      font-size: 16px;
-      font-weight: 800;
-      cursor: pointer;
     }
 
     .ready-button {
-      width: 100%;
-      padding: 17px;
-      border: none;
-      border-radius: 12px;
       background: #2196f3;
-      color: #ffffff;
-      font-size: 16px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    button:active {
-      transform: scale(0.98);
+      color: white;
     }
 
     button:disabled {
-      opacity: 0.45;
+      opacity: .45;
       cursor: not-allowed;
-      transform: none;
     }
 
-    /* INFORMATION */
     .info {
       background: #111820;
       border: 1px solid #26313d;
-      border-radius: 16px;
-      padding: 20px;
+      border-radius: 18px;
+      padding: 22px;
       margin-top: 25px;
     }
 
     .info h3 {
-      font-size: 18px;
       margin-bottom: 10px;
     }
 
     .info p {
       color: #aeb8c2;
-      font-size: 14px;
       line-height: 1.7;
+      font-size: 14px;
     }
 
-    /* TOAST */
     .toast {
       position: fixed;
       left: 50%;
-      bottom: 25px;
+      bottom: 30px;
       transform: translate(-50%, 100px);
-      background: #ffffff;
+      background: white;
       color: #111820;
-      padding: 14px 20px;
+      padding: 15px 20px;
       border-radius: 12px;
-      font-size: 14px;
       font-weight: 700;
       opacity: 0;
-      transition: 0.3s ease;
-      z-index: 1000;
+      transition: .3s;
+      z-index: 9999;
       max-width: 90%;
       text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     }
 
     .toast.show {
@@ -335,10 +303,7 @@
 
 <body>
 
-  <!-- ==========================================
-       HEADER
-  =========================================== -->
-
+  <!-- HEADER -->
   <header class="header">
 
     <div class="logo">
@@ -352,17 +317,9 @@
   </header>
 
 
-  <!-- ==========================================
-       MAIN
-  =========================================== -->
-
   <main class="container">
 
-
-    <!-- ========================================
-         SUPABASE CONNECTION
-    ========================================= -->
-
+    <!-- CONNECTION -->
     <section class="connection-card">
 
       <div class="connection-title">
@@ -377,11 +334,10 @@
         ></span>
 
         <span id="connectionText">
-          Checking connection...
+          Starting...
         </span>
 
       </div>
-
 
       <button
         class="test-button"
@@ -393,19 +349,13 @@
     </section>
 
 
-    <!-- ========================================
-         INCOMING ORDER
-    ========================================= -->
-
+    <!-- ORDERS -->
     <div class="section-title">
       Incoming Order
     </div>
 
 
     <section class="order-card">
-
-
-      <!-- ORDER HEADER -->
 
       <div class="order-header">
 
@@ -423,12 +373,7 @@
       </div>
 
 
-      <!-- ORDER INFORMATION -->
-
       <div class="order-body">
-
-
-        <!-- CUSTOMER -->
 
         <div class="customer-box">
 
@@ -443,8 +388,6 @@
         </div>
 
 
-        <!-- PHONE -->
-
         <div class="customer-box">
 
           <div class="label">
@@ -457,8 +400,6 @@
 
         </div>
 
-
-        <!-- DELIVERY ADDRESS -->
 
         <div class="customer-box">
 
@@ -473,10 +414,7 @@
         </div>
 
 
-        <!-- ITEMS -->
-
         <div class="items">
-
 
           <div class="item">
 
@@ -516,11 +454,8 @@
 
           </div>
 
-
         </div>
 
-
-        <!-- TOTAL -->
 
         <div class="total">
 
@@ -534,16 +469,10 @@
 
         </div>
 
-
       </div>
 
 
-      <!-- ======================================
-           BUTTONS
-      ======================================= -->
-
       <div class="buttons">
-
 
         <button
           id="acceptButton"
@@ -563,16 +492,10 @@
           FOOD READY — REQUEST RIDER
         </button>
 
-
       </div>
-
 
     </section>
 
-
-    <!-- ========================================
-         INFORMATION
-    ========================================= -->
 
     <section class="info">
 
@@ -589,13 +512,8 @@
 
     </section>
 
-
   </main>
 
-
-  <!-- ==========================================
-       TOAST
-  =========================================== -->
 
   <div
     id="toast"
@@ -603,89 +521,180 @@
   ></div>
 
 
-  <!-- ==========================================
-       JAVASCRIPT
-  =========================================== -->
-
+  <!-- JAVASCRIPT -->
   <script>
 
-
-    /* ==========================================
-       SUPABASE SETTINGS
-    =========================================== */
+    /*
+    =====================================================
+    QUICK EATS SUPABASE SETTINGS
+    =====================================================
+    */
 
     const SUPABASE_URL =
       "https://glkutdkwbrjpiuqcmgwe.supabase.co";
-
 
     const SUPABASE_PUBLISHABLE_KEY =
       "sb_publishable_lQkN8HQP2Tm3tPiDYJbrNw_ydO7bqXU";
 
 
-    /* ==========================================
-       CREATE SUPABASE CLIENT
-    =========================================== */
-
-    const supabase =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-      );
+    let supabaseClient = null;
 
 
-    /* ==========================================
-       TEST SUPABASE CONNECTION
-    =========================================== */
+    /*
+    =====================================================
+    SHOW CONNECTION MESSAGE
+    =====================================================
+    */
+
+    function setConnection(
+      message,
+      type = ""
+    ) {
+
+      const dot =
+        document.getElementById("statusDot");
+
+      const text =
+        document.getElementById("connectionText");
+
+
+      dot.className =
+        "status-dot";
+
+
+      if (type === "connected") {
+        dot.classList.add("connected");
+      }
+
+      if (type === "error") {
+        dot.classList.add("error");
+      }
+
+
+      text.textContent =
+        message;
+
+    }
+
+
+    /*
+    =====================================================
+    CREATE SUPABASE CLIENT
+    =====================================================
+    */
+
+    function createSupabaseClient() {
+
+      try {
+
+        /*
+        Check if Supabase library loaded.
+        */
+
+        if (
+          typeof window.supabase === "undefined"
+        ) {
+
+          setConnection(
+            "Supabase library did not load.",
+            "error"
+          );
+
+          showToast(
+            "Supabase library did not load.",
+            true
+          );
+
+          return false;
+        }
+
+
+        /*
+        Create client.
+        */
+
+        supabaseClient =
+          window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY
+          );
+
+
+        return true;
+
+      } catch (error) {
+
+        console.error(error);
+
+        setConnection(
+          "Could not start Supabase.",
+          "error"
+        );
+
+        showToast(
+          "Could not start Supabase.",
+          true
+        );
+
+        return false;
+      }
+
+    }
+
+
+    /*
+    =====================================================
+    TEST SUPABASE
+    =====================================================
+    */
 
     async function testConnection() {
 
-      const statusDot =
-        document.getElementById(
-          "statusDot"
-        );
-
-      const connectionText =
-        document.getElementById(
-          "connectionText"
-        );
+      setConnection(
+        "Connecting to Supabase..."
+      );
 
 
-      connectionText.textContent =
-        "Connecting to Supabase...";
+      /*
+      Make sure the client exists.
+      */
+
+      if (!supabaseClient) {
+
+        const started =
+          createSupabaseClient();
 
 
-      statusDot.className =
-        "status-dot";
+        if (!started) {
+          return;
+        }
+
+      }
 
 
       try {
 
-
         /*
-         * Ask Supabase for the current
-         * login session.
-         *
-         * This confirms that the
-         * Supabase service is reachable.
-         */
+        Ask Supabase for the current
+        login session.
+        */
 
-        const result =
-          await supabase.auth.getSession();
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth.getSession();
 
 
-        if (result.error) {
-
-          throw result.error;
-
+        if (error) {
+          throw error;
         }
 
 
-        statusDot.className =
-          "status-dot connected";
-
-
-        connectionText.textContent =
-          "Supabase connected successfully.";
+        setConnection(
+          "Supabase connected successfully.",
+          "connected"
+        );
 
 
         showToast(
@@ -695,19 +704,16 @@
 
       } catch (error) {
 
-
         console.error(
-          "Supabase connection error:",
+          "Supabase error:",
           error
         );
 
 
-        statusDot.className =
-          "status-dot error";
-
-
-        connectionText.textContent =
-          "Supabase connection failed.";
+        setConnection(
+          "Supabase connection failed.",
+          "error"
+        );
 
 
         showToast(
@@ -720,24 +726,23 @@
     }
 
 
-    /* ==========================================
-       ACCEPT ORDER
-    =========================================== */
+    /*
+    =====================================================
+    ACCEPT ORDER
+    =====================================================
+    */
 
     function acceptOrder() {
 
-
-      const orderStatus =
+      const status =
         document.getElementById(
           "orderStatus"
         );
-
 
       const acceptButton =
         document.getElementById(
           "acceptButton"
         );
-
 
       const readyButton =
         document.getElementById(
@@ -745,11 +750,11 @@
         );
 
 
-      orderStatus.textContent =
+      status.textContent =
         "ACCEPTED";
 
 
-      orderStatus.className =
+      status.className =
         "status accepted";
 
 
@@ -768,18 +773,18 @@
     }
 
 
-    /* ==========================================
-       FOOD READY
-    =========================================== */
+    /*
+    =====================================================
+    FOOD READY
+    =====================================================
+    */
 
     function foodReady() {
 
-
-      const orderStatus =
+      const status =
         document.getElementById(
           "orderStatus"
         );
-
 
       const readyButton =
         document.getElementById(
@@ -787,11 +792,11 @@
         );
 
 
-      orderStatus.textContent =
+      status.textContent =
         "READY FOR RIDER";
 
 
-      orderStatus.className =
+      status.className =
         "status ready";
 
 
@@ -806,15 +811,16 @@
     }
 
 
-    /* ==========================================
-       TOAST MESSAGE
-    =========================================== */
+    /*
+    =====================================================
+    TOAST
+    =====================================================
+    */
 
     function showToast(
       message,
       isError = false
     ) {
-
 
       const toast =
         document.getElementById(
@@ -865,19 +871,32 @@
     }
 
 
-    /* ==========================================
-       START
-    =========================================== */
+    /*
+    =====================================================
+    START AFTER PAGE LOAD
+    =====================================================
+    */
 
     window.addEventListener(
       "load",
       function () {
 
-        testConnection();
+        /*
+        Give the Supabase script a moment
+        to finish loading.
+        */
+
+        setTimeout(
+          function () {
+
+            testConnection();
+
+          },
+          500
+        );
 
       }
     );
-
 
   </script>
 
