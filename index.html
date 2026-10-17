@@ -2950,6 +2950,18 @@ function orderActionHtml(order){
 }
 
 
+function autoReadyHint(order){
+  if(!order || !["new","vendor_accepted"].includes(order.status) || order.rider_id) return "";
+  const createdAt = new Date(order.created_at || 0).getTime();
+  if(!Number.isFinite(createdAt) || createdAt <= 0) return "";
+  const remaining = 30 * 60 * 1000 - (Date.now() - createdAt);
+  const message = remaining > 0
+    ? "If you do not mark this order ready, it will be marked ready automatically in about " + Math.ceil(remaining / 60000) + " minute(s)."
+    : "This order has passed 30 minutes and is being marked ready automatically.";
+  return '<div style="margin-top:12px;padding:11px 12px;border-radius:11px;background:#fff7ed;color:#9a3412;font-size:11px;line-height:1.5;font-weight:700">⏱️ ' + escapeHtml(message) + '</div>';
+}
+
+
 function orderCard(order){
 
   const status =
@@ -3008,6 +3020,8 @@ function orderCard(order){
 
       </div>
 
+
+      ${autoReadyHint(order)}
 
       <div class="order-details">
 
@@ -4811,6 +4825,16 @@ supabaseClient.auth.onAuthStateChange(
 /* =========================================================
    START
 ========================================================= */
+
+/* Refresh vendor orders every minute; the database independently enforces the 30-minute auto-ready rule. */
+setInterval(async () => {
+  if (!vendor || document.hidden) return;
+  await loadOrders();
+  renderOrders();
+  updateDashboard();
+  renderEarnings();
+}, 60000);
+
 
 checkSession();
 
