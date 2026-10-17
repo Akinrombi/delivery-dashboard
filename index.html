@@ -3126,7 +3126,7 @@ function renderOrders(){
 async function verifyRiderPickupCode(orderId){
   const input = document.getElementById("pickup-code-" + orderId);
   const code = String(input?.value || "").trim();
-  if(!/^\\d{6}$/.test(code)){
+  if(!/^[0-9]{6}$/.test(code)){
     toast("Enter the 6-digit code shown in the rider's app.", "error");
     input?.focus();
     return;
