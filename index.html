@@ -2927,13 +2927,25 @@ function orderActionHtml(order){
   else if(status === "ready_for_pickup"){
 
     actions += `
-      <span
-        class="status-pill status-ready"
-      >
-        Waiting for rider
-      </span>
+      <span class="status-pill status-ready">Waiting for rider</span>
     `;
 
+  }
+  else if(["rider_accepted","arrived_pickup","accepted","arrived_at_vendor"].includes(status) && order.rider_id){
+
+    actions += `
+      <div style="flex-basis:100%;margin-top:10px;padding:14px;border:2px solid #b7e6c8;background:#f0fbf4;border-radius:14px;">
+        <div style="font-size:13px;font-weight:900;color:#08783e;margin-bottom:5px;">🔐 VERIFY RIDER PICKUP CODE</div>
+        <div style="font-size:12px;line-height:1.5;color:#40564a;margin-bottom:10px;">Ask the rider to show the 6-digit vendor code from their Rider App, then enter it here before handing over the food.</div>
+        <input id="pickup-code-${order.id}" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="Enter 6-digit code" style="width:100%;height:46px;border:1px solid #b6d8c2;border-radius:10px;padding:0 12px;font-size:20px;font-weight:900;letter-spacing:5px;margin-bottom:9px;">
+        <button class="btn btn-primary" style="width:100%;min-height:44px;" onclick="verifyRiderPickupCode('${order.id}')">Verify Code & Confirm Pickup</button>
+        <div style="font-size:10px;color:#64756b;margin-top:8px;">Do not hand over the order until the code is accepted.</div>
+      </div>
+    `;
+
+  }
+  else if(status === "picked_up"){
+    actions += `<span class="status-pill status-ready">Pickup verified ✓</span>`;
   }
 
   return `
@@ -3108,6 +3120,40 @@ function renderOrders(){
   container.innerHTML =
     orders.map(orderCard).join("");
 
+}
+
+
+async function verifyRiderPickupCode(orderId){
+  const input = document.getElementById("pickup-code-" + orderId);
+  const code = String(input?.value || "").trim();
+  if(!/^\\d{6}$/.test(code)){
+    toast("Enter the 6-digit code shown in the rider's app.", "error");
+    input?.focus();
+    return;
+  }
+
+  const button = input?.parentElement?.querySelector("button");
+  if(button){ button.disabled = true; button.textContent = "Verifying…"; }
+
+  try{
+    const { data, error } = await supabaseClient.rpc("vendor_verify_rider_pickup_code", {
+      p_order_id: orderId,
+      p_code: code
+    });
+    if(error) throw error;
+    if(!data?.success) throw new Error(data?.message || "Code verification failed.");
+
+    toast("Pickup code verified. Rider may deliver the order.", "success");
+    await loadOrders();
+    renderOrders();
+    updateDashboard();
+    renderEarnings();
+  }catch(error){
+    console.error(error);
+    toast(error.message || "Could not verify pickup code.", "error");
+  }finally{
+    if(button){ button.disabled = false; button.textContent = "Verify Code & Confirm Pickup"; }
+  }
 }
 
 
