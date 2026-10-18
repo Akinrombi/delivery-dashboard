@@ -3891,31 +3891,29 @@ function renderOrderDetails(order){
             const qty =
               itemQty(item);
 
+            const unitPrice =
+              itemPrice(item);
+
             const total =
               itemLineTotal(item);
 
             return `
 
-              <div class="order-item-row">
+              <div class="order-item-row" style="align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #edf1ee">
 
-                <div>
-                  <strong>
-                    ${escapeHtml(name)}
+                <div style="min-width:0;flex:1">
+                  <strong style="display:block">
+                    ${qty} × ${escapeHtml(name)}
                   </strong>
 
-                  <span style="
-                    color:#64748b;
-                    margin-left:5px;
-                  ">
-                    × ${qty}
+                  <span style="display:block;color:#64748b;font-size:12px;margin-top:5px;line-height:1.5">
+                    ${unitPrice > 0
+                      ? `${money(unitPrice)} each × ${qty} = ${money(total)}`
+                      : `Unit price not listed yet · line total ${money(total)}`}
                   </span>
                 </div>
 
-                ${
-                  total > 0
-                    ? `<strong>${money(total)}</strong>`
-                    : ""
-                }
+                <strong style="white-space:nowrap">${money(total)}</strong>
 
               </div>
 
