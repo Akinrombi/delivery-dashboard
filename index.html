@@ -1511,12 +1511,31 @@ textarea.form-control{
             </div>
 
             <div class="form-group">
+              <label class="form-label">Nearby Landmark</label>
+              <input id="restaurantLandmark" class="form-control" type="text" placeholder="e.g. opposite the filling station">
+            </div>
+
+            <div class="form-group">
               <label class="form-label">Phone</label>
-              <input
-                id="restaurantPhone"
-                class="form-control"
-                type="tel"
-              >
+              <input id="restaurantPhone" class="form-control" type="tel">
+            </div>
+
+            <div class="form-group" style="margin-top:16px;padding:14px;background:var(--surface,#f8faf9);border:1px solid var(--border,#e5e7eb);border-radius:12px;">
+              <div style="font-weight:800;margin-bottom:5px;">Exact map location</div>
+              <div style="font-size:12px;color:var(--muted,#667085);margin-bottom:12px;">Stand at your restaurant entrance and tap the button to save its GPS coordinates. Check that the pin is correct before saving.</div>
+              <div class="field-row">
+                <div class="form-group">
+                  <label class="form-label">Latitude</label>
+                  <input id="restaurantLat" class="form-control" type="number" step="any" placeholder="Not set">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Longitude</label>
+                  <input id="restaurantLng" class="form-control" type="number" step="any" placeholder="Not set">
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary" style="width:100%;margin-top:8px;" onclick="captureRestaurantLocation()">📍 Use my current location</button>
+              <button type="button" class="btn" style="width:100%;margin-top:8px;" onclick="previewRestaurantLocation()">Open location in Maps</button>
+              <div id="restaurantLocationFeedback" style="font-size:12px;margin-top:8px;color:var(--muted,#667085);" aria-live="polite">Location has not been captured yet.</div>
             </div>
 
             <div class="field-row">
@@ -4215,6 +4234,26 @@ function renderRestaurant(){
     .value =
       vendor.phone || "";
 
+  document
+    .getElementById("restaurantLandmark")
+    .value = vendor.landmark || "";
+
+  document
+    .getElementById("restaurantLat")
+    .value = vendor.lat ?? vendor.latitude ?? "";
+
+  document
+    .getElementById("restaurantLng")
+    .value = vendor.lng ?? vendor.longitude ?? "";
+
+  const locationFeedback = document.getElementById("restaurantLocationFeedback");
+  if (locationFeedback) {
+    const lat = vendor.lat ?? vendor.latitude;
+    const lng = vendor.lng ?? vendor.longitude;
+    locationFeedback.textContent = lat != null && lng != null
+      ? "Saved coordinates are available. Open Maps to verify the pin."
+      : "Location has not been captured yet.";
+  }
 
   document
     .getElementById("openTime")
@@ -4282,6 +4321,49 @@ function updateRestaurantSwitch(){
 }
 
 
+async function captureRestaurantLocation() {
+  const feedback = document.getElementById("restaurantLocationFeedback");
+  if (!navigator.geolocation) {
+    if (feedback) feedback.textContent = "This browser does not support GPS location.";
+    toast("GPS location is not supported on this device.", "error");
+    return;
+  }
+  if (feedback) feedback.textContent = "Finding the restaurant's GPS location…";
+  navigator.geolocation.getCurrentPosition(
+    position => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      document.getElementById("restaurantLat").value = lat.toFixed(7);
+      document.getElementById("restaurantLng").value = lng.toFixed(7);
+      if (feedback) feedback.textContent = "Location captured (accuracy about " + Math.round(position.coords.accuracy) + " metres). Tap Save Restaurant to store it.";
+      toast("Location captured. Tap Save Restaurant to save it.", "success");
+    },
+    error => {
+      const message = error.code === 1
+        ? "Location permission denied. Allow location access in browser settings."
+        : error.code === 2
+          ? "GPS location is unavailable. Turn on Location and try again."
+          : "Could not get GPS location. Try again outside with a clear view of the sky.";
+      if (feedback) feedback.textContent = message;
+      toast(message, "error");
+    },
+    { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+  );
+}
+
+function previewRestaurantLocation() {
+  const latInput = document.getElementById("restaurantLat").value.trim();
+  const lngInput = document.getElementById("restaurantLng").value.trim();
+  const lat = Number(latInput), lng = Number(lngInput);
+  if (!latInput || !lngInput || !Number.isFinite(lat) || !Number.isFinite(lng) ||
+      Math.abs(lat) > 90 || Math.abs(lng) > 180 || (lat === 0 && lng === 0)) {
+    toast("Capture the restaurant location first.", "error");
+    return;
+  }
+  window.open("https://www.google.com/maps/search/?api=1&query=" +
+    encodeURIComponent(lat + "," + lng), "_blank", "noopener,noreferrer");
+}
+
 async function saveRestaurant(){
 
   if(!vendor){
@@ -4300,6 +4382,15 @@ async function saveRestaurant(){
       document
         .getElementById("restaurantAddress")
         .value.trim(),
+
+    landmark:
+      document.getElementById("restaurantLandmark").value.trim(),
+
+    lat: document.getElementById("restaurantLat").value.trim() === ""
+      ? null : Number(document.getElementById("restaurantLat").value),
+
+    lng: document.getElementById("restaurantLng").value.trim() === ""
+      ? null : Number(document.getElementById("restaurantLng").value),
 
     phone:
       document
@@ -4320,15 +4411,21 @@ async function saveRestaurant(){
 
 
   if(!updates.store_name || !updates.address){
-
-    toast(
-      "Restaurant name and address are required.",
-      "error"
-    );
-
+    toast("Restaurant name and address are required.", "error");
     return;
   }
 
+  if ((updates.lat === null) !== (updates.lng === null)) {
+    toast("Please capture or enter both latitude and longitude.", "error");
+    return;
+  }
+  if (updates.lat !== null &&
+      (!Number.isFinite(updates.lat) || !Number.isFinite(updates.lng) ||
+       Math.abs(updates.lat) > 90 || Math.abs(updates.lng) > 180 ||
+       (updates.lat === 0 && updates.lng === 0))) {
+    toast("The map coordinates are not valid. Capture your location again.", "error");
+    return;
+  }
 
   try{
 
