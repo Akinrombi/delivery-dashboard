@@ -2657,6 +2657,13 @@ function renderMenu(){
           </button>
 
           <button
+            class="btn btn-secondary btn-small"
+            onclick="editMenuPrice('${item.id}')"
+          >
+            Edit price
+          </button>
+
+          <button
             class="btn btn-danger btn-small"
             onclick="deleteMenuItem('${item.id}')"
           >
@@ -2765,6 +2772,42 @@ async function addMenuItem(){
 
   }
 
+}
+
+
+async function editMenuPrice(itemId){
+  if(!vendor || !itemId) return;
+  const item = menuItems.find(entry => String(entry.id) === String(itemId));
+  if(!item) {
+    toast("Menu item not found. Refresh the menu and try again.", "error");
+    return;
+  }
+  const entered = prompt("Enter the new price for " + item.name + " (₦):", String(item.price ?? ""));
+  if(entered === null) return;
+  const normalized = entered.trim().replace(/,/g, "");
+  const price = Number(normalized);
+  if(!normalized || !Number.isFinite(price) || price <= 0 || price > 100000000) {
+    toast("Enter a valid price greater than ₦0.", "error");
+    return;
+  }
+  try {
+    const { data, error } = await supabaseClient
+      .from("menu_items")
+      .update({ price })
+      .eq("id", itemId)
+      .eq("vendor_id", vendor.id)
+      .select("id, price")
+      .maybeSingle();
+    if(error) throw error;
+    if(!data) throw new Error("Price was not changed. Check that this item belongs to your vendor account.");
+    await loadMenu();
+    renderMenu();
+    updateDashboard();
+    toast("Menu price updated to " + money(data.price) + ".", "success");
+  } catch(error) {
+    console.error(error);
+    toast(error.message || "Could not update menu price.", "error");
+  }
 }
 
 
