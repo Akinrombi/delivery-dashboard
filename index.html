@@ -2812,46 +2812,43 @@ async function editMenuPrice(itemId){
 
 
 async function toggleStock(itemId,newValue){
+  const item = menuItems.find(entry => String(entry.id) === String(itemId));
+  if(!item || !vendor) return;
 
-  try{
-
-    const {
-      error
-    } =
-      await supabaseClient
-        .from("menu_items")
-        .update({
-          in_stock:newValue
-        })
-        .eq("id",itemId)
-        .eq("vendor_id",vendor.id);
-
-    if(error){
-      throw error;
+  let availableAgainAt = null;
+  if(!newValue){
+    const choice = prompt(
+      "Mark " + item.name + " out of stock for:\n\n1 = 15 minutes\n2 = 30 minutes\n3 = 1 hour\n4 = 2 hours\n5 = Rest of today\n6 = Until I turn it back on\n\nEnter 1–6:",
+      "3"
+    );
+    if(choice === null) return;
+    const options = {"1":15,"2":30,"3":60,"4":120};
+    if(options[choice]){
+      availableAgainAt = new Date(Date.now() + options[choice] * 60000).toISOString();
+    }else if(choice === "5"){
+      const endOfDay = new Date();
+      endOfDay.setHours(23,59,59,999);
+      availableAgainAt = endOfDay.toISOString();
+    }else if(choice !== "6"){
+      toast("Choose a number from 1 to 6.", "error");
+      return;
     }
-
-    await loadMenu();
-
-    renderMenu();
-
-    toast(
-      newValue
-        ? "Item marked in stock."
-        : "Item marked out of stock.",
-      "success"
-    );
-
-  }catch(error){
-
-    console.error(error);
-
-    toast(
-      error.message || "Could not update stock.",
-      "error"
-    );
-
   }
 
+  try{
+    const { error } = await supabaseClient
+      .from("menu_items")
+      .update({ in_stock:newValue, in_stock_until:newValue ? null : availableAgainAt })
+      .eq("id",itemId)
+      .eq("vendor_id",vendor.id);
+    if(error) throw error;
+    await loadMenu();
+    renderMenu();
+    toast(newValue ? "Item marked in stock." : (availableAgainAt ? "Item marked out of stock temporarily." : "Item marked out of stock until you turn it back on."), "success");
+  }catch(error){
+    console.error(error);
+    toast(error.message || "Could not update stock. The database needs the in_stock_until column first.", "error");
+  }
 }
 
 
