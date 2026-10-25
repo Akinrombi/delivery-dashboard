@@ -4834,6 +4834,70 @@ function navigate(page){
 
 
 /* =========================================================
+   NEW ORDER SOUND ALERT
+========================================================= */
+
+// Browsers require a user gesture before audio can play. Unlock audio after
+// the vendor taps/clicks the dashboard, then alert only for newly inserted orders.
+let vendorAlertAudio = null;
+let vendorAlertAudioUnlocked = false;
+
+function unlockVendorAlertAudio(){
+  try{
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if(!AudioContextClass) return;
+    if(!vendorAlertAudio) vendorAlertAudio = new AudioContextClass();
+    if(vendorAlertAudio.state === "suspended"){
+      vendorAlertAudio.resume().then(()=>{ vendorAlertAudioUnlocked = true; }).catch(()=>{});
+    }else{
+      vendorAlertAudioUnlocked = true;
+    }
+  }catch(error){
+    console.warn("Vendor alert audio unavailable:", error);
+  }
+}
+
+document.addEventListener("pointerdown", unlockVendorAlertAudio, {passive:true});
+document.addEventListener("keydown", unlockVendorAlertAudio);
+
+function playVendorAlertTone(frequency, startTime, duration, peak = 0.55){
+  if(!vendorAlertAudio || !vendorAlertAudioUnlocked) return;
+  try{
+    const oscillator = vendorAlertAudio.createOscillator();
+    const gain = vendorAlertAudio.createGain();
+    oscillator.type = "square";
+    oscillator.frequency.setValueAtTime(frequency, startTime);
+    gain.gain.setValueAtTime(0.0001, startTime);
+    gain.gain.exponentialRampToValueAtTime(peak, startTime + 0.02);
+    gain.gain.setValueAtTime(peak, Math.max(startTime + 0.025, startTime + duration - 0.05));
+    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+    oscillator.connect(gain);
+    gain.connect(vendorAlertAudio.destination);
+    oscillator.start(startTime);
+    oscillator.stop(startTime + duration + 0.03);
+  }catch(error){
+    console.warn("Vendor order alert tone failed:", error);
+  }
+}
+
+function playVendorNewOrderAlert(){
+  unlockVendorAlertAudio();
+  if(!vendorAlertAudio || !vendorAlertAudioUnlocked) return;
+  const now = vendorAlertAudio.currentTime + 0.04;
+  // Three urgent alert bursts; actual loudness is still limited by device volume.
+  for(let burst = 0; burst < 3; burst++){
+    const t = now + burst * 0.92;
+    playVendorAlertTone(880, t, 0.22, 0.48);
+    playVendorAlertTone(1175, t + 0.24, 0.22, 0.58);
+    playVendorAlertTone(880, t + 0.48, 0.22, 0.48);
+    playVendorAlertTone(1480, t + 0.72, 0.16, 0.58);
+  }
+  if("vibrate" in navigator){
+    try{ navigator.vibrate([180, 70, 180, 70, 300]); }catch(error){}
+  }
+}
+
+/* =========================================================
    REALTIME
 ========================================================= */
 
@@ -4876,6 +4940,12 @@ function subscribeRealtime(){
             payload
           );
 
+          // Only INSERT events represent a newly placed order; ordinary status
+          // updates must not repeatedly sound like new orders.
+          if(payload?.eventType === "INSERT" && payload?.new?.id){
+            playVendorNewOrderAlert();
+            toast("🔔 NEW ORDER RECEIVED! Check your orders now.", "success");
+          }
 
           await loadOrders();
 
