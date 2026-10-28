@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>QuickEats Vendor</title>
+<title>Quick Eats Vendor</title>
+<link rel="icon" type="image/svg+xml" href="./quick-eats-mark.svg">
+<link rel="apple-touch-icon" href="./quick-eats-mark.svg">
+<link rel="manifest" href="./manifest.webmanifest">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -86,16 +89,17 @@ button{
 }
 
 .logo-mark{
-  width:42px;
-  height:42px;
-  border-radius:13px;
-  background:var(--primary);
-  color:white;
+  width:48px;
+  height:48px;
+  border-radius:12px;
+  background:#fff;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-weight:900;
+  flex:0 0 auto;
+  overflow:hidden;
 }
+.logo-mark img{width:100%;height:100%;object-fit:contain;display:block;}
 
 .auth-title{
   margin-top:28px;
@@ -1097,7 +1101,7 @@ textarea.form-control{
   <div class="auth-card">
 
     <div class="logo">
-      <div class="logo-mark">Q</div>
+      <div class="logo-mark"><img src="./quick-eats-mark.svg" alt=""></div>
       <span>QuickEats</span>
     </div>
 
