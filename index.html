@@ -1089,10 +1089,52 @@ textarea.form-control{
     padding:20px;
   }
 }
+
+/* QUICK EATS VENDOR 7-SECOND STARTUP */
+#qeVendorSplash{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:28px 22px;background:#fff;text-align:center;opacity:1;transition:opacity .45s ease;isolation:isolate}
+#qeVendorSplash.qe-splash-hide{opacity:0;pointer-events:none}
+#qeVendorSplash:before,#qeVendorSplash:after{content:"";position:absolute;z-index:-1;width:210px;height:210px;border-radius:36px;transform:rotate(35deg)}
+#qeVendorSplash:before{top:-145px;left:-95px;background:#ff6b00}
+#qeVendorSplash:after{right:-150px;bottom:-150px;background:#00a859}
+.qe-splash-inner{width:min(420px,100%);display:flex;flex-direction:column;align-items:center;animation:qeSplashPop .65s ease both}
+.qe-splash-logo{width:clamp(150px,42vw,220px);height:clamp(150px,42vw,220px);object-fit:contain;animation:qeSplashFloat 2s ease-in-out infinite}
+.qe-splash-wordmark{margin-top:12px;font-size:clamp(31px,8vw,45px);font-weight:950;letter-spacing:-1.8px;line-height:1}
+.qe-splash-wordmark .qe-word-green{color:#00a859}.qe-splash-wordmark .qe-word-orange{color:#ff6b00}
+.qe-splash-tagline{margin-top:13px;color:#059669;font-size:16px;font-weight:700}
+.qe-splash-welcome{margin-top:clamp(42px,10vh,78px);font-size:clamp(25px,6vw,34px);line-height:1.12;font-weight:900;color:#047b43}
+.qe-splash-vendor{display:block;color:#ff6b00;font-size:1.2em}
+.qe-splash-copy{margin-top:14px;color:#718096;font-size:15px;line-height:1.55;max-width:320px}
+.qe-splash-track{width:min(270px,80%);height:10px;border-radius:99px;background:#edf0f3;overflow:hidden;margin-top:34px}
+.qe-splash-progress{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#00a859,#8bcf25);animation:qeSplashProgress 7s linear forwards}
+.qe-splash-status{margin-top:13px;color:#64748b;font-size:14px}
+.qe-splash-seconds{margin-top:5px;color:#94a3b8;font-size:12px}
+.qe-splash-deco{position:absolute;color:#ffb800;font-size:30px;font-weight:800;opacity:.85}
+.qe-splash-deco-one{top:12%;right:9%;transform:rotate(16deg)}.qe-splash-deco-two{bottom:10%;left:9%;transform:rotate(-22deg)}
+@keyframes qeSplashProgress{to{width:100%}}
+@keyframes qeSplashFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes qeSplashPop{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){.qe-splash-logo{animation:none}.qe-splash-inner{animation:none}.qe-splash-progress{animation-duration:7s}}
+
 </style>
 </head>
 
 <body>
+
+<div id="qeVendorSplash" role="status" aria-label="Quick Eats Vendor is loading">
+ <span class="qe-splash-deco qe-splash-deco-one" aria-hidden="true">✳</span>
+ <span class="qe-splash-deco qe-splash-deco-two" aria-hidden="true">✦</span>
+ <div class="qe-splash-inner">
+  <img class="qe-splash-logo" src="./quick-eats-mark.svg?v=20261028c" alt="Quick Eats logo">
+  <div class="qe-splash-wordmark"><span class="qe-word-green">QUICK</span> <span class="qe-word-orange">EATS</span></div>
+  <div class="qe-splash-tagline">Good Food. More Orders.</div>
+  <div class="qe-splash-welcome">Welcome Back,<span class="qe-splash-vendor">Vendor</span></div>
+  <p class="qe-splash-copy">Your restaurant. Your customers.<br>We’re here to help.</p>
+  <div class="qe-splash-track" aria-hidden="true"><div class="qe-splash-progress"></div></div>
+  <div class="qe-splash-status">Loading your dashboard...</div>
+  <div class="qe-splash-seconds">7 seconds</div>
+ </div>
+</div>
+
 
 <!-- AUTH SCREEN -->
 
@@ -5134,5 +5176,25 @@ checkSession();
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkQuickEatsSystem();});
 })();
 </script>
+
+<script>
+(function(){
+ const splash=document.getElementById('qeVendorSplash');
+ if(!splash)return;
+ const started=Date.now();
+ function dismissSplash(){
+  const remaining=Math.max(0,7000-(Date.now()-started));
+  window.setTimeout(function(){
+   splash.classList.add('qe-splash-hide');
+   window.setTimeout(function(){splash.remove();},500);
+  },remaining);
+ }
+ if(document.readyState==='complete')dismissSplash();
+ else window.addEventListener('load',dismissSplash,{once:true});
+ // Fallback: do not trap users if a slow external resource delays the load event.
+ window.setTimeout(dismissSplash,7000);
+})();
+</script>
+
 </body>
 </html>
