@@ -1502,6 +1502,18 @@ textarea.form-control{
 
         </div>
 
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:14px 0 18px;padding:12px;background:#fff;border:1px solid var(--border);border-radius:14px;">
+          <strong style="font-size:12px;">Menu availability</strong>
+          <select id="menuPauseDuration" class="form-input" style="width:auto;min-width:155px;padding:9px 12px;">
+            <option value="30">Pause all · 30 minutes</option>
+            <option value="60">Pause all · 1 hour</option>
+            <option value="tomorrow">Pause until tomorrow</option>
+            <option value="manual">Out of stock until I restore</option>
+          </select>
+          <button class="btn btn-secondary btn-small" onclick="pauseAllMenu()">Apply to all items</button>
+          <button class="btn btn-primary btn-small" onclick="restoreAllMenu()">Restore all items</button>
+        </div>
+
         <div
           id="menuGrid"
           class="menu-grid"
@@ -2689,16 +2701,16 @@ function renderMenu(){
 
           <button
             class="stock-toggle ${
-              item.in_stock
+              (item.in_stock && !(item.stock_pause_until && new Date(item.stock_pause_until).getTime() > Date.now()))
                 ? "stock-on"
                 : "stock-off"
             }"
-            onclick="toggleStock('${item.id}',${!item.in_stock})"
+            onclick="toggleStock('${item.id}',${!(item.in_stock && !(item.stock_pause_until && new Date(item.stock_pause_until).getTime() > Date.now()))})"
           >
             ${
-              item.in_stock
+              (item.in_stock && !(item.stock_pause_until && new Date(item.stock_pause_until).getTime() > Date.now()))
                 ? "● In stock"
-                : "● Out of stock"
+                : (item.stock_pause_until && new Date(item.stock_pause_until).getTime() > Date.now() ? "● Temporarily paused" : "● Out of stock")
             }
           </button>
 
@@ -2857,6 +2869,53 @@ async function editMenuPrice(itemId){
 }
 
 
+async function pauseAllMenu(){
+  if(!vendor?.id) return;
+  const choice=document.getElementById("menuPauseDuration")?.value || "30";
+  const updates={};
+  let message="";
+  if(choice==="manual"){
+    updates.in_stock=false;
+    updates.stock_pause_until=null;
+    message="All menu items are out of stock until you restore them.";
+  }else{
+    const until=new Date();
+    if(choice==="tomorrow"){
+      until.setDate(until.getDate()+1);
+      until.setHours(0,0,0,0);
+    }else{
+      until.setMinutes(until.getMinutes()+Math.max(1,Number(choice)||30));
+    }
+    updates.in_stock=true;
+    updates.stock_pause_until=until.toISOString();
+    message="All menu items paused until "+until.toLocaleString()+".";
+  }
+  try{
+    const {error}=await supabaseClient.from("menu_items").update(updates).eq("vendor_id",vendor.id);
+    if(error) throw error;
+    await loadMenu(); renderMenu(); updateDashboard();
+    toast(message,"success");
+  }catch(error){
+    console.error(error);
+    toast(error.message||"Could not update menu availability.","error");
+  }
+}
+
+async function restoreAllMenu(){
+  if(!vendor?.id) return;
+  try{
+    const {error}=await supabaseClient.from("menu_items")
+      .update({in_stock:true,stock_pause_until:null})
+      .eq("vendor_id",vendor.id);
+    if(error) throw error;
+    await loadMenu(); renderMenu(); updateDashboard();
+    toast("All menu items restored and available.","success");
+  }catch(error){
+    console.error(error);
+    toast(error.message||"Could not restore menu items.","error");
+  }
+}
+
 async function toggleStock(itemId,newValue){
 
   try{
@@ -2867,7 +2926,8 @@ async function toggleStock(itemId,newValue){
       await supabaseClient
         .from("menu_items")
         .update({
-          in_stock:newValue
+          in_stock:newValue,
+          stock_pause_until:null
         })
         .eq("id",itemId)
         .eq("vendor_id",vendor.id);
