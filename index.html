@@ -1572,6 +1572,11 @@ textarea.form-control{
               <label class="form-label">Nearby Landmark</label>
               <input id="restaurantLandmark" class="form-control" type="text" placeholder="e.g. opposite the filling station">
             </div>
+            <div class="form-group">
+              <label class="form-label">Delivery Region</label>
+              <input id="restaurantServiceRegion" class="form-control" type="text" maxlength="60" placeholder="e.g. Arumosho">
+              <small style="display:block;color:var(--muted,#667085);margin-top:5px">Use the same area name riders select in their delivery regions.</small>
+            </div>
 
             <div class="form-group">
               <label class="form-label">Phone</label>
@@ -4386,6 +4391,10 @@ function renderRestaurant(){
     .value = vendor.landmark || "";
 
   document
+    .getElementById("restaurantServiceRegion")
+    .value = vendor.service_region || "";
+
+  document
     .getElementById("restaurantLat")
     .value = vendor.lat ?? vendor.latitude ?? "";
 
@@ -4532,6 +4541,9 @@ async function saveRestaurant(){
 
     landmark:
       document.getElementById("restaurantLandmark").value.trim(),
+
+    service_region:
+      document.getElementById("restaurantServiceRegion").value.trim() || null,
 
     lat: document.getElementById("restaurantLat").value.trim() === ""
       ? null : Number(document.getElementById("restaurantLat").value),
