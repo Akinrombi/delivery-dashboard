@@ -2715,7 +2715,7 @@ function renderMenu(){
             ${
               (item.in_stock && !(item.stock_pause_until && new Date(item.stock_pause_until).getTime() > Date.now()))
                 ? "● In stock"
-                : (item.stock_pause_until && new Date(item.stock_pause_until).getTime() > Date.now() ? "● Temporarily paused" : "● Out of stock")
+                : (item.in_stock && item.stock_pause_until && new Date(item.stock_pause_until).getTime() > Date.now() ? "● Temporarily paused" : "● Out of stock")
             }
           </button>
 
@@ -2891,7 +2891,8 @@ async function pauseAllMenu(){
     }else{
       until.setMinutes(until.getMinutes()+Math.max(1,Number(choice)||30));
     }
-    updates.in_stock=true;
+    // Keep each item's existing in_stock value. A timed pause must not
+    // accidentally restore items that were already manually out of stock.
     updates.stock_pause_until=until.toISOString();
     message="All menu items paused until "+until.toLocaleString()+".";
   }
