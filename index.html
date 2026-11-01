@@ -1382,6 +1382,15 @@ textarea.form-control{
             Here's what's happening with your restaurant today.
           </div>
 
+          <div style="position:relative;z-index:1;display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:16px;">
+            <button class="btn btn-secondary" type="button" onclick="testVendorAlertSound()" style="background:#fff;color:#047857;">
+              🔊 Test order alert
+            </button>
+            <span id="vendorAlertStatus" style="font-size:11px;color:#ecfdf5;" aria-live="polite">
+              Test once to enable order sounds on this device.
+            </span>
+          </div>
+
         </div>
 
 
@@ -4962,23 +4971,39 @@ function navigate(page){
 let vendorAlertAudio = null;
 let vendorAlertAudioUnlocked = false;
 
-function unlockVendorAlertAudio(){
+async function unlockVendorAlertAudio(){
   try{
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-    if(!AudioContextClass) return;
+    if(!AudioContextClass) return false;
     if(!vendorAlertAudio) vendorAlertAudio = new AudioContextClass();
     if(vendorAlertAudio.state === "suspended"){
-      vendorAlertAudio.resume().then(()=>{ vendorAlertAudioUnlocked = true; }).catch(()=>{});
-    }else{
-      vendorAlertAudioUnlocked = true;
+      await vendorAlertAudio.resume();
     }
+    vendorAlertAudioUnlocked = vendorAlertAudio.state === "running";
+    return vendorAlertAudioUnlocked;
   }catch(error){
+    vendorAlertAudioUnlocked = false;
     console.warn("Vendor alert audio unavailable:", error);
+    return false;
   }
 }
 
-document.addEventListener("pointerdown", unlockVendorAlertAudio, {passive:true});
-document.addEventListener("keydown", unlockVendorAlertAudio);
+document.addEventListener("pointerdown", () => { unlockVendorAlertAudio(); }, {passive:true});
+document.addEventListener("keydown", () => { unlockVendorAlertAudio(); });
+
+async function testVendorAlertSound(){
+  const status = document.getElementById("vendorAlertStatus");
+  if(status) status.textContent = "Enabling sound…";
+  const unlocked = await unlockVendorAlertAudio();
+  if(!unlocked){
+    if(status) status.textContent = "Sound could not be enabled. Check your device volume and browser settings.";
+    toast("Sound is unavailable in this browser. Check device volume and browser settings.", "error");
+    return;
+  }
+  playVendorNewOrderAlert();
+  if(status) status.textContent = "Order alert sound is enabled on this device.";
+  toast("Order alert sound test played.", "success");
+}
 
 function playVendorAlertTone(frequency, startTime, duration, peak = 0.55){
   if(!vendorAlertAudio || !vendorAlertAudioUnlocked) return;
@@ -5001,8 +5026,7 @@ function playVendorAlertTone(frequency, startTime, duration, peak = 0.55){
 }
 
 function playVendorNewOrderAlert(){
-  unlockVendorAlertAudio();
-  if(!vendorAlertAudio || !vendorAlertAudioUnlocked) return;
+  if(!vendorAlertAudio || !vendorAlertAudioUnlocked || vendorAlertAudio.state !== "running") return;
   const now = vendorAlertAudio.currentTime + 0.04;
   // Three urgent alert bursts; actual loudness is still limited by device volume.
   for(let burst = 0; burst < 3; burst++){
