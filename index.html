@@ -1720,7 +1720,7 @@ textarea.form-control{
           <div>
             <div class="page-title">Earnings</div>
             <div class="page-subtitle">
-              Track your completed restaurant orders.
+              Delivered order totals before commission and payout adjustments. This is not your withdrawable balance.
             </div>
           </div>
 
@@ -1731,7 +1731,7 @@ textarea.form-control{
 
           <div class="earning-card">
             <div class="earning-label">
-              Total Delivered Sales
+              Gross Delivered Order Value
             </div>
 
             <div
@@ -1775,7 +1775,7 @@ textarea.form-control{
 
           <div class="card-header">
             <div class="card-title">
-              Earnings History
+              Delivered Orders History
             </div>
           </div>
 
@@ -2003,6 +2003,7 @@ let vendor = null;
 let menuItems = [];
 let orders = [];
 let realtimeChannel = null;
+let recentlyAlertedOrderIds = new Set();
 
 
 /* =========================================================
@@ -5059,26 +5060,25 @@ function subscribeRealtime(){
             payload
           );
 
-          // Only INSERT events represent a newly placed order; ordinary status
-          // updates must not repeatedly sound like new orders.
+          // Only a genuinely new INSERT should alert the vendor.
+          // UPDATE events refresh the interface silently; they are not new orders.
           if(payload?.eventType === "INSERT" && payload?.new?.id){
-            playVendorNewOrderAlert();
-            toast("🔔 NEW ORDER RECEIVED! Check your orders now.", "success");
+            const orderId = String(payload.new.id);
+            if(!recentlyAlertedOrderIds.has(orderId)){
+              recentlyAlertedOrderIds.add(orderId);
+              if(recentlyAlertedOrderIds.size > 200){
+                recentlyAlertedOrderIds.delete(recentlyAlertedOrderIds.values().next().value);
+              }
+              playVendorNewOrderAlert();
+              toast("🔔 NEW ORDER RECEIVED! Check your orders now.", "success");
+            }
           }
 
           await loadOrders();
 
           renderOrders();
-
           updateDashboard();
-
           renderEarnings();
-
-
-          toast(
-            "Your orders have been updated.",
-            "success"
-          );
 
         }
       )
