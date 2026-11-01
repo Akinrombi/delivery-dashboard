@@ -62,6 +62,13 @@ jobs:
         with:
           gradle-version: ${{ steps.inspect.outputs.gradle_version }}
 
+      - name: Inspect Android signing configuration
+        working-directory: ${{ steps.inspect.outputs.project_dir }}
+        shell: bash
+        run: |
+          echo "Signing config references:"
+          grep -n -A 18 -B 4 -E "signingConfigs|debugConfig|storeFile|keyAlias|storePassword|keyPassword" app/build.gradle.kts || true
+
       - name: Build debug APK
         working-directory: ${{ steps.inspect.outputs.project_dir }}
         shell: bash
