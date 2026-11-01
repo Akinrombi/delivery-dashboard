@@ -69,6 +69,22 @@ jobs:
           echo "Signing config references:"
           grep -n -A 18 -B 4 -E "signingConfigs|debugConfig|storeFile|keyAlias|storePassword|keyPassword" app/build.gradle.kts || true
 
+      - name: Create Android debug keystore
+        working-directory: ${{ steps.inspect.outputs.project_dir }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          keytool -genkeypair -v \\
+            -keystore debug.keystore \\
+            -storepass android \\
+            -alias androiddebugkey \\
+            -keypass android \\
+            -keyalg RSA \\
+            -keysize 2048 \\
+            -validity 10000 \\
+            -dname "CN=Android Debug,O=Android,C=US"
+          test -s debug.keystore
+
       - name: Build debug APK
         working-directory: ${{ steps.inspect.outputs.project_dir }}
         shell: bash
