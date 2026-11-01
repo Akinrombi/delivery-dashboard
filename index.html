@@ -2009,6 +2009,8 @@ const supabaseClient =
 
 let currentUser = null;
 let vendor = null;
+let vendorPayoutDetails = { bank_name:"", account_number:"" };
+const VENDOR_PROFILE_COLUMNS = "id,owner_id,store_name,address,lat,lng,is_open,created_at,phone,open_time,close_time,latitude,longitude,landmark,service_region";
 let menuItems = [];
 let orders = [];
 let realtimeChannel = null;
@@ -2453,6 +2455,14 @@ async function loadApp(){
     return;
   }
 
+  try{
+    await loadVendorPayoutDetails();
+  }catch(error){
+    console.warn("Vendor payout details could not be loaded:", error);
+    vendorPayoutDetails = { bank_name:"", account_number:"" };
+    toast("Bank details could not be loaded. You can still manage orders and your menu.", "error");
+  }
+
   await Promise.all([
     loadMenu(),
     loadOrders()
@@ -2486,7 +2496,7 @@ async function loadVendor(){
     } =
       await supabaseClient
         .from("vendors")
-        .select("*")
+        .select(VENDOR_PROFILE_COLUMNS)
         .eq("owner_id",currentUser.id)
         .limit(1);
 
@@ -2573,7 +2583,7 @@ async function loadVendor(){
       const result =
         await supabaseClient
           .from("vendors")
-          .select("*")
+          .select(VENDOR_PROFILE_COLUMNS)
           .eq("owner_id",currentUser.id)
           .limit(1);
 
@@ -4437,13 +4447,13 @@ function renderRestaurant(){
   document
     .getElementById("bankName")
     .value =
-      vendor.bank_name || "";
+      vendorPayoutDetails.bank_name || "";
 
 
   document
     .getElementById("accountNumber")
     .value =
-      vendor.account_number || "";
+      vendorPayoutDetails.account_number || "";
 
 
   updateRestaurantSwitch();
@@ -4607,7 +4617,7 @@ async function saveRestaurant(){
         .from("vendors")
         .update(updates)
         .eq("id",vendor.id)
-        .select("*")
+        .select(VENDOR_PROFILE_COLUMNS)
         .single();
 
     if(error){
@@ -4668,7 +4678,7 @@ async function toggleRestaurantStatus(){
           is_open:newValue
         })
         .eq("id",vendor.id)
-        .select("*")
+        .select(VENDOR_PROFILE_COLUMNS)
         .single();
 
     if(error){
@@ -4701,64 +4711,50 @@ async function toggleRestaurantStatus(){
 }
 
 
-async function saveBankDetails(){
+async function loadVendorPayoutDetails(){
+  if(!vendor?.id){
+    vendorPayoutDetails = { bank_name:"", account_number:"" };
+    return;
+  }
+  const {data,error}=await supabaseClient.rpc("vendor_get_bank_details");
+  if(error) throw error;
+  vendorPayoutDetails = data || { bank_name:"", account_number:"" };
+}
 
-  if(!vendor){
+
+async function saveBankDetails(){
+  if(!vendor?.id) return;
+
+  const bankName=document.getElementById("bankName").value.trim();
+  const accountNumber=document.getElementById("accountNumber").value.trim();
+
+  if(!bankName){
+    toast("Enter your bank name.", "error");
+    return;
+  }
+  if(!/^[0-9]{10}$/.test(accountNumber)){
+    toast("Enter a valid 10-digit Nigerian bank account number.", "error");
     return;
   }
 
-
-  const bankName =
-    document
-      .getElementById("bankName")
-      .value.trim();
-
-
-  const accountNumber =
-    document
-      .getElementById("accountNumber")
-      .value.trim();
-
+  const button=document.querySelector('button[onclick="saveBankDetails()"]');
+  if(button){button.disabled=true;button.textContent="Saving…";}
 
   try{
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .from("vendors")
-        .update({
-          bank_name:bankName,
-          account_number:accountNumber
-        })
-        .eq("id",vendor.id)
-        .select("*")
-        .single();
-
-    if(error){
-      throw error;
-    }
-
-    vendor = data;
-
-    toast(
-      "Bank details saved.",
-      "success"
-    );
-
+    const {data,error}=await supabaseClient.rpc("vendor_save_bank_details",{
+      p_bank_name:bankName,
+      p_account_number:accountNumber
+    });
+    if(error) throw error;
+    if(!data?.success) throw new Error(data?.message || "Bank details were not saved.");
+    vendorPayoutDetails={bank_name:bankName,account_number:accountNumber};
+    toast("Bank details saved securely.", "success");
   }catch(error){
-
     console.error(error);
-
-    toast(
-      error.message ||
-      "Could not save bank details.",
-      "error"
-    );
-
+    toast(error.message || "Could not save bank details.", "error");
+  }finally{
+    if(button){button.disabled=false;button.textContent="Save Bank Details";}
   }
-
 }
 
 
@@ -5140,6 +5136,7 @@ async function logout(){
 
   currentUser = null;
   vendor = null;
+  vendorPayoutDetails = { bank_name:"", account_number:"" };
   menuItems = [];
   orders = [];
 
