@@ -57,6 +57,66 @@ jobs:
           echo "Android project root: $PROJECT_DIR"
           echo "Project Gradle version: $GRADLE_VERSION"
 
+      - name: Fix QuickEats vendor backend schema mapping
+        working-directory: ${{ steps.inspect.outputs.project_dir }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("app/src/main/java/com/example/data/SupabaseApiClient.kt")
+          s = p.read_text()
+          replacements = [
+              ('/rest/v1/restaurants?owner_id=eq.', '/rest/v1/vendors?owner_id=eq.'),
+              ('/rest/v1/vendors?auth_user_id=eq.', '/rest/v1/vendors?owner_id=eq.'),
+              ('/rest/v1/orders?restaurant_id=eq.', '/rest/v1/orders?vendor_id=eq.'),
+              ('/rest/v1/menu_categories?restaurant_id=eq.', '/rest/v1/menu_categories?vendor_id=eq.'),
+              ('/rest/v1/menu_items?restaurant_id=eq.', '/rest/v1/menu_items?vendor_id=eq.'),
+              ('put("restaurant_id", item.vendorId)', 'put("vendor_id", item.vendorId)'),
+              ('name = obj.optString("name", "Quick Eats Restaurant")', 'name = obj.optString("store_name", obj.optString("name", "Quick Eats Restaurant"))'),
+          ]
+          for old, new in replacements:
+              if old not in s:
+                  raise SystemExit(f"Expected source text not found: {old}")
+              s = s.replace(old, new)
+          s = s.replace(
+              'val items = itemsMap[id] ?: emptyList()',
+              'val items = parseEmbeddedOrderItems(obj).ifEmpty { itemsMap[id] ?: emptyList() }'
+          )
+          anchor = '    private fun fetchOrderItemsBatch(\n'
+          helper = '''    private fun parseEmbeddedOrderItems(order: JSONObject): List<OrderItem> {
+        val array = order.optJSONArray("items") ?: order.optJSONArray("cart_items") ?: return emptyList()
+        val parsed = mutableListOf<OrderItem>()
+        for (i in 0 until array.length()) {
+            val item = array.optJSONObject(i) ?: continue
+            parsed.add(
+                OrderItem(
+                    id = item.optString("id", UUID.randomUUID().toString()),
+                    menuItemId = item.optString("menu_item_id", item.optString("product_id", "")),
+                    name = item.optString("item_name", item.optString("name", item.optString("title", "Food Item"))),
+                    quantity = item.optInt("quantity", item.optInt("qty", 1)).coerceAtLeast(1),
+                    unitPrice = item.optDouble("unit_price", item.optDouble("price", 0.0)),
+                    options = item.optString("options_note", item.optString("options", "")),
+                    imageUrl = item.optString("image_url", "")
+                )
+            )
+        }
+        return parsed
+    }
+
+'''
+          if anchor not in s:
+              raise SystemExit("Could not find order item helper insertion point")
+          s = s.replace(anchor, helper + anchor, 1)
+          p.write_text(s)
+
+          model = Path("app/src/main/java/com/example/model/Models.kt")
+          m = model.read_text()
+          m = m.replace('"pending" -> PENDING', '"pending", "new", "awaiting_payment" -> PENDING')
+          model.write_text(m)
+          print("Patched vendor lookup, order/menu vendor_id filters, embedded WhatsApp order items and new-order status mapping.")
+          PY
+
       - name: Set up project Gradle version
         uses: gradle/actions/setup-gradle@v4
         with:
