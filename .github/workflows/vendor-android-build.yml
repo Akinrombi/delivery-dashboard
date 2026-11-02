@@ -84,27 +84,27 @@ jobs:
               'val items = parseEmbeddedOrderItems(obj).ifEmpty { itemsMap[id] ?: emptyList() }'
           )
           anchor = '    private fun fetchOrderItemsBatch(\n'
-          helper = '''    private fun parseEmbeddedOrderItems(order: JSONObject): List<OrderItem> {
-        val array = order.optJSONArray("items") ?: order.optJSONArray("cart_items") ?: return emptyList()
-        val parsed = mutableListOf<OrderItem>()
-        for (i in 0 until array.length()) {
-            val item = array.optJSONObject(i) ?: continue
-            parsed.add(
-                OrderItem(
-                    id = item.optString("id", UUID.randomUUID().toString()),
-                    menuItemId = item.optString("menu_item_id", item.optString("product_id", "")),
-                    name = item.optString("item_name", item.optString("name", item.optString("title", "Food Item"))),
-                    quantity = item.optInt("quantity", item.optInt("qty", 1)).coerceAtLeast(1),
-                    unitPrice = item.optDouble("unit_price", item.optDouble("price", 0.0)),
-                    options = item.optString("options_note", item.optString("options", "")),
-                    imageUrl = item.optString("image_url", "")
-                )
-            )
-        }
-        return parsed
-    }
-
-'''
+          helper = '''
+            private fun parseEmbeddedOrderItems(order: JSONObject): List<OrderItem> {
+                val array = order.optJSONArray("items") ?: order.optJSONArray("cart_items") ?: return emptyList()
+                val parsed = mutableListOf<OrderItem>()
+                for (i in 0 until array.length()) {
+                    val item = array.optJSONObject(i) ?: continue
+                    parsed.add(
+                        OrderItem(
+                            id = item.optString("id", UUID.randomUUID().toString()),
+                            menuItemId = item.optString("menu_item_id", item.optString("product_id", "")),
+                            name = item.optString("item_name", item.optString("name", item.optString("title", "Food Item"))),
+                            quantity = item.optInt("quantity", item.optInt("qty", 1)).coerceAtLeast(1),
+                            unitPrice = item.optDouble("unit_price", item.optDouble("price", 0.0)),
+                            options = item.optString("options_note", item.optString("options", "")),
+                            imageUrl = item.optString("image_url", "")
+                        )
+                    )
+                }
+                return parsed
+            }
+          '''
           if anchor not in s:
               raise SystemExit("Could not find order item helper insertion point")
           s = s.replace(anchor, helper + anchor, 1)
