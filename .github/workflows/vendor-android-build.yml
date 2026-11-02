@@ -79,6 +79,10 @@ jobs:
               if old not in s:
                   raise SystemExit(f"Expected source text not found: {old}")
               s = s.replace(old, new)
+          s = s.replace('val subtotal = obj.optDouble("subtotal", 0.0)', 'val subtotal = obj.optDouble("subtotal", obj.optDouble("total", 0.0))')
+          s = s.replace('obj.optString("customer_notes", obj.optString("customer_note", ""))', 'obj.optString("notes", obj.optString("customer_notes", obj.optString("customer_note", "")))')
+          s = s.replace('obj.optDouble("platform_fee", subtotal * 0.15)', 'obj.optDouble("commission_amount", obj.optDouble("platform_fee", subtotal * 0.15))')
+          s = s.replace('obj.optDouble("restaurant_earnings", subtotal - platformFee)', 'obj.optDouble("vendor_net", obj.optDouble("restaurant_earnings", subtotal - platformFee))')
           s = s.replace(
               'val items = itemsMap[id] ?: emptyList()',
               'val items = parseEmbeddedOrderItems(obj).ifEmpty { itemsMap[id] ?: emptyList() }'
