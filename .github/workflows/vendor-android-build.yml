@@ -94,3 +94,20 @@ jobs:
             ${{ steps.inspect.outputs.project_dir }}/**/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 14
+
+      - name: Package Android source for order-flow inspection
+        if: success()
+        working-directory: ${{ steps.inspect.outputs.project_dir }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          zip -qr "$GITHUB_WORKSPACE/vendor-android-source-inspection.zip" . -x '**/build/**' '**/.gradle/**'
+
+      - name: Upload Android source inspection archive
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quickeats-vendor-source-inspection
+          path: vendor-android-source-inspection.zip
+          if-no-files-found: error
+          retention-days: 3
