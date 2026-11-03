@@ -52,4 +52,5 @@ $("replacementHistory").innerHTML=adjustmentRows.length?'<table><thead><tr><th>D
 $("rangeMsg").textContent="Updated "+new Date().toLocaleTimeString("en-NG")}
 $("signIn").addEventListener("click",signIn);$("apply").addEventListener("click",()=>load().catch(e=>$("rangeMsg").textContent=e.message));$("logout").addEventListener("click",async()=>{await db.auth.signOut();location.reload()});
 (async()=>{setDefaultDates();const {data:{session}}=await db.auth.getSession();if(session){try{await boot()}catch(e){$("loginMsg").textContent=e.message}}})();
+setInterval(()=>{if(!document.hidden&&!$("app").classList.contains("hidden"))load().catch(e=>console.warn("Vendor analytics refresh failed:",e));},60000);
 </script></body></html>
