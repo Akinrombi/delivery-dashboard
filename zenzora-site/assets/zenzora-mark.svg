@@ -1,1 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="ZENZORA food delivery and rider booking logo"><rect width="512" height="512" rx="112" fill="#050807"/><circle cx="256" cy="256" r="232" fill="none" stroke="#00BFA5" stroke-width="12"/><g fill="#00BFA5" font-family="Arial,Helvetica,sans-serif" font-weight="600" text-anchor="middle"><text x="151" y="112" font-size="48" letter-spacing="5">ZENZ</text><text x="361" y="112" font-size="48" letter-spacing="5">RA</text></g><g transform="translate(256 91)" fill="none" stroke="#00BFA5" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><circle r="31"/><circle r="6" fill="#00BFA5"/><path d="M0-25V-7M-22 12l16-9M22 12L6 3"/></g><path d="M111 172H389Q414 172 396 191L143 324Q123 335 151 335H390" fill="none" stroke="#00BFA5" stroke-width="25" stroke-linecap="round" stroke-linejoin="round"/><path d="M151 184h34m27 0h34m27 0h34m27 0h34M173 316l26-14m25-13l26-14m25-13l26-14m25-13l26-14m-189 98h32m27 0h32m27 0h32m27 0h32" fill="none" stroke="#050807" stroke-width="8" stroke-linecap="round" stroke-dasharray="17 13"/><g transform="translate(328 291)" fill="none" stroke="#00BFA5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><circle cx="-29" cy="24" r="17"/><circle cx="40" cy="24" r="17"/><path d="M-29 24l21-29 19 29h-40l13-20h24l12 20M2-13l10-12 12 4-4 12-12 1M-4-20l-8-9m31 2l8-5"/></g><path d="M124 399H388" stroke="#00BFA5" stroke-width="5" stroke-linecap="round"/><path d="M251 383v40m-17-40v24m34-24v24m-17 16v8" stroke="#00BFA5" stroke-width="7" stroke-linecap="round"/><text x="256" y="463" fill="#00BFA5" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="700" text-anchor="middle" letter-spacing="1.2">FOOD DELIVERY • BOOK A RIDER</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+<title id="title">ZENZORA — Food Delivery • Book a Rider</title>
+<desc id="desc">Circular black and teal badge with ZENZORA lettering, a road-shaped Z, motorcycle and fork symbol.</desc>
+<defs>
+ <path id="topArc" d="M 83,250 A 173,173 0 0 1 429,250"/>
+ <path id="bottomArc" d="M 78,283 A 180,180 0 0 0 434,283"/>
+</defs>
+<rect width="512" height="512" rx="256" fill="#000000"/>
+<circle cx="256" cy="256" r="238" fill="none" stroke="#00BFA5" stroke-width="5"/>
+<circle cx="256" cy="256" r="222" fill="none" stroke="#00BFA5" stroke-width="1.5" opacity=".55"/>
+<text fill="#00BFA5" font-family="Montserrat,Inter,Arial,sans-serif" font-size="31" font-weight="500" letter-spacing="5">
+ <textPath href="#topArc" startOffset="50%" text-anchor="middle">ZENZ</textPath>
+</text>
+<text x="355" y="104" fill="#00BFA5" font-family="Montserrat,Inter,Arial,sans-serif" font-size="31" font-weight="500" letter-spacing="5">RA</text>
+<!-- steering wheel replaces the O in the upper wordmark -->
+<g transform="translate(331 92)" fill="none" stroke="#00BFA5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+ <circle r="15"/><circle r="3" fill="#00BFA5" stroke="none"/>
+ <path d="M0-12V-3M-11 7l8-4M11 7L3 3"/>
+</g>
+<!-- road-shaped Z -->
+<path d="M116 177 H397 Q414 177 397 190 L157 319 Q139 330 160 330 H394" fill="none" stroke="#00BFA5" stroke-width="27" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M139 177h34 M190 177h34 M241 177h34 M292 177h34 M343 177h34
+ M365 206l-29 16 M310 236l-29 16 M255 266l-29 16 M200 296l-29 16
+ M183 330h34 M234 330h34 M285 330h34 M336 330h34" fill="none" stroke="#000000" stroke-width="5.5" stroke-linecap="round" stroke-dasharray="16 12"/>
+<!-- motorcycle on the lower right of the road -->
+<g transform="translate(333 286)" fill="none" stroke="#00BFA5" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+ <circle cx="-31" cy="34" r="17"/><circle cx="39" cy="34" r="17"/>
+ <path d="M-31 34l22-31 20 31h-42l14-22h27l19 22M-9 3l-9-13h18l9 13M10 3l12-15 13 4-7 14"/>
+ <path d="M-4-11l-6-12m31 1l10-5"/>
+</g>
+<!-- fork mark -->
+<g transform="translate(256 386)" fill="none" stroke="#00BFA5" stroke-width="5" stroke-linecap="round">
+ <path d="M0-17v31 M-13-17v13 M13-17v13 M-13-4h26 M0 14v12"/>
+</g>
+<text fill="#00BFA5" font-family="Montserrat,Inter,Arial,sans-serif" font-size="17" font-weight="600" letter-spacing="1.7">
+ <textPath href="#bottomArc" startOffset="50%" text-anchor="middle">FOOD DELIVERY • BOOK A RIDER</textPath>
+</text>
+</svg>
