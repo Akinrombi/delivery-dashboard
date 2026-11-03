@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Zenzora Vendor | Zenzora</title>
-<link rel="icon" type="image/svg+xml" href="./quick-eats-mark.svg">
-<link rel="apple-touch-icon" href="./quick-eats-mark.svg">
+<link rel="icon" type="image/svg+xml" href="./zenzora-mark.svg">
+<link rel="apple-touch-icon" href="./zenzora-mark.svg">
 <link rel="manifest" href="./manifest.webmanifest">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1090,7 +1090,7 @@ textarea.form-control{
   }
 }
 
-/* QUICK EATS VENDOR 7-SECOND STARTUP */
+/* ZENZORA VENDOR 7-SECOND STARTUP */
 #qeVendorSplash{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:28px 22px;background:#fff;text-align:center;opacity:1;transition:opacity .45s ease;isolation:isolate}
 #qeVendorSplash.qe-splash-hide{opacity:0;pointer-events:none}
 #qeVendorSplash:before,#qeVendorSplash:after{content:"";position:absolute;z-index:-1;width:210px;height:210px;border-radius:36px;transform:rotate(35deg)}
@@ -1124,7 +1124,7 @@ textarea.form-control{
  <span class="qe-splash-deco qe-splash-deco-one" aria-hidden="true">✳</span>
  <span class="qe-splash-deco qe-splash-deco-two" aria-hidden="true">✦</span>
  <div class="qe-splash-inner">
-  <img class="qe-splash-logo" src="./quick-eats-mark.svg?v=20261028c" alt="Zenzora logo">
+  <img class="qe-splash-logo" src="./zenzora-mark.svg?v=20261028c" alt="Zenzora logo">
   <div class="qe-splash-wordmark"><span class="qe-word-green">QUICK</span> <span class="qe-word-orange">EATS</span></div>
   <div class="qe-splash-tagline">Good Food. More Orders.</div>
   <div class="qe-splash-welcome">Welcome Back,<span class="qe-splash-vendor">Vendor</span></div>
@@ -1143,8 +1143,8 @@ textarea.form-control{
   <div class="auth-card">
 
     <div class="logo">
-      <div class="logo-mark"><img src="./quick-eats-mark.svg?v=20261028b" alt=""></div>
-      <span>QuickEats</span>
+      <div class="logo-mark"><img src="./zenzora-mark.svg?v=20261028b" alt=""></div>
+      <span>Zenzora</span>
     </div>
 
     <div id="loginForm">
@@ -1194,7 +1194,7 @@ textarea.form-control{
       <div class="auth-title">Create Vendor Account</div>
 
       <div class="auth-subtitle">
-        Register your restaurant on QuickEats.
+        Register your restaurant on Zenzora.
       </div>
 
       <div class="form-group">
@@ -1276,8 +1276,8 @@ textarea.form-control{
 
     <div class="sidebar-logo">
       <div class="logo">
-        <div class="logo-mark"><img src="./quick-eats-mark.svg?v=20261028b" alt="Zenzora logo"></div>
-        <span>QuickEats</span>
+        <div class="logo-mark"><img src="./zenzora-mark.svg?v=20261028b" alt="Zenzora logo"></div>
+        <span>Zenzora</span>
       </div>
     </div>
 
@@ -1351,8 +1351,8 @@ textarea.form-control{
     <header class="mobile-header">
 
       <div class="logo">
-        <div class="logo-mark"><img src="./quick-eats-mark.svg?v=20261028b" alt="Zenzora logo"></div>
-        <span>QuickEats</span>
+        <div class="logo-mark"><img src="./zenzora-mark.svg?v=20261028b" alt="Zenzora logo"></div>
+        <span>Zenzora</span>
       </div>
 
       <button
@@ -5381,14 +5381,14 @@ checkSession();
 #qeGlobalShutdown h2{margin:0 0 12px;font-size:25px}#qeGlobalShutdown p{line-height:1.6;color:#d8e7dd;margin:8px 0}
 </style>
 <div id="qeGlobalShutdown" role="alertdialog" aria-modal="true" aria-labelledby="qeGlobalShutdownTitle">
- <div class="qe-shutdown-card"><h2 id="qeGlobalShutdownTitle">QuickEats is temporarily offline</h2><p id="qeGlobalShutdownMessage">The QuickEats team has paused the system. Please try again later.</p><p>This screen will close automatically when QuickEats is switched back on.</p></div>
+ <div class="qe-shutdown-card"><h2 id="qeGlobalShutdownTitle">Zenzora is temporarily offline</h2><p id="qeGlobalShutdownMessage">The Zenzora team has paused the system. Please try again later.</p><p>This screen will close automatically when Zenzora is switched back on.</p></div>
 </div>
 <script>
 (function(){
  const layer=document.getElementById('qeGlobalShutdown');
  const msg=document.getElementById('qeGlobalShutdownMessage');
  let lastState=null, checking=false;
- async function checkQuickEatsSystem(){
+ async function checkZenzoraSystem(){
   if(checking)return;checking=true;
   try{
    const client=(typeof supabaseClient!=='undefined'?supabaseClient:null);
@@ -5398,16 +5398,16 @@ checkSession();
    const enabled=data.enabled!==false;
    if(lastState!==enabled){
     layer.style.display=enabled?'none':'flex';
-    msg.textContent=data.shutdown_message||'QuickEats is temporarily unavailable. Please try again later.';
+    msg.textContent=data.shutdown_message||'Zenzora is temporarily unavailable. Please try again later.';
     document.documentElement.style.overflow=enabled?'':'hidden';
     lastState=enabled;
    }
-  }catch(e){console.warn('QuickEats system status check failed',e);}
+  }catch(e){console.warn('Zenzora system status check failed',e);}
   finally{checking=false;}
  }
- checkQuickEatsSystem();
- setInterval(checkQuickEatsSystem,8000);
- document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkQuickEatsSystem();});
+ checkZenzoraSystem();
+ setInterval(checkZenzoraSystem,8000);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkZenzoraSystem();});
 })();
 </script>
 
