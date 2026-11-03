@@ -1322,6 +1322,9 @@ textarea.form-control{
       >
         💰 Earnings
       </button>
+      <a class="nav-btn" href="./analytics.html" style="text-decoration:none">
+        📈 Analytics
+      </a>
 
     </nav>
 
@@ -1995,6 +1998,8 @@ const SUPABASE_URL =
 
 const SUPABASE_KEY =
   "sb_publishable_lQkN8HQP2Tm3tPiDYJbrNw_ydO7bqXU";
+
+const QUICKEATS_API_BASE = "https://whatsapp-delivery-bot-cstv.onrender.com";
 
 const supabaseClient =
   supabase.createClient(
@@ -3351,6 +3356,101 @@ async function verifyRiderPickupCode(orderId){
 }
 
 
+
+async function loadOrderRefundHistory(orderId){
+  const host=document.getElementById("orderRefundHistory");
+  if(!host)return;
+  host.innerHTML='<div class="order-detail-label">Refund history</div><div class="order-detail-value">Loading…</div>';
+  try{
+    const {data,error}=await supabaseClient.from("order_refunds")
+      .select("id,item_name,quantity,amount,status,reason,created_at")
+      .eq("order_id",orderId).order("created_at",{ascending:false}).limit(20);
+    if(error)throw error;
+    const rows=data||[];
+    host.innerHTML='<div class="order-detail-label">Refund history</div>'+
+      (rows.length?rows.map(r=>'<div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid #edf1ee;font-size:12px"><span><strong>'+escapeHtml(r.item_name)+' × '+Number(r.quantity||0)+'</strong><br><span style="color:#64748b">'+escapeHtml(r.reason)+' · '+escapeHtml(r.status)+'</span></span><strong>'+money(r.amount)+'</strong></div>').join(""):'<div class="order-detail-value">No refunds recorded for this order.</div>');
+  }catch(error){
+    console.warn("Refund history could not be loaded:",error);
+    host.innerHTML='<div class="order-detail-label">Refund history</div><div class="order-detail-value">Refund history is temporarily unavailable.</div>';
+  }
+}
+
+
+async function loadOrderAdjustmentHistory(orderId){
+  const host=document.getElementById("orderAdjustmentHistory");
+  if(!host)return;
+  host.innerHTML='<div class="order-detail-label">Replacement requests</div><div class="order-detail-value">Loading…</div>';
+  try{
+    const {data,error}=await supabaseClient.from("order_adjustments")
+      .select("token,original_item,replacement_item,status,reason,created_at,expires_at")
+      .eq("order_id",orderId).order("created_at",{ascending:false}).limit(20);
+    if(error)throw error;
+    const rows=data||[];
+    host.innerHTML='<div class="order-detail-label">Replacement requests</div>'+
+      (rows.length?rows.map(r=>'<div style="padding:9px 0;border-top:1px solid #edf1ee;font-size:12px"><strong>'+escapeHtml(r.original_item?.name||"Item")+' → '+escapeHtml(r.replacement_item?.name||"Replacement")+'</strong><br><span style="color:#64748b">'+escapeHtml(r.status)+' · '+escapeHtml(r.reason)+'</span><br><span style="color:#64748b">Approval code: '+escapeHtml(r.token)+'</span></div>').join(""):'<div class="order-detail-value">No replacement requests for this order.</div>');
+  }catch(error){
+    console.warn("Replacement history could not be loaded:",error);
+    host.innerHTML='<div class="order-detail-label">Replacement requests</div><div class="order-detail-value">Replacement history is temporarily unavailable.</div>';
+  }
+}
+
+async function suggestOrderReplacement(orderId,itemId,itemName,selectId){
+  const select=document.getElementById(selectId);
+  const replacementId=String(select?.value||"");
+  if(!replacementId){toast("Choose an available replacement first.","error");return;}
+  const reason=prompt("Why is "+itemName+" unavailable?","Out of stock");
+  if(reason===null)return;
+  if(reason.trim().length<3){toast("Please enter a short reason.","error");return;}
+  if(!confirm("Send this replacement suggestion to the customer? The order will change only after the customer approves it on WhatsApp."))return;
+  try{
+    const {data:{session}}=await supabaseClient.auth.getSession();
+    if(!session?.access_token)throw new Error("Please sign in again.");
+    const response=await fetch(QUICKEATS_API_BASE+"/api/vendor/suggest-replacement",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token},
+      body:JSON.stringify({order_id:orderId,item_id:itemId,replacement_menu_item_id:replacementId,reason:reason.trim()})
+    });
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok||!result.success)throw new Error(result.message||"Could not send the replacement suggestion.");
+    toast(result.message||"Replacement sent for customer approval.","success");
+    await loadOrderAdjustmentHistory(orderId);
+  }catch(error){
+    console.error("Replacement suggestion failed:",error);
+    toast(error.message||"Could not send the replacement suggestion.","error");
+  }
+}
+
+async function refundOrderItem(orderId,itemId,maxQty,itemName){
+  const quantityText=prompt("How many units of "+itemName+" should be refunded? (1–"+maxQty+")","1");
+  if(quantityText===null)return;
+  const quantity=Number(quantityText);
+  if(!Number.isInteger(quantity)||quantity<1||quantity>maxQty){
+    toast("Enter a valid quantity between 1 and "+maxQty+".","error");return;
+  }
+  const reason=prompt("Why are you refunding this item?","Out of stock");
+  if(reason===null)return;
+  if(reason.trim().length<3){toast("Please enter a clear refund reason.","error");return;}
+  if(!confirm("Issue a refund for "+quantity+" × "+itemName+"? The refund will be submitted to Paystack and cannot be recalled once processed."))return;
+  try{
+    const {data:{session}}=await supabaseClient.auth.getSession();
+    if(!session?.access_token)throw new Error("Please sign in again.");
+    const key=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():"qe-refund-"+orderId+"-"+Date.now()+"-"+Math.random().toString(36).slice(2,10);
+    const response=await fetch(QUICKEATS_API_BASE+"/api/vendor/refund-item",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token},
+      body:JSON.stringify({order_id:orderId,item_id:itemId,quantity,reason:reason.trim(),idempotency_key:key})
+    });
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok||!result.success)throw new Error(result.message||"Refund could not be submitted.");
+    toast(result.message||("Refund submitted: "+money(result.amount)),"success");
+    await loadOrderRefundHistory(orderId);
+    await loadOrders();renderOrders();updateDashboard();renderEarnings();
+  }catch(error){
+    console.error("Vendor refund failed:",error);
+    toast(error.message||"Refund could not be submitted.","error");
+  }
+}
+
 async function updateOrder(orderId,status){
 
   try{
@@ -3974,6 +4074,8 @@ function openOrderDetails(orderId){
 
 
   renderOrderDetails(order);
+  loadOrderRefundHistory(order.id);
+  loadOrderAdjustmentHistory(order.id);
 
 }
 
@@ -4071,6 +4173,14 @@ function renderOrderDetails(order){
 
             const total =
               itemLineTotal(item);
+            const itemId = String(item.id || item.menu_item_id || "");
+            const canRefund = order.payment_status === "paid" && itemId && unitPrice > 0 && !["cancelled"].includes(String(order.status || "").toLowerCase());
+            const replacementOptions = menuItems.filter(m =>
+              String(m.id) !== itemId &&
+              m.in_stock === true &&
+              (!m.stock_pause_until || new Date(m.stock_pause_until).getTime() <= Date.now()) &&
+              Number(m.price) === Number(unitPrice)
+            );
 
             return `
 
@@ -4088,7 +4198,15 @@ function renderOrderDetails(order){
                   </span>
                 </div>
 
-                <strong style="white-space:nowrap">${money(total)}</strong>
+                <div style="display:grid;justify-items:end;gap:8px">
+                  <strong style="white-space:nowrap">${money(total)}</strong>
+                  ${canRefund
+                    ? `<button type="button" class="btn btn-danger btn-small" data-refund-order="${escapeHtml(order.id)}" data-refund-item="${escapeHtml(itemId)}" data-refund-qty="${qty}" data-refund-name="${escapeHtml(name)}">Refund item</button>`
+                    : `<span style="font-size:10px;color:#94a3b8">${order.payment_status === "paid" ? "Refund unavailable" : "Payment not confirmed"}</span>`}
+                  ${canRefund && replacementOptions.length
+                    ? `<select id="replacement-select-${escapeHtml(order.id)}-${escapeHtml(itemId)}" style="max-width:180px;padding:7px;border:1px solid #dce5df;border-radius:8px;font-size:11px"><option value="">Choose replacement</option>${replacementOptions.map(m=>`<option value="${escapeHtml(m.id)}">${escapeHtml(m.name)} · ${money(m.price)}</option>`).join("")}</select><button type="button" class="btn btn-primary btn-small" data-suggest-replacement="1" data-suggest-order="${escapeHtml(order.id)}" data-suggest-item="${escapeHtml(itemId)}" data-suggest-name="${escapeHtml(name)}" data-suggest-select="replacement-select-${escapeHtml(order.id)}-${escapeHtml(itemId)}">Suggest replacement</button>`
+                    : `<span style="font-size:10px;color:#94a3b8">No same-price replacement in stock</span>`}
+                </div>
 
               </div>
 
@@ -4241,6 +4359,15 @@ function renderOrderDetails(order){
       ${renderOrderTimeline(order)}
 
 
+      <div id="orderRefundHistory" class="order-detail-box full" style="margin-top:12px">
+        <div class="order-detail-label">Refund history</div>
+        <div class="order-detail-value">Loading refund records…</div>
+      </div>
+      <div id="orderAdjustmentHistory" class="order-detail-box full" style="margin-top:12px">
+        <div class="order-detail-label">Replacement requests</div>
+        <div class="order-detail-value">Loading replacement requests…</div>
+      </div>
+
       <div class="order-detail-actions">
 
         ${orderActionHtml(order)}
@@ -4248,6 +4375,27 @@ function renderOrderDetails(order){
       </div>
 
     `;
+
+  document.querySelectorAll("[data-refund-item]").forEach(button=>{
+    button.addEventListener("click",()=>{
+      refundOrderItem(
+        button.dataset.refundOrder,
+        button.dataset.refundItem,
+        Number(button.dataset.refundQty),
+        button.dataset.refundName
+      );
+    });
+  });
+  document.querySelectorAll("[data-suggest-replacement]").forEach(button=>{
+    button.addEventListener("click",()=>{
+      suggestOrderReplacement(
+        button.dataset.suggestOrder,
+        button.dataset.suggestItem,
+        button.dataset.suggestName,
+        button.dataset.suggestSelect
+      );
+    });
+  });
 
 }
 
