@@ -1,8 +1,9 @@
 const CACHE_NAME = "zenzora-vendor-shell-v1";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./vendor-ops.js"];
+const SUPABASE_CDN = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
 
 self.addEventListener("install", event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
+  event.waitUntil(caches.open(CACHE_NAME).then(async cache => { await cache.addAll(SHELL); try { await cache.add(SUPABASE_CDN); } catch (_) {} }).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", event => {
@@ -16,6 +17,13 @@ self.addEventListener("fetch", event => {
   const request = event.request;
   if (request.method !== "GET") return;
   const url = new URL(request.url);
+  if (url.origin === "https://cdn.jsdelivr.net") {
+    event.respondWith(caches.match(request).then(cached => cached || fetch(request).then(response => {
+      if (response && response.ok) caches.open(CACHE_NAME).then(cache => cache.put(request, response.clone()));
+      return response;
+    })));
+    return;
+  }
   if (url.origin !== self.location.origin) return;
   event.respondWith(
     caches.match(request).then(cached => cached || fetch(request).then(response => {
