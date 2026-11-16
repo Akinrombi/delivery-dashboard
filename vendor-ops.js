@@ -627,10 +627,18 @@
       const day=String(tx.created_at||"").slice(0,10);
       return (!from||day>=from)&&(!to||day<=to);
     });
+    const withdrawals=cachedWithdrawals.filter(item=>{
+      const day=String(item.created_at||"").slice(0,10);
+      return (!from||day>=from)&&(!to||day<=to);
+    });
     const header=["Date","Type","Order code","Gross (NGN)","Platform fee (NGN)","Net amount (NGN)","Note"];
-    const csv=[header,...rows.map(tx=>[
+    const transactionRows=rows.map(tx=>[
       tx.created_at,tx.type,cachedOrderCodes[tx.order_id]||"",tx.gross,tx.commission,tx.amount,tx.note||""
-    ])].map(row=>row.map(value=>'"'+String(value??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
+    ]);
+    const withdrawalRows=withdrawals.map(item=>[
+      item.created_at,"withdrawal","","","",item.amount,"Status: "+(item.status||"pending")+"; paid date: "+(item.paid_at||"")
+    ]);
+    const csv=[header,...transactionRows,...withdrawalRows].map(row=>row.map(value=>'"'+String(value??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
     const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
     const url=URL.createObjectURL(blob);
     const link=document.createElement("a");
