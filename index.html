@@ -2007,7 +2007,7 @@ const supabaseClient =
 let currentUser = null;
 let vendor = null;
 let vendorPayoutDetails = { bank_name:"", account_number:"" };
-const VENDOR_PROFILE_COLUMNS = "id,owner_id,store_name,address,lat,lng,is_open,created_at,phone,open_time,close_time,latitude,longitude,landmark,service_region";
+const VENDOR_PROFILE_COLUMNS = "id,owner_id,store_name,address,lat,lng,is_open,accepting_orders,created_at,phone,open_time,close_time,latitude,longitude,landmark,service_region";
 let menuItems = [];
 let orders = [];
 let realtimeChannel = null;
@@ -5430,5 +5430,6 @@ checkSession();
 })();
 </script>
 
+<script src="./vendor-ops.js"></script>
 </body>
 </html>

@@ -1,16 +1,19 @@
 {
   "name": "Zenzora Vendor",
   "short_name": "Zenzora",
-  "description": "Zenzora food delivery vendor portal",
+  "description": "Manage Zenzora restaurant orders, menu and earnings.",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#050807",
-  "theme_color": "#00BFA5",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#10BFA5",
+  "categories": ["business", "food"],
   "icons": [
     {
       "src": "./file_00000000715c8243898b56fd2a81f2d7.png",
       "sizes": "any",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
