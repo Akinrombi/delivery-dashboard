@@ -962,6 +962,7 @@
   ensureBatterySaver();
   ensureRules();
   addRulesLink();
-  const timer=window.setInterval(()=>{ensureBatterySaver();ensureRules();addRulesLink();},1000);
-  window.addEventListener("pagehide",()=>window.clearInterval(timer),{once:true});
+  ensureBatterySaver();
+  ensureRules();
+  addRulesLink();
 })();
