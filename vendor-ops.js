@@ -916,3 +916,52 @@
   ensurePushButton();
   addOptionsButtons();
 })();
+
+/* Final accessibility and vendor guidance touches. */
+(function(){
+  if(window.__zenzoraVendorOpsV4)return;
+  window.__zenzoraVendorOpsV4=true;
+  const q=(s,r=document)=>r.querySelector(s);
+  function ensureBatterySaver(){
+    const dashboard=q("#page-dashboard");
+    if(!dashboard||q("#zzBatterySaverCard"))return;
+    const card=document.createElement("section");
+    card.id="zzBatterySaverCard";card.className="zz-ops-card";
+    card.innerHTML='<div class="zz-ops-title">Battery saver</div><div class="zz-ops-muted">Reduce motion and visual effects while keeping order alerts and vibration enabled when the app is open.</div><div class="zz-ops-actions"><label class="zz-check-row"><input id="zzBatterySaver" type="checkbox"><strong>Use battery saver</strong></label></div>';
+    dashboard.appendChild(card);
+    const input=q("#zzBatterySaver",card);
+    input.checked=localStorage.getItem("zenzora-vendor-battery-saver")==="on";
+    document.documentElement.classList.toggle("zz-battery-saver",input.checked);
+    input.addEventListener("change",()=>{
+      localStorage.setItem("zenzora-vendor-battery-saver",input.checked?"on":"off");
+      document.documentElement.classList.toggle("zz-battery-saver",input.checked);
+    });
+  }
+  function ensureRules(){
+    if(q("#zzVendorRules"))return;
+    const modal=document.createElement("div");
+    modal.id="zzVendorRules";modal.className="zz-modal";modal.hidden=true;
+    modal.innerHTML='<div class="zz-modal-card" role="dialog" aria-modal="true"><h3>Vendor rules, ratings and disputes</h3><p class="zz-ops-muted">Vendor guidance. Zenzora must publish the final policy before this becomes an official policy.</p><ul style="padding-left:20px;line-height:1.65;font-size:13px"><li>Keep menu prices and food availability accurate.</li><li>Accept or decline new orders promptly.</li><li>Prepare the items shown on the confirmed order.</li><li>Do not ask customers or riders to share passwords, PINs or payment codes.</li><li>Ratings should describe a real order and the service received.</li><li>For a dispute, keep the order code and share clear details with support.</li></ul><div class="zz-ops-actions"><button class="btn btn-primary" id="zzRulesClose">Close</button></div></div>';
+    document.body.appendChild(modal);
+    modal.addEventListener("click",e=>{if(e.target===modal)modal.hidden=true;});
+    q("#zzRulesClose",modal).addEventListener("click",()=>modal.hidden=true);
+  }
+  function addRulesLink(){
+    const help=q("#zzVendorHelpModal .zz-modal-card");
+    if(!help||q("#zzRulesOpen",help))return;
+    const button=document.createElement("button");
+    button.id="zzRulesOpen";button.type="button";button.className="btn btn-secondary";
+    button.textContent="Rules and disputes";
+    button.addEventListener("click",()=>{ensureRules();q("#zzVendorRules").hidden=false;});
+    const actions=q(".zz-ops-actions",help);
+    if(actions)actions.prepend(button);
+  }
+  const style=document.createElement("style");
+  style.textContent='.zz-battery-saver *, .zz-battery-saver *:before, .zz-battery-saver *:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}';
+  document.head.appendChild(style);
+  ensureBatterySaver();
+  ensureRules();
+  addRulesLink();
+  const timer=window.setInterval(()=>{ensureBatterySaver();ensureRules();addRulesLink();},1000);
+  window.addEventListener("pagehide",()=>window.clearInterval(timer),{once:true});
+})();
