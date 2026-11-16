@@ -543,6 +543,7 @@
       <div class="zz-ops-grid">
         <div class="zz-ops-stat"><span>Today's delivered sales</span><strong id="zzTodaySales">₦0</strong></div>
         <div class="zz-ops-stat"><span>Available wallet balance</span><strong id="zzAvailableBalance">₦0</strong></div>
+        <div class="zz-ops-stat"><span>Pending withdrawal requests</span><strong id="zzPendingWithdrawals">₦0</strong></div>
         <div class="zz-ops-stat"><span>Next payout</span><strong id="zzNextPayout">Not scheduled</strong></div>
       </div>
       <div class="zz-ops-title" style="margin-top:14px">Download your statement</div>
@@ -553,12 +554,15 @@
       </div>
       <div class="zz-ops-title" style="margin-top:18px">Transaction history</div>
       <div id="zzTransactionHistory" class="zz-ops-muted">Loading transactions…</div>
+      <div class="zz-ops-title" style="margin-top:18px">Withdrawal history</div>
+      <div id="zzWithdrawalHistory" class="zz-ops-muted">Loading withdrawals…</div>
     `;
     page.appendChild(panel);
     q("#zzExportStatement",panel).addEventListener("click",exportStatement);
   }
 
   let cachedTransactions=[];
+  let cachedWithdrawals=[];
   let cachedOrderCodes={};
 
   async function loadFinance(){
@@ -569,15 +573,20 @@
     const sales=todays.reduce((sum,o)=>sum+Number(o.vendor_net ?? o.total ?? 0),0);
     const salesNode=q("#zzTodaySales");if(salesNode)salesNode.textContent=naira(sales);
     try{
-      const [walletResult,txResult]=await Promise.all([
+      const [walletResult,txResult,withdrawalResult]=await Promise.all([
         supabaseClient.from("vendor_wallets").select("available_balance,total_earned,total_commission").eq("vendor_id",vendor.id).maybeSingle(),
-        supabaseClient.from("vendor_transactions").select("id,order_id,type,gross,commission,amount,note,created_at").eq("vendor_id",vendor.id).order("created_at",{ascending:false}).limit(300)
+        supabaseClient.from("vendor_transactions").select("id,order_id,type,gross,commission,amount,note,created_at").eq("vendor_id",vendor.id).order("created_at",{ascending:false}).limit(300),
+        supabaseClient.from("withdrawal_requests").select("id,amount,status,created_at,paid_at").eq("vendor_id",vendor.id).eq("role","vendor").order("created_at",{ascending:false}).limit(100)
       ]);
       if(walletResult.error) throw walletResult.error;
       if(txResult.error) throw txResult.error;
+      if(withdrawalResult.error) throw withdrawalResult.error;
       const wallet=walletResult.data||{};
       const balance=q("#zzAvailableBalance");if(balance)balance.textContent=naira(wallet.available_balance);
       cachedTransactions=txResult.data||[];
+      cachedWithdrawals=withdrawalResult.data||[];
+      const pending=cachedWithdrawals.filter(item=>["pending","processing","approved"].includes(String(item.status||"").toLowerCase())).reduce((sum,item)=>sum+Number(item.amount||0),0);
+      const pendingNode=q("#zzPendingWithdrawals");if(pendingNode)pendingNode.textContent=naira(pending);
       const ids=[...new Set(cachedTransactions.map(tx=>tx.order_id).filter(Boolean))];
       cachedOrderCodes={};
       if(ids.length){
@@ -586,6 +595,7 @@
         (data||[]).forEach(order=>cachedOrderCodes[order.id]=order.order_number||order.id.slice(0,8));
       }
       renderTransactions();
+      renderWithdrawals();
       financeLoaded=true;
     }catch(error){
       const history=q("#zzTransactionHistory");
@@ -601,6 +611,14 @@
       '</tbody></table></div>';
   }
 
+  function renderWithdrawals(){
+    const node=q("#zzWithdrawalHistory");if(!node)return;
+    if(!cachedWithdrawals.length){node.textContent="No withdrawal requests have been recorded yet.";return;}
+    node.innerHTML='<div class="zz-ops-table-wrap"><table class="zz-ops-table"><thead><tr><th>Requested</th><th>Amount</th><th>Status</th><th>Paid date</th></tr></thead><tbody>'+
+      cachedWithdrawals.map(item=>'<tr><td>'+safe(new Date(item.created_at).toLocaleString("en-NG"))+'</td><td>'+naira(item.amount)+'</td><td>'+safe(item.status||"pending")+'</td><td>'+safe(item.paid_at?new Date(item.paid_at).toLocaleString("en-NG"):"—")+'</td></tr>').join("")+
+      '</tbody></table></div>';
+  }
+
   function exportStatement(){
     const from=q("#zzStatementFrom")?.value||"";
     const to=q("#zzStatementTo")?.value||"";
@@ -609,10 +627,18 @@
       const day=String(tx.created_at||"").slice(0,10);
       return (!from||day>=from)&&(!to||day<=to);
     });
+    const withdrawals=cachedWithdrawals.filter(item=>{
+      const day=String(item.created_at||"").slice(0,10);
+      return (!from||day>=from)&&(!to||day<=to);
+    });
     const header=["Date","Type","Order code","Gross (NGN)","Platform fee (NGN)","Net amount (NGN)","Note"];
-    const csv=[header,...rows.map(tx=>[
+    const transactionRows=rows.map(tx=>[
       tx.created_at,tx.type,cachedOrderCodes[tx.order_id]||"",tx.gross,tx.commission,tx.amount,tx.note||""
-    ])].map(row=>row.map(value=>'"'+String(value??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
+    ]);
+    const withdrawalRows=withdrawals.map(item=>[
+      item.created_at,"withdrawal","","","",item.amount,"Status: "+(item.status||"pending")+"; paid date: "+(item.paid_at||"")
+    ]);
+    const csv=[header,...transactionRows,...withdrawalRows].map(row=>row.map(value=>'"'+String(value??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
     const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
     const url=URL.createObjectURL(blob);
     const link=document.createElement("a");
