@@ -211,6 +211,7 @@
     .zz-prep-chip{min-height:48px;min-width:52px;padding:0 11px;border:1px solid #dbe3e8;border-radius:12px;background:#fff;color:#243342;font-size:12px;font-weight:800;touch-action:manipulation}
     .zz-prep-chip.is-current{border-color:#10b981;background:#ecfdf5;color:#047857}
     .zz-prep-chip:disabled{opacity:.55}
+    .order-actions .btn{min-height:48px;padding-left:14px;padding-right:14px;touch-action:manipulation}
     @media(max-width:560px){.zenzora-order-search{grid-template-columns:1fr 1fr}.zenzora-search-field:first-child{grid-column:1/-1}.zenzora-clear-search{grid-column:1/-1;width:100%}.zz-prep-chip{flex:1}}
   `;
   document.head.appendChild(style);
