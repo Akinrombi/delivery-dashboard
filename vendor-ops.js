@@ -173,6 +173,7 @@
       window.renderOrders = function () {
         installSearch();
         renderFilteredOrders();
+        syncAlertLoop();
       };
     }
     if (typeof window.orderActionHtml === "function" && !originalOrderActionHtml) {
@@ -226,7 +227,6 @@
   }, { once: true, passive: true });
 
   install();
-  window.setInterval(install, 2000);
 })();
 
 /* =========================================================
@@ -237,6 +237,13 @@
   if(window.__zenzoraVendorOpsV2) return;
   window.__zenzoraVendorOpsV2 = true;
 
+  function makeActionId(){
+    if(window.crypto?.randomUUID) return window.crypto.randomUUID();
+    const bytes=window.crypto.getRandomValues(new Uint8Array(16));
+    bytes[6]=(bytes[6]&15)|64; bytes[8]=(bytes[8]&63)|128;
+    const hex=Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("");
+    return hex.slice(0,8)+"-"+hex.slice(8,12)+"-"+hex.slice(12,16)+"-"+hex.slice(16,20)+"-"+hex.slice(20);
+  }
   const DB_NAME = "zenzora-vendor-ops";
   const STORE = "actions";
   let dbPromise;
@@ -340,7 +347,7 @@
 
   async function queueOrSend(actionType,payload){
     const action={
-      action_id:crypto.randomUUID(),
+      action_id:makeActionId(),
       action_type:actionType,
       payload,
       created_at:Date.now()
@@ -670,7 +677,7 @@
 
   async function uploadMenuPhoto(file){
     const blob=await compressImage(file);
-    const path=vendor.id+"/"+crypto.randomUUID()+".webp";
+    const path=vendor.id+"/"+makeActionId()+".webp";
     const {error}=await supabaseClient.storage.from("vendor-menu-images").upload(path,blob,{contentType:"image/webp",upsert:false});
     if(error)throw error;
     const {data}=supabaseClient.storage.from("vendor-menu-images").getPublicUrl(path);

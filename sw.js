@@ -32,7 +32,7 @@ self.addEventListener("fetch", event => {
         caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
       }
       return response;
-    }).catch(() => caches.match("./index.html")))
+    }).catch(() => request.mode === "navigate" ? caches.match("./index.html") : Response.error()))
   );
 });
 
