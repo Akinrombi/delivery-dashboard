@@ -74,6 +74,10 @@
     const query = String(document.getElementById("zenzoraOrderQuery")?.value || "").trim().toLowerCase();
     const date = String(document.getElementById("zenzoraOrderDate")?.value || "");
     const all = getOrders();
+    if (!all.length && !query && !date) {
+      if (typeof originalRenderOrders === "function") originalRenderOrders();
+      return;
+    }
     const filtered = all.filter(order => {
       const code = String(order.order_number || order.id || "").toLowerCase();
       const shortId = String(order.id || "").slice(0, 8).toLowerCase();
