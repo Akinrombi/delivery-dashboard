@@ -776,7 +776,7 @@
     ensureLanguageAndSaver();
     paintStatus();
     renderChecklist();
-    if(q("#page-earnings")?.classList.contains("active"))loadFinance();
+    if(q("#page-earnings")?.classList.contains("active") && !financeLoaded)loadFinance();
   }
 
   window.addEventListener("online",()=>{paintStatus();flushQueue();});
@@ -803,6 +803,116 @@
   insertStyles();
   installServiceWorker();
   refreshPanels();
-  window.setInterval(refreshPanels,3000);
   paintStatus();
+})();
+
+/* Store pause, menu options and notification permission controls. */
+(function(){
+  "use strict";
+  if(window.__zenzoraVendorOpsV3)return;
+  window.__zenzoraVendorOpsV3=true;
+  const q=(s,r=document)=>r.querySelector(s);
+  const say=(m,t)=>{if(typeof toast==="function")toast(m,t||"");};
+  const esc=v=>typeof escapeHtml==="function"?escapeHtml(v):String(v??"");
+
+  function ensureStorePause(){
+    const page=q("#page-restaurant");
+    if(!page||q("#zzAcceptingOrdersCard"))return;
+    const card=document.createElement("div");
+    card.id="zzAcceptingOrdersCard";card.className="zz-ops-card";
+    card.innerHTML='<div class="zz-ops-title">New order settings</div><div class="zz-ops-muted">Pause new customer orders without closing your restaurant profile.</div><div class="zz-ops-actions"><label class="zz-check-row"><input id="zzAcceptingOrders" type="checkbox"><strong>Accept new orders</strong></label></div><div id="zzAcceptingOrdersHint" class="zz-ops-muted"></div>';
+    page.prepend(card);
+    q("#zzAcceptingOrders",card).addEventListener("change",setAcceptingOrders);
+  }
+  function renderStorePause(){
+    ensureStorePause();
+    const input=q("#zzAcceptingOrders");if(!input||!window.vendor)return;
+    input.checked=vendor.accepting_orders!==false;
+    const hint=q("#zzAcceptingOrdersHint");
+    if(hint)hint.textContent=input.checked?"Customers can place new orders.":"New orders are paused. Your restaurant profile stays visible.";
+  }
+  async function setAcceptingOrders(event){
+    const input=event.target;input.disabled=true;
+    try{
+      const {data,error}=await supabaseClient.rpc("vendor_set_accepting_orders",{p_accepting:input.checked});
+      if(error)throw error;
+      vendor.accepting_orders=data?.accepting_orders ?? input.checked;
+      renderStorePause();
+      say(input.checked?"New orders are now enabled.":"New orders are paused.","success");
+    }catch(error){
+      input.checked=!input.checked;
+      say(error.message||"Could not change order settings.","error");
+    }finally{input.disabled=false;}
+  }
+
+  window.editMenuOptions=async function(itemId){
+    const item=Array.isArray(menuItems)?menuItems.find(row=>row.id===itemId):null;
+    if(!item)return;
+    try{
+      const {data,error}=await supabaseClient.from("menu_item_options").select("option_group,option_name,price_delta,is_required").eq("menu_item_id",itemId).order("sort_order");
+      if(error)throw error;
+      const existing=(data||[]).map(o=>[o.option_group,o.option_name,o.price_delta,o.is_required?"required":"optional"].join(" | ")).join("\n");
+      const value=prompt(
+        "Add-ons and portion choices for "+item.name+".\nEnter one per line: Group | Option | Extra price | required/optional\nExample: Portion | Large | 500 | required",
+        existing
+      );
+      if(value===null)return;
+      const options=value.split(/\r?\n/).map(line=>line.trim()).filter(Boolean).map(line=>{
+        const parts=line.split("|").map(part=>part.trim());
+        if(parts.length<3)throw new Error("Use: Group | Option | Extra price | required/optional");
+        const price=Number(parts[2]);
+        if(!parts[0]||!parts[1]||!Number.isFinite(price)||price<0)throw new Error("Check the option name and extra price.");
+        return {option_group:parts[0],option_name:parts[1],price_delta:price,is_required:(parts[3]||"optional").toLowerCase()==="required"};
+      });
+      const result=await supabaseClient.rpc("vendor_replace_menu_item_options",{p_menu_item_id:itemId,p_options:options});
+      if(result.error)throw result.error;
+      say("Menu options saved.","success");
+    }catch(error){say(error.message||"Could not save menu options.","error");}
+  };
+
+  function addOptionsButtons(){
+    const cards=document.querySelectorAll("#menuGrid .menu-card");
+    cards.forEach((card,index)=>{
+      const item=menuItems?.[index];const footer=q(".menu-footer",card);
+      if(!item||!footer||q(".zz-edit-options",footer))return;
+      const button=document.createElement("button");
+      button.type="button";button.className="btn btn-secondary btn-small zz-edit-options";
+      button.textContent="Add-ons / portions";button.addEventListener("click",()=>window.editMenuOptions(item.id));
+      footer.appendChild(button);
+    });
+  }
+
+  function ensurePushButton(){
+    const dashboard=q("#page-dashboard");
+    if(!dashboard||q("#zzPushSetup"))return;
+    const card=document.createElement("section");
+    card.id="zzPushSetup";card.className="zz-ops-card";
+    card.innerHTML='<div class="zz-ops-title">Order alerts on this phone</div><div class="zz-ops-muted">Allow notifications so Zenzora can alert you when push delivery is configured. Sound and vibration still depend on your phone settings.</div><div class="zz-ops-actions"><button id="zzEnableNotifications" class="btn btn-secondary" type="button">Enable notifications</button></div><div id="zzPushHint" class="zz-ops-muted"></div>';
+    dashboard.appendChild(card);
+    q("#zzEnableNotifications",card).addEventListener("click",async()=>{
+      if(!("Notification" in window)){q("#zzPushHint").textContent="This browser does not support notifications.";return;}
+      const permission=await Notification.requestPermission();
+      q("#zzPushHint").textContent=permission==="granted"
+        ?"Notifications are allowed on this phone. Server push delivery still needs to be connected."
+        : "Notifications are blocked. Change this in your browser or phone settings.";
+      if(permission==="granted"&&"serviceWorker" in navigator) navigator.serviceWorker.ready.then(()=>say("Notifications allowed. Background delivery is not connected yet.","success"));
+    });
+  }
+
+  const oldRenderMenu=window.renderMenu;
+  if(typeof oldRenderMenu==="function"){
+    window.renderMenu=function(){oldRenderMenu();addOptionsButtons();};
+  }
+  const oldNavigate=window.navigate;
+  if(typeof oldNavigate==="function"){
+    window.navigate=function(page){oldNavigate(page);if(page==="restaurant")renderStorePause();if(page==="menu")addOptionsButtons();};
+  }
+  const oldLoadVendor=window.loadVendor;
+  if(typeof oldLoadVendor==="function"){
+    window.loadVendor=async function(){await oldLoadVendor();renderStorePause();};
+  }
+  ensureStorePause();
+  renderStorePause();
+  ensurePushButton();
+  addOptionsButtons();
 })();
