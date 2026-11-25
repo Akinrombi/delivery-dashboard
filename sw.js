@@ -1,4 +1,4 @@
-const CACHE_NAME = "zenzora-vendor-shell-v2";
+const CACHE_NAME = "zenzora-vendor-shell-v3";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./vendor-ops.js"];
 const SUPABASE_CDN = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
 
