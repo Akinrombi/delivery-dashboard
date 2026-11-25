@@ -489,6 +489,7 @@
       .zz-menu-photo{width:100%;height:140px;object-fit:cover;border-radius:12px;margin-bottom:10px;background:#f1f5f9}
       .zz-help-fab{position:fixed;right:16px;bottom:82px;z-index:60;border:0;border-radius:999px;background:#10a56b;color:#fff;min-height:52px;padding:0 18px;font-weight:900;box-shadow:0 8px 24px #0002}
       .zz-modal{position:fixed;inset:0;z-index:1000;background:#0008;display:flex;align-items:center;justify-content:center;padding:16px}
+      .zz-modal[hidden]{display:none!important;visibility:hidden!important;pointer-events:none!important}
       .zz-modal-card{background:#fff;color:#17212b;width:min(520px,100%);max-height:85vh;overflow:auto;border-radius:18px;padding:20px}
       .zz-modal-card h3{margin:0 0 8px;font-size:18px}
       .zz-modal-card label{display:block;font-size:12px;font-weight:800;margin:12px 0 6px}
