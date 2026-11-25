@@ -433,7 +433,40 @@
 
   function insertStyles(){
     if(q("#zz-vendor-v2-style")) return;
-    const style=document.createElement("style");
+    window.saveRestaurantLogo=async function(){
+    const input=q("#restaurantLogoFile"),feedback=q("#restaurantLogoFeedback"),button=q("#page-restaurant button[onclick='saveRestaurantLogo()']");
+    const file=input?.files?.[0];
+    if(!vendor?.id||!currentUser?.id){say("Please sign in as a vendor first.","error");return;}
+    if(!file){say("Choose a store logo picture first.","error");return;}
+    if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>5*1024*1024){say("Choose a JPG, PNG or WebP image under 5 MB.","error");return;}
+    if(button)button.disabled=true;if(feedback)feedback.textContent="Uploading store picture…";
+    try{
+      const ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg";
+      const path=vendor.id+"/store-logo-"+Date.now()+"."+ext;
+      const {error:uploadError}=await supabaseClient.storage.from("vendor-menu-images").upload(path,file,{upsert:true,contentType:file.type,cacheControl:"3600"});
+      if(uploadError)throw uploadError;
+      const {data}=supabaseClient.storage.from("vendor-menu-images").getPublicUrl(path);
+      const {data:updated,error}=await supabaseClient.from("vendors").update({store_logo_url:data.publicUrl}).eq("id",vendor.id).select(VENDOR_PROFILE_COLUMNS).single();
+      if(error)throw error;
+      vendor=updated;renderRestaurant();
+      if(feedback)feedback.textContent="Store picture uploaded successfully.";
+      say("Store picture uploaded.","success");
+    }catch(error){console.error(error);if(feedback)feedback.textContent=error.message||"Could not upload the store picture.";say(error.message||"Could not upload the store picture.","error");}
+    finally{if(button)button.disabled=false;}
+  };
+  function renderRestaurantLogo(){
+    const preview=q("#restaurantLogoPreview");if(!preview)return;
+    preview.innerHTML=vendor?.store_logo_url?'<img alt="Store logo" src="'+String(vendor.store_logo_url).replace(/"/g,"&quot;")+'" style="width:100%;height:100%;object-fit:cover;">':'<span style="font-size:32px;font-weight:800;color:var(--muted,#667085);">'+(vendor?.store_name||"Z").slice(0,1).toUpperCase()+'</span>';
+  }
+  const logoInput=q("#restaurantLogoFile");if(logoInput)logoInput.addEventListener("change",()=>{
+    const file=logoInput.files?.[0];if(!file)return;
+    if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>5*1024*1024){say("Choose a JPG, PNG or WebP image under 5 MB.","error");logoInput.value="";return;}
+    const reader=new FileReader();reader.onload=()=>{const preview=q("#restaurantLogoPreview");if(preview)preview.innerHTML='<img alt="Store logo preview" src="'+reader.result+'" style="width:100%;height:100%;object-fit:cover;">';};reader.readAsDataURL(file);
+  });
+  const oldRenderRestaurant=window.renderRestaurant;
+  if(typeof oldRenderRestaurant==="function"){window.renderRestaurant=function(){oldRenderRestaurant();renderRestaurantLogo();};}
+  renderRestaurantLogo();
+  const style=document.createElement("style");
     style.id="zz-vendor-v2-style";
     style.textContent=`
       .zz-sync-status{position:sticky;top:0;z-index:25;margin:0 0 14px;padding:11px 14px;border-radius:12px;font-size:12px;font-weight:800;background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
@@ -970,32 +1003,9 @@
       document.documentElement.classList.toggle("zz-battery-saver",input.checked);
     });
   }
-  function ensureRules(){
-    if(q("#zzVendorRules"))return;
-    const modal=document.createElement("div");
-    modal.id="zzVendorRules";modal.className="zz-modal";modal.hidden=true;
-    modal.innerHTML='<div class="zz-modal-card" role="dialog" aria-modal="true"><h3>Vendor rules, ratings and disputes</h3><p class="zz-ops-muted">Vendor guidance. Zenzora must publish the final policy before this becomes an official policy.</p><ul style="padding-left:20px;line-height:1.65;font-size:13px"><li>Keep menu prices and food availability accurate.</li><li>Accept or decline new orders promptly.</li><li>Prepare the items shown on the confirmed order.</li><li>Do not ask customers or riders to share passwords, PINs or payment codes.</li><li>Ratings should describe a real order and the service received.</li><li>For a dispute, keep the order code and share clear details with support.</li></ul><div class="zz-ops-actions"><button class="btn btn-primary" id="zzRulesClose">Close</button></div></div>';
-    document.body.appendChild(modal);
-    modal.addEventListener("click",e=>{if(e.target===modal)modal.hidden=true;});
-    q("#zzRulesClose",modal).addEventListener("click",()=>modal.hidden=true);
-  }
-  function addRulesLink(){
-    const help=q("#zzVendorHelpModal .zz-modal-card");
-    if(!help||q("#zzRulesOpen",help))return;
-    const button=document.createElement("button");
-    button.id="zzRulesOpen";button.type="button";button.className="btn btn-secondary";
-    button.textContent="Rules and disputes";
-    button.addEventListener("click",()=>{ensureRules();q("#zzVendorRules").hidden=false;});
-    const actions=q(".zz-ops-actions",help);
-    if(actions)actions.prepend(button);
-  }
   const style=document.createElement("style");
   style.textContent='.zz-battery-saver *, .zz-battery-saver *:before, .zz-battery-saver *:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}';
   document.head.appendChild(style);
   ensureBatterySaver();
-  ensureRules();
-  addRulesLink();
   ensureBatterySaver();
-  ensureRules();
-  addRulesLink();
 })();
