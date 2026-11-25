@@ -1554,6 +1554,16 @@ textarea.form-control{
               Keep your restaurant information up to date.
             </div>
 
+            <div class="form-group" style="padding:14px;border:1px solid var(--border,#e5e7eb);border-radius:12px;margin-bottom:16px;">
+              <label class="form-label">Store logo / picture</label>
+              <div id="restaurantLogoPreview" style="width:112px;height:112px;border-radius:16px;overflow:hidden;background:var(--surface,#f8faf9);display:flex;align-items:center;justify-content:center;margin:8px 0 12px;border:1px solid var(--border,#e5e7eb);">
+                <span style="font-size:32px;font-weight:800;color:var(--muted,#667085);">Z</span>
+              </div>
+              <input id="restaurantLogoFile" class="form-control" type="file" accept="image/jpeg,image/png,image/webp">
+              <small style="display:block;color:var(--muted,#667085);margin-top:6px;">Choose a clear photo of your shop logo. JPG, PNG or WebP, maximum 5 MB.</small>
+              <button type="button" class="btn btn-primary" style="margin-top:10px;" onclick="saveRestaurantLogo()">Upload store picture</button>
+              <div id="restaurantLogoFeedback" aria-live="polite" style="font-size:12px;margin-top:8px;color:var(--muted,#667085);"></div>
+            </div>
             <div class="form-group">
               <label class="form-label">Restaurant Name</label>
               <input
@@ -2007,7 +2017,7 @@ const supabaseClient =
 let currentUser = null;
 let vendor = null;
 let vendorPayoutDetails = { bank_name:"", account_number:"" };
-const VENDOR_PROFILE_COLUMNS = "id,owner_id,store_name,address,lat,lng,is_open,accepting_orders,created_at,phone,open_time,close_time,latitude,longitude,landmark,service_region";
+const VENDOR_PROFILE_COLUMNS = "id,owner_id,store_name,address,lat,lng,is_open,accepting_orders,created_at,phone,open_time,close_time,latitude,longitude,landmark,service_region,store_logo_url";
 let menuItems = [];
 let orders = [];
 let realtimeChannel = null;
