@@ -366,7 +366,7 @@
   }
 
   async function flushQueue(){
-    if(!navigator.onLine || !window.supabaseClient || !window.vendor) return;
+    if(!navigator.onLine || !supabaseClient || !vendor) return;
     let queue;
     try{ queue=await allQueued(); }catch(error){ console.warn("Offline queue unavailable",error); return; }
     for(const action of queue){
@@ -506,7 +506,7 @@
     const details=q("#zzHelpMessage").value.trim();
     const type=q("#zzHelpType").value;
     if(!details){feedback.textContent="Please describe the problem.";return;}
-    if(!window.vendor?.id){feedback.textContent="Sign in to send a report.";return;}
+    if(!vendor?.id){feedback.textContent="Sign in to send a report.";return;}
     button.disabled=true;
     try{
       const {error}=await supabaseClient.from("vendor_support_messages").insert({
@@ -566,7 +566,7 @@
   let cachedOrderCodes={};
 
   async function loadFinance(){
-    if(!window.vendor?.id || !window.supabaseClient) return;
+    if(!vendor?.id || !supabaseClient) return;
     ensureFinancePanel();
     const today=new Date();today.setHours(0,0,0,0);
     const todays=Array.isArray(orders)?orders.filter(o=>o.status==="delivered" && new Date(o.delivered_at||o.updated_at||o.created_at)>=today):[];
@@ -657,7 +657,7 @@
 
   function renderChecklist(){
     ensureChecklist();
-    const list=q("#zzSetupItems");if(!list || !window.vendor)return;
+    const list=q("#zzSetupItems");if(!list || !vendor)return;
     const hasBank=!!(vendorPayoutDetails?.bank_name && String(vendorPayoutDetails?.account_number||"").length===10);
     const hasMenu=Array.isArray(menuItems)&&menuItems.length>0;
     const hasBusiness=!!(vendor.store_name&&vendor.address&&vendor.phone);
@@ -711,7 +711,7 @@
   }
 
   window.addMenuItem=async function(){
-    if(!window.vendor?.id)return;
+    if(!vendor?.id)return;
     const name=q("#menuName")?.value.trim();
     const category=q("#menuCategory")?.value.trim();
     const price=Number(q("#menuPrice")?.value);
@@ -859,7 +859,7 @@
   }
   function renderStorePause(){
     ensureStorePause();
-    const input=q("#zzAcceptingOrders");if(!input||!window.vendor)return;
+    const input=q("#zzAcceptingOrders");if(!input||!vendor)return;
     input.checked=vendor.accepting_orders!==false;
     const hint=q("#zzAcceptingOrdersHint");
     if(hint)hint.textContent=input.checked?"Customers can place new orders.":"New orders are paused. Your restaurant profile stays visible.";
