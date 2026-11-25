@@ -508,6 +508,7 @@
     modal.id="zzVendorHelpModal";
     modal.className="zz-modal";
     modal.hidden=true;
+    modal.style.display="none";
     modal.innerHTML=`
       <div class="zz-modal-card" role="dialog" aria-modal="true" aria-labelledby="zzHelpTitle">
         <h3 id="zzHelpTitle">Help and report a problem</h3>
@@ -529,8 +530,8 @@
         <div id="zzHelpFeedback" class="zz-ops-muted" aria-live="polite"></div>
       </div>`;
     document.body.appendChild(modal);
-    modal.addEventListener("click",event=>{if(event.target===modal) modal.hidden=true;});
-    q("#zzHelpCancel",modal).addEventListener("click",()=>modal.hidden=true);
+    modal.addEventListener("click",event=>{if(event.target===modal){modal.hidden=true;modal.style.display="none";}});
+    q("#zzHelpCancel",modal).addEventListener("click",()=>{modal.hidden=true;modal.style.display="none";});
     q("#zzHelpSend",modal).addEventListener("click",sendHelpReport);
   }
 
@@ -561,7 +562,7 @@
     button.className="zz-help-fab";
     button.type="button";
     button.textContent="Help";
-    button.addEventListener("click",()=>{ensureModal();q("#zzVendorHelpModal").hidden=false;});
+    button.addEventListener("click",()=>{ensureModal();const modal=q("#zzVendorHelpModal");modal.hidden=false;modal.style.display="flex";});
     document.body.appendChild(button);
   }
 
