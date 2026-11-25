@@ -503,6 +503,7 @@
   }
 
   function ensureModal(){
+    if(!vendor?.id){ q("#zzVendorHelpModal")?.remove(); return; }
     if(q("#zzVendorHelpModal")) return;
     const modal=document.createElement("div");
     modal.id="zzVendorHelpModal";
@@ -556,6 +557,7 @@
   }
 
   function ensureHelpButton(){
+    if(!vendor?.id){ q("#zzVendorHelpButton")?.remove(); q("#zzVendorHelpModal")?.remove(); return; }
     if(q("#zzVendorHelpButton")) return;
     const button=document.createElement("button");
     button.id="zzVendorHelpButton";
