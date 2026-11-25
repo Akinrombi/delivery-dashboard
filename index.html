@@ -5441,5 +5441,54 @@ checkSession();
 </script>
 
 <script src="./vendor-ops.js"></script>
+
+<script>
+/* Keep vendor authentication accessible: remove the obsolete guidance gate
+   and any cached/injected vendor-policy notice that blocks login or signup. */
+(function(){
+  function removeVendorPolicyGate(){
+    const phrases = [
+      "vendor rules",
+      "ratings and disputes",
+      "vendor guidance",
+      "keep menu prices and food availability accurate",
+      "zenzora must publish the final policy"
+    ];
+    document.querySelectorAll("body *").forEach(function(el){
+      if(!el || el.id === "authScreen" || el.closest("#authScreen")) return;
+      const text = (el.innerText || el.textContent || "").trim().toLowerCase();
+      if(!text || text.length > 3500 || !phrases.some(function(p){ return text.includes(p); })) return;
+      let gate = el;
+      for(let i=0;i<6 && gate.parentElement && gate.parentElement !== document.body;i++){
+        const cls = String(gate.className || "").toLowerCase();
+        const role = (gate.getAttribute("role") || "").toLowerCase();
+        if(role === "dialog" || /modal|overlay|backdrop|notice|policy|guidance/.test(cls)) break;
+        gate = gate.parentElement;
+      }
+      if(gate && gate !== document.body && !gate.closest("#authScreen")){
+        gate.remove();
+      }
+    });
+  }
+  function clearStartupBlocker(){
+    const splash = document.getElementById("qeVendorSplash");
+    if(splash) splash.remove();
+  }
+  function keepAuthAvailable(){
+    clearStartupBlocker();
+    removeVendorPolicyGate();
+    const auth = document.getElementById("authScreen");
+    const app = document.getElementById("app");
+    if(auth && app && app.classList.contains("hidden")) auth.style.pointerEvents = "auto";
+  }
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", keepAuthAvailable, {once:true});
+  } else {
+    keepAuthAvailable();
+  }
+  const observer = new MutationObserver(keepAuthAvailable);
+  observer.observe(document.documentElement, {childList:true,subtree:true});
+})();
+</script>
 </body>
 </html>
