@@ -1090,7 +1090,7 @@ textarea.form-control{
   }
 }
 
-/* ZENZORA VENDOR 7-SECOND STARTUP */
+/* ZENZORA VENDOR QUICK STARTUP */
 #qeVendorSplash{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:28px 22px;background:#fff;text-align:center;opacity:1;transition:opacity .45s ease;isolation:isolate}
 #qeVendorSplash.qe-splash-hide{opacity:0;pointer-events:none}
 #qeVendorSplash:before,#qeVendorSplash:after{content:"";position:absolute;z-index:-1;width:210px;height:210px;border-radius:36px;transform:rotate(35deg)}
@@ -1105,7 +1105,7 @@ textarea.form-control{
 .qe-splash-vendor{display:block;color:#ff6b00;font-size:1.2em}
 .qe-splash-copy{margin-top:14px;color:#718096;font-size:15px;line-height:1.55;max-width:320px}
 .qe-splash-track{width:min(270px,80%);height:10px;border-radius:99px;background:#edf0f3;overflow:hidden;margin-top:34px}
-.qe-splash-progress{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#00a859,#8bcf25);animation:qeSplashProgress 7s linear forwards}
+.qe-splash-progress{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#00a859,#8bcf25);animation:qeSplashProgress 1.4s linear forwards}
 .qe-splash-status{margin-top:13px;color:#64748b;font-size:14px}
 .qe-splash-seconds{margin-top:5px;color:#94a3b8;font-size:12px}
 .qe-splash-deco{position:absolute;color:#ffb800;font-size:30px;font-weight:800;opacity:.85}
@@ -1113,7 +1113,7 @@ textarea.form-control{
 @keyframes qeSplashProgress{to{width:100%}}
 @keyframes qeSplashFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 @keyframes qeSplashPop{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
-@media(prefers-reduced-motion:reduce){.qe-splash-logo{animation:none}.qe-splash-inner{animation:none}.qe-splash-progress{animation-duration:7s}}
+@media(prefers-reduced-motion:reduce){.qe-splash-logo{animation:none}.qe-splash-inner{animation:none}.qe-splash-progress{animation-duration:1.4s}}
 
 </style>
 </head>
@@ -5425,69 +5425,45 @@ checkSession();
 (function(){
  const splash=document.getElementById('qeVendorSplash');
  if(!splash)return;
- const started=Date.now();
+ let removed=false;
  function dismissSplash(){
-  const remaining=Math.max(0,7000-(Date.now()-started));
-  window.setTimeout(function(){
-   splash.classList.add('qe-splash-hide');
-   window.setTimeout(function(){splash.remove();},500);
-  },remaining);
+  if(removed)return;
+  removed=true;
+  splash.classList.add('qe-splash-hide');
+  window.setTimeout(function(){if(splash.isConnected)splash.remove();},450);
  }
  if(document.readyState==='complete')dismissSplash();
  else window.addEventListener('load',dismissSplash,{once:true});
- // Fallback: do not trap users if a slow external resource delays the load event.
- window.setTimeout(dismissSplash,7000);
+ window.setTimeout(dismissSplash,1400);
 })();
 </script>
 
 <script src="./vendor-ops.js"></script>
 
 <script>
-/* Keep vendor authentication accessible: remove the obsolete guidance gate
-   and any cached/injected vendor-policy notice that blocks login or signup. */
+/* Keep vendor login and registration accessible without a page-wide observer. */
 (function(){
-  function removeVendorPolicyGate(){
-    const phrases = [
-      "vendor rules",
-      "ratings and disputes",
-      "vendor guidance",
-      "keep menu prices and food availability accurate",
-      "zenzora must publish the final policy"
-    ];
-    document.querySelectorAll("body *").forEach(function(el){
-      if(!el || el.id === "authScreen" || el.closest("#authScreen")) return;
-      const text = (el.innerText || el.textContent || "").trim().toLowerCase();
-      if(!text || text.length > 3500 || !phrases.some(function(p){ return text.includes(p); })) return;
-      let gate = el;
-      for(let i=0;i<6 && gate.parentElement && gate.parentElement !== document.body;i++){
-        const cls = String(gate.className || "").toLowerCase();
-        const role = (gate.getAttribute("role") || "").toLowerCase();
-        if(role === "dialog" || /modal|overlay|backdrop|notice|policy|guidance/.test(cls)) break;
-        gate = gate.parentElement;
-      }
-      if(gate && gate !== document.body && !gate.closest("#authScreen")){
-        gate.remove();
+  function keepAuthAvailable(){
+    const splash=document.getElementById("qeVendorSplash");
+    if(splash)splash.remove();
+    const phrases=["vendor rules","ratings and disputes","vendor guidance"];
+    document.querySelectorAll('[role="dialog"],.modal-backdrop,.modal,.overlay').forEach(function(el){
+      if(el.closest("#authScreen"))return;
+      const text=String(el.innerText||el.textContent||"").trim().toLowerCase();
+      if(text&&text.length<1800&&phrases.some(function(p){return text.includes(p);})){
+        el.remove();
       }
     });
+    const auth=document.getElementById("authScreen");
+    const app=document.getElementById("app");
+    if(auth&&app&&app.classList.contains("hidden")){
+      auth.style.pointerEvents="auto";
+      auth.style.visibility="visible";
+    }
   }
-  function clearStartupBlocker(){
-    const splash = document.getElementById("qeVendorSplash");
-    if(splash) splash.remove();
-  }
-  function keepAuthAvailable(){
-    clearStartupBlocker();
-    removeVendorPolicyGate();
-    const auth = document.getElementById("authScreen");
-    const app = document.getElementById("app");
-    if(auth && app && app.classList.contains("hidden")) auth.style.pointerEvents = "auto";
-  }
-  if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", keepAuthAvailable, {once:true});
-  } else {
-    keepAuthAvailable();
-  }
-  const observer = new MutationObserver(keepAuthAvailable);
-  observer.observe(document.documentElement, {childList:true,subtree:true});
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",keepAuthAvailable,{once:true});
+  else keepAuthAvailable();
+  window.setTimeout(keepAuthAvailable,500);
 })();
 </script>
 </body>
